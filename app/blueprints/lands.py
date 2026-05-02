@@ -1,10 +1,15 @@
-from flask import Blueprint, render_template, session, redirect, url_for, request, flash
+from flask import Blueprint, render_template, session, redirect, url_for, request, flash, abort
 from app.database import get_db
+from app.utils.logging import log_message
 from bson import ObjectId
 from datetime import datetime
 import folium
 
 lands_bp = Blueprint('lands', __name__, url_prefix='/lands')
+lands_bp.strict_slashes = False
+
+lands_bp = Blueprint('lands', __name__, url_prefix='/lands')
+lands_bp.strict_slashes = False
 
 @lands_bp.route('/', methods=['GET', 'POST'])
 def index():

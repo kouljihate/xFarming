@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block title %}Edit {{ row.name }} - xFarming{% endblock %}
+
+{% block content %}
+<a href="{{ url_for('rows.detail', row_id=row._id) }}" class="btn btn-secondary mb-3">{{ t('back', session.get('lang', 'en')) }}</a>
+<h2>Edit Row</h2>
+
+<div class="card">
+    <div class="card-body">
+        <form method="POST">
+            <div class="mb-3">
+                <label class="form-label">Row Name</label>
+                <input type="text" class="form-control" name="name" value="{{ row.name }}" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Save Changes</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

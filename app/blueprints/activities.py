@@ -3,6 +3,7 @@ from app.database import get_db
 from math import ceil
 
 activities_bp = Blueprint('activities', __name__, url_prefix='/activities')
+activities_bp.strict_slashes = False
 
 ACTIVITIES_PER_PAGE = 20
 

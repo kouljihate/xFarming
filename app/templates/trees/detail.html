@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block title %}{{ tree.name }} - xFarming{% endblock %}
+
+{% block content %}
+<a href="{{ url_for('rows.detail', row_id=row._id) }}" class="btn btn-secondary mb-3">{{ t('back', session.get('lang', 'en')) }}</a>
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h2>{{ tree.name }}</h2>
+    {% if session.get('role') == 'admin' %}
+    <div>
+        <a href="{{ url_for('trees.edit', tree_id=tree._id) }}" class="btn btn-warning">Edit</a>
+        <form method="POST" action="{{ url_for('trees.delete', tree_id=tree._id) }}" class="d-inline">
+            <button type="submit" class="btn btn-danger" onclick="return confirm('Delete this tree?')">Delete</button>
+        </form>
+    </div>
+    {% endif %}
+</div>
+
+<div class="card">
+    <div class="card-body">
+        <h5 class="card-title">Tree Information</h5>
+        <p><strong>Name:</strong> {{ tree.name }}</p>
+        <p><strong>Located in:</strong> {{ row.name }} > {{ zone.name }} > {{ sector.name }} > {{ land.name }}</p>
+    </div>
+</div>
+{% endblock %}

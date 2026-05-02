@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+
+{% block title %}{{ row.name }} - xFarming{% endblock %}
+
+{% block content %}
+<a href="{{ url_for('zones.detail', zone_id=zone._id) }}" class="btn btn-secondary mb-3">{{ t('back', session.get('lang', 'en')) }}</a>
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h2>{{ row.name }}</h2>
+    {% if session.get('role') == 'admin' %}
+    <div>
+        <a href="{{ url_for('rows.edit', row_id=row._id) }}" class="btn btn-warning">Edit</a>
+        <form method="POST" action="{{ url_for('rows.delete', row_id=row._id) }}" class="d-inline">
+            <button type="submit" class="btn btn-danger" onclick="return confirm('Delete this row?')">Delete</button>
+        </form>
+    </div>
+    {% endif %}
+</div>
+
+{% if session.get('role') == 'admin' %}
+<button type="button" class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#addTreeModal">
+    Add Tree
+</button>
+
+<div class="modal fade" id="addTreeModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Add Tree to {{ row.name }}</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form method="POST" action="{{ url_for('lands.detail', land_id=land._id) }}">
+                <input type="hidden" name="entity_type" value="tree">
+                <input type="hidden" name="parent_id" value="{{ row._id }}">
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">Tree Name</label>
+                        <input type="text" class="form-control" name="name">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ t('back', session.get('lang', 'en')) }}</button>
+                    <button type="submit" class="btn btn-primary">Add Tree</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<h3>{{ t('trees', session.get('lang', 'en')) }}</h3>
+<div class="row">
+    {% for tree in trees %}
+    <div class="col-md-3 mb-3">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">{{ tree.name }}</h5>
+                {% if session.get('role') == 'admin' %}
+                <form method="POST" action="{{ url_for('trees.delete', tree_id=tree._id) }}" class="d-inline">
+                    <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Delete this tree?')">Delete</button>
+                </form>
+                <a href="{{ url_for('trees.detail', tree_id=tree._id) }}" class="btn btn-sm btn-primary">View</a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

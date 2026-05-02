@@ -3,6 +3,7 @@ from app.database import get_db
 from werkzeug.security import check_password_hash, generate_password_hash
 
 auth_bp = Blueprint('auth', __name__, url_prefix='/auth')
+auth_bp.strict_slashes = False
 
 @auth_bp.route('/login', methods=['GET', 'POST'])
 def login():

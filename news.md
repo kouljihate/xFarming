@@ -1,5 +1,31 @@
 # xFarming - Version History
 
+## [0.4.0] - 2026-05-02
+
+### Added
+- Full CRUD operations for all hierarchy levels (Sectors, Zones, Rows, Trees)
+- Dedicated detail pages for each entity with breadcrumb navigation
+- Edit functionality for sectors, zones, rows, and trees
+- Delete functionality with confirmation for all entities
+- Proper navigation: Land → Sector → Zone → Row → Tree
+- Back buttons on all detail/edit pages
+- Admin-only access for edit/delete operations
+- Logging for all create/update/delete operations
+- Added missing translations for "rows", "trees", "zones"
+
+### Fixed
+- Indentation error in app initialization
+- Blueprint registration for all hierarchy levels
+- Proper ObjectId handling in all new routes
+- Template paths for new blueprints
+
+### Technical Details
+- Created separate blueprints: sectors, zones, rows, trees
+- Each entity has detail, edit, and delete routes
+- Breadcrumb navigation: Land > Sector > Zone > Row > Tree
+- All delete operations use POST method for security
+- Integrated with logging system (info/warning levels)
+
 ## [0.3.0] - 2026-05-02
 
 ### Added

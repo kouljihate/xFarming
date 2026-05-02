@@ -5,6 +5,7 @@ from bson import ObjectId
 from math import ceil
 
 users_bp = Blueprint('users', __name__, url_prefix='/users')
+users_bp.strict_slashes = False
 
 @users_bp.route('/')
 def index():
