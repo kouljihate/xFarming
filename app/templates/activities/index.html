@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+
+{% block title %}{{ t('activities', session.get('lang', 'en')) }} - xFarming{% endblock %}
+
+{% block content %}
+<h2>{{ t('activities', session.get('lang', 'en')) }}</h2>
+
+{% if activities %}
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Date</th>
+            <th>Type</th>
+            <th>Notes</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for activity in activities %}
+        <tr>
+            <td>{{ activity.date }}</td>
+            <td>{{ t(activity.type, session.get('lang', 'en')) }}</td>
+            <td>{{ activity.notes or '' }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<nav aria-label="Page navigation">
+    <ul class="pagination">
+        {% if page > 1 %}
+        <li class="page-item">
+            <a class="page-link" href="{{ url_for('activities.index', page=page-1) }}">{{ t('previous', session.get('lang', 'en')) }}</a>
+        </li>
+        {% endif %}
+        <li class="page-item disabled">
+            <span class="page-link">{{ t('page', session.get('lang', 'en')) }} {{ page }} {{ t('of', session.get('lang', 'en')) }} {{ pages }}</span>
+        </li>
+        {% if page < pages %}
+        <li class="page-item">
+            <a class="page-link" href="{{ url_for('activities.index', page=page+1) }}">{{ t('next', session.get('lang', 'en')) }}</a>
+        </li>
+        {% endif %}
+    </ul>
+</nav>
+{% else %}
+<p>{{ t('no_activities', session.get('lang', 'en')) }}</p>
+{% endif %}
+{% endblock %}

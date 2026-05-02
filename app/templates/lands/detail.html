@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block title %}{{ land.name }} - xFarming{% endblock %}
+
+{% block content %}
+<a href="{{ url_for('lands.index') }}" class="btn btn-secondary mb-3">{{ t('back', session.get('lang', 'en')) }}</a>
+<h2>{{ land.name }}</h2>
+
+<div class="mb-4">
+    {{ land.map | safe }}
+</div>
+
+<h3>{{ t('sectors', session.get('lang', 'en')) }}</h3>
+<div class="accordion" id="sectorsAccordion">
+    {% for sector in sectors %}
+    <div class="accordion-item">
+        <h2 class="accordion-header">
+            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#sector{{ loop.index }}">
+                {{ sector.name }} ({{ sector.zones|length }} {{ t('zones', session.get('lang', 'en')) }})
+            </button>
+        </h2>
+        <div id="sector{{ loop.index }}" class="accordion-collapse collapse" data-bs-parent="#sectorsAccordion">
+            <div class="accordion-body">
+                {% for zone in sector.zones %}
+                <h5>{{ zone.name }} ({{ zone.rows|length }} {{ t('rows', session.get('lang', 'en')) }})</h5>
+                    {% for row in zone.rows %}
+                    <p>{{ row.name }} ({{ row.trees|length }} {{ t('trees', session.get('lang', 'en')) }})</p>
+                    {% endfor %}
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

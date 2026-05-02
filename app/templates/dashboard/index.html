@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+
+{% block title %}{{ t('dashboard', session.get('lang', 'en')) }} - xFarming{% endblock %}
+
+{% block content %}
+<h2>{{ t('dashboard', session.get('lang', 'en')) }}</h2>
+
+<div class="row mb-4">
+    <div class="col-md-3">
+        <div class="card text-white bg-primary">
+            <div class="card-body">
+                <h5 class="card-title">{{ t('total_lands', session.get('lang', 'en')) }}</h5>
+                <p class="card-text display-4">{{ stats.lands }}</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-white bg-success">
+            <div class="card-body">
+                <h5 class="card-title">{{ t('total_sectors', session.get('lang', 'en')) }}</h5>
+                <p class="card-text display-4">{{ stats.sectors }}</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-white bg-info">
+            <div class="card-body">
+                <h5 class="card-title">{{ t('total_zones', session.get('lang', 'en')) }}</h5>
+                <p class="card-text display-4">{{ stats.zones }}</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-white bg-warning">
+            <div class="card-body">
+                <h5 class="card-title">{{ t('total_rows', session.get('lang', 'en')) }}</h5>
+                <p class="card-text display-4">{{ stats.rows }}</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">{{ t('recent_activities', session.get('lang', 'en')) }}</h5>
+            </div>
+            <div class="card-body">
+                {% if activities %}
+                    <ul class="list-group">
+                    {% for activity in activities %}
+                        <li class="list-group-item">
+                            {{ activity.date }} - {{ t(activity.type, session.get('lang', 'en')) }}
+                            {% if activity.notes %}<br><small>{{ activity.notes }}</small>{% endif %}
+                        </li>
+                    {% endfor %}
+                    </ul>
+                {% else %}
+                    <p>{{ t('no_activities', session.get('lang', 'en')) }}</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Farm Treemap</h5>
+            </div>
+            <div class="card-body">
+                {{ treemap | safe }}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

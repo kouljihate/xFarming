@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block title %}{{ t('lands', session.get('lang', 'en')) }} - xFarming{% endblock %}
+
+{% block content %}
+<h2>{{ t('lands', session.get('lang', 'en')) }}</h2>
+<a href="#" class="btn btn-primary mb-3">{{ t('add_land', session.get('lang', 'en')) }}</a>
+
+<div class="row">
+    {% for land in lands %}
+    <div class="col-md-4 mb-3">
+        <div class="card">
+            <div class="card-body">
+                {{ land.map | safe }}
+                <h5 class="card-title">{{ land.name }}</h5>
+                <p class="card-text">
+                    {{ t('coordinates', session.get('lang', 'en')) }}: {{ land.latitude }}, {{ land.longitude }}<br>
+                    {{ t('soil_type', session.get('lang', 'en')) }}: {{ t(land.soil_type, session.get('lang', 'en')) }}<br>
+                    {{ t('area', session.get('lang', 'en')) }}: {{ land.area }}<br>
+                    {{ t('sectors', session.get('lang', 'en')) }}: {{ land.sector_count }}
+                </p>
+                <a href="{{ url_for('lands.detail', land_id=land._id) }}" class="btn btn-sm btn-primary">{{ t('land_name', session.get('lang', 'en')) }}</a>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% block title %}{{ t('users', session.get('lang', 'en')) }} - xFarming{% endblock %}
+
+{% block content %}
+<h2>{{ t('users', session.get('lang', 'en')) }}</h2>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>{{ t('username', session.get('lang', 'en')) }}</th>
+            <th>{{ t('role', session.get('lang', 'en')) }}</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for user in users %}
+        <tr>
+            <td>{{ user.username }}</td>
+            <td>{{ t(user.role, session.get('lang', 'en')) }}</td>
+            <td>
+                <form method="POST" action="{{ url_for('users.change_role', user_id=user._id) }}" class="d-inline">
+                    <select name="role" class="form-select form-select-sm d-inline w-auto" onchange="this.form.submit()">
+                        <option value="guest" {% if user.role == 'guest' %}selected{% endif %}>{{ t('guest', session.get('lang', 'en')) }}</option>
+                        <option value="worker" {% if user.role == 'worker' %}selected{% endif %}>{{ t('worker', session.get('lang', 'en')) }}</option>
+                        <option value="admin" {% if user.role == 'admin' %}selected{% endif %}>{{ t('admin', session.get('lang', 'en')) }}</option>
+                        <option value="customer" {% if user.role == 'customer' %}selected{% endif %}>{{ t('customer', session.get('lang', 'en')) }}</option>
+                    </select>
+                </form>
+                <form method="POST" action="{{ url_for('users.delete', user_id=user._id) }}" class="d-inline">
+                    <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Delete user?')">{{ t('delete', session.get('lang', 'en')) }}</button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}
