@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block title %}Add Tree - xFarming{% endblock %}
+
+{% block content %}
+<a href="{{ url_for('trees.index') }}" class="btn btn-secondary mb-3">{{ t('back', session.get('lang', 'en')) }}</a>
+<h2>Add Tree</h2>
+
+<div class="card">
+    <div class="card-body">
+        <form method="POST">
+            <div class="mb-3">
+                <label class="form-label">Tree Name</label>
+                <input type="text" class="form-control" name="name" value="Tree">
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Row</label>
+                <select class="form-select" name="row_id" required>
+                    {% for row in rows %}
+                    <option value="{{ row._id }}">{{ row.name }} ({{ row.zone.name if row.zone else '' }})</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <button type="submit" class="btn btn-primary">Add Tree</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

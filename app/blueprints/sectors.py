@@ -1,11 +1,26 @@
 from flask import Blueprint, render_template, session, redirect, url_for, request, flash, abort
 from app.database import get_db
 from app.utils.logging import log_message
+from app.models.validation import SectorModel, ZoneModel
 from bson import ObjectId
 from datetime import datetime
 
 sectors_bp = Blueprint('sectors', __name__, url_prefix='/sectors')
 sectors_bp.strict_slashes = False
+
+@sectors_bp.route('/')
+def index():
+    if 'user_id' not in session:
+        return redirect(url_for('auth.login'))
+    
+    db = get_db()
+    sectors = list(db.sectors.find())
+    for sector in sectors:
+        sector['_id'] = str(sector['_id'])
+        sector['land'] = db.lands.find_one({'_id': sector['land_id']})
+        sector['zone_count'] = db.zones.count_documents({'sector_id': sector['_id']})
+    
+    return render_template('sectors/index.html', sectors=sectors)
 
 @sectors_bp.route('/<sector_id>')
 def detail(sector_id):
@@ -50,6 +65,25 @@ def edit(sector_id):
     
     sector['_id'] = str(sector['_id'])
     return render_template('sectors/edit.html', sector=sector)
+
+@sectors_bp.route('/<sector_id>/add-zone', methods=['GET', 'POST'])
+def add_zone(sector_id):
+    if 'user_id' not in session or session.get('role') != 'admin':
+        flash('Admin access required', 'danger')
+        return redirect(url_for('lands.index'))
+    
+    if request.method == 'POST':
+        db = get_db()
+        zone_data = {
+            'name': request.form.get('name'),
+            'sector_id': ObjectId(sector_id)
+        }
+        db.zones.insert_one(zone_data)
+        log_message('info', f"Added zone: {zone_data['name']}", session.get('user_id'), session.get('username'))
+        flash('Zone added successfully!', 'success')
+        return redirect(url_for('sectors.detail', sector_id=sector_id))
+    
+    return render_template('sectors/add_zone.html', sector_id=sector_id)
 
 @sectors_bp.route('/<sector_id>/delete', methods=['POST'])
 def delete(sector_id):

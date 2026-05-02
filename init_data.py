@@ -10,75 +10,70 @@ def init_sample_data():
     with app.app_context():
         db = get_db()
         
-        # Clear existing data (optional - comment out to keep existing)
-        # db.lands.delete_many({})
-        # db.sectors.delete_many({})
-        # db.zones.delete_many({})
-        # db.rows.delete_many({})
-        # db.trees.delete_many({})
-        # db.activities.delete_many({})
-        
         # Check if we already have data
         if db.lands.count_documents({}) > 0:
             print("Sample data already exists. Skipping...")
             return
         
-        # Create a sample land
-        land = {
-            'name': 'North Farm',
-            'latitude': 34.123,
-            'longitude': -118.456,
-            'soil_type': 'loam',
-            'area': 25.5,
-            'boundaries': '34.120,-118.450;34.130,-118.460;34.125,-118.470',
-            'created_at': datetime.utcnow()
-        }
-        land_id = db.lands.insert_one(land).inserted_id
-        print(f"Created land: {land['name']}")
+        print("Creating sample data...")
         
-        # Create a sector
-        sector = {
-            'name': 'Sector A',
-            'land_id': land_id
-        }
-        sector_id = db.sectors.insert_one(sector).inserted_id
-        print(f"Created sector: {sector['name']}")
+        # Create lands
+        lands_data = [
+            {'name': 'North Farm', 'latitude': 34.123, 'longitude': -118.456, 'soil_type': 'loam', 'area': 25.5},
+            {'name': 'South Orchard', 'latitude': 33.789, 'longitude': -118.123, 'soil_type': 'clay', 'area': 18.2},
+        ]
         
-        # Create a zone
-        zone = {
-            'name': 'Zone 1',
-            'sector_id': sector_id
-        }
-        zone_id = db.zones.insert_one(zone).inserted_id
-        print(f"Created zone: {zone['name']}")
-        
-        # Create rows
-        for i in range(1, 4):
-            row = {
-                'name': f'Row {i}',
-                'zone_id': zone_id
-            }
-            row_id = db.rows.insert_one(row).inserted_id
+        for land_data in lands_data:
+            land_data['boundaries'] = f"{land_data['latitude']},{land_data['longitude']}"
+            land_data['created_at'] = datetime.utcnow()
+            land_id = db.lands.insert_one(land_data).inserted_id
+            print(f"Created land: {land_data['name']}")
             
-            # Add trees to each row
-            for j in range(1, 6):
-                tree = {
-                    'name': f'Tree {i}-{j}',
-                    'row_id': row_id
+            # Create 2 sectors per land
+            for s in range(1, 3):
+                sector = {
+                    'name': f'Sector {chr(64+s)}',
+                    'land_id': land_id
                 }
-                db.trees.insert_one(tree)
-            print(f"Created row with 5 trees: {row['name']}")
+                sector_id = db.sectors.insert_one(sector).inserted_id
+                print(f"  Created sector: {sector['name']}")
+                
+                # Create 2 zones per sector
+                for z in range(1, 3):
+                    zone = {
+                        'name': f'Zone {z}',
+                        'sector_id': sector_id
+                    }
+                    zone_id = db.zones.insert_one(zone).inserted_id
+                    
+                    # Create 3 rows per zone
+                    for r in range(1, 4):
+                        row = {
+                            'name': f'Row {r}',
+                            'zone_id': zone_id
+                        }
+                        row_id = db.rows.insert_one(row).inserted_id
+                        
+                        # Add 5 trees per row
+                        for t in range(1, 6):
+                            tree = {
+                                'name': f'Tree {r}-{t}',
+                                'row_id': row_id
+                            }
+                            db.trees.insert_one(tree)
         
         # Add sample activities
         activities = [
             {'type': 'planting', 'notes': 'Planted new apple trees in North Farm', 'date': datetime.utcnow()},
             {'type': 'irrigating', 'notes': 'Irrigation cycle completed for Sector A', 'date': datetime.utcnow()},
-            {'type': 'fertilizing', 'notes': 'Applied organic fertilizer to Zone 1', 'date': datetime.utcnow()}
+            {'type': 'fertilizing', 'notes': 'Applied organic fertilizer to Zone 1', 'date': datetime.utcnow()},
+            {'type': 'harvesting', 'notes': 'Harvested 500kg of apples from Row 1', 'date': datetime.utcnow()},
+            {'type': 'pruning', 'notes': 'Pruned trees in South Orchard', 'date': datetime.utcnow()},
         ]
         db.activities.insert_many(activities)
-        print(f"Created {len(activities)} sample activities")
-        
+        print(f"\nCreated {len(activities)} sample activities")
         print("\nSample data initialized successfully!")
+        print("Login: admin / admin123")
 
 if __name__ == '__main__':
     init_sample_data()

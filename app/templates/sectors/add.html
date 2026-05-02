@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block title %}Add Sector - xFarming{% endblock %}
+
+{% block content %}
+<a href="{{ url_for('sectors.index') }}" class="btn btn-secondary mb-3">{{ t('back', session.get('lang', 'en')) }}</a>
+<h2>Add Sector</h2>
+
+<div class="card">
+    <div class="card-body">
+        <form method="POST">
+            <div class="mb-3">
+                <label class="form-label">Sector Name</label>
+                <input type="text" class="form-control" name="name" required>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Land</label>
+                <select class="form-select" name="land_id" required>
+                    {% for land in lands %}
+                    <option value="{{ land._id }}">{{ land.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <button type="submit" class="btn btn-primary">Add Sector</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

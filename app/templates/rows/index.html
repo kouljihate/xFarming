@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+
+{% block title %}{{ t('rows', session.get('lang', 'en')) }} - xFarming{% endblock %}
+
+{% block content %}
+<a href="{{ url_for('lands.index') }}" class="btn btn-secondary mb-3">{{ t('back', session.get('lang', 'en')) }}</a>
+<h2>{{ t('rows', session.get('lang', 'en')) }}</h2>
+
+<form method="GET" class="mb-3">
+    <div class="input-group">
+        <input type="text" class="form-control" name="search" placeholder="Search rows..." value="{{ search }}">
+        <button class="btn btn-primary" type="submit">Search</button>
+        {% if search %}
+        <a href="{{ url_for('rows.index') }}" class="btn btn-secondary">Clear</a>
+        {% endif %}
+    </div>
+</form>
+
+{% if session.get('role') == 'admin' %}
+<a href="{{ url_for('rows.add') }}" class="btn btn-primary mb-3">{{ t('add', session.get('lang', 'en')) }} {{ t('rows', session.get('lang', 'en')) }}</a>
+{% endif %}
+
+<form method="GET" class="mb-3">
+    <div class="input-group">
+        <input type="text" class="form-control" name="search" placeholder="Search rows..." value="{{ search }}">
+        <button class="btn btn-primary" type="submit"><i class="bi-search"></i> Search</button>
+        {% if search %}
+        <a href="{{ url_for('rows.index') }}" class="btn btn-secondary"><i class="bi-x-circle"></i> Clear</a>
+        {% endif %}
+    </div>
+</form>
+
+{% if session.get('role') == 'admin' %}
+<a href="{{ url_for('rows.add') }}" class="btn btn-primary mb-3"><i class="bi-plus-circle"></i> {{ t('add', session.get('lang', 'en')) }} {{ t('rows', session.get('lang', 'en')) }}</a>
+{% endif %}
+
+<div class="table-responsive">
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th><i class="bi-layout-three-columns"></i> Name</th>
+                <th><i class="bi-map-fill"></i> Zone</th>
+                <th><i class="bi-tree-fill"></i> Trees</th>
+                <th><i class="bi-gear"></i> Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for row in rows %}
+            <tr>
+                <td><i class="bi-layout-three-columns"></i> {{ row.name }}</td>
+                <td>{{ row.zone.name if row.zone else '' }}</td>
+                <td>{{ row.tree_count }}</td>
+                <td>
+                    <a href="{{ url_for('rows.detail', row_id=row._id) }}" class="btn btn-sm btn-primary"><i class="bi-eye"></i></a>
+                    {% if session.get('role') == 'admin' %}
+                    <a href="{{ url_for('rows.edit', row_id=row._id) }}" class="btn btn-sm btn-warning"><i class="bi-pencil"></i></a>
+                    <form method="POST" action="{{ url_for('rows.delete', row_id=row._id) }}" class="d-inline">
+                        <button type="submit" class="btn btn-sm btn-danger"><i class="bi-trash"></i></button>
+                    </form>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

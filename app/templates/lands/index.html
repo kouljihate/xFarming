@@ -5,55 +5,65 @@
 {% block content %}
 <h2>{{ t('lands', session.get('lang', 'en')) }}</h2>
 
-{% if session.get('role') in ['admin', 'worker'] %}
-<button type="button" class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#addLandModal">
-    {{ t('add_land', session.get('lang', 'en')) }}
-</button>
-
-<div class="modal fade" id="addLandModal" tabindex="-1">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">{{ t('add_land', session.get('lang', 'en')) }}</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-            <form method="POST">
-                <div class="modal-body">
-                    <div class="mb-3">
-                        <label class="form-label">{{ t('land_name', session.get('lang', 'en')) }}</label>
-                        <input type="text" class="form-control" name="name" required>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">{{ t('coordinates', session.get('lang', 'en')) }} (Lat)</label>
-                        <input type="number" step="any" class="form-control" name="latitude" required>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">{{ t('coordinates', session.get('lang', 'en')) }} (Lng)</label>
-                        <input type="number" step="any" class="form-control" name="longitude" required>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">{{ t('soil_type', session.get('lang', 'en')) }}</label>
-                        <select class="form-select" name="soil_type">
-                            <option value="sandy">{{ t('sandy', session.get('lang', 'en')) }}</option>
-                            <option value="clay">{{ t('clay', session.get('lang', 'en')) }}</option>
-                            <option value="loam" selected>{{ t('loam', session.get('lang', 'en')) }}</option>
-                            <option value="silt">{{ t('silt', session.get('lang', 'en')) }}</option>
-                        </select>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">{{ t('area', session.get('lang', 'en')) }}</label>
-                        <input type="number" step="any" class="form-control" name="area" required>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ t('back', session.get('lang', 'en')) }}</button>
-                    <button type="submit" class="btn btn-primary">{{ t('add_land', session.get('lang', 'en')) }}</button>
-                </div>
-            </form>
-        </div>
+<div class="mb-3">
+    <div class="btn-group">
+        <a href="{{ url_for('lands.index') }}" class="btn btn-primary">{{ t('lands', session.get('lang', 'en')) }}</a>
+        <a href="{{ url_for('sectors.index') }}" class="btn btn-outline-primary">{{ t('sectors', session.get('lang', 'en')) }}</a>
+        <a href="{{ url_for('zones.index') }}" class="btn btn-outline-primary">{{ t('zones', session.get('lang', 'en')) }}</a>
+        <a href="{{ url_for('rows.index') }}" class="btn btn-outline-primary">{{ t('rows', session.get('lang', 'en')) }}</a>
+        <a href="{{ url_for('trees.index') }}" class="btn btn-outline-primary">{{ t('trees', session.get('lang', 'en')) }}</a>
     </div>
+{% if session.get('role') in ['admin', 'worker'] %}
+    <a href="{{ url_for('lands.add') }}" class="btn btn-success ms-2"><i class="bi-plus-circle"></i> {{ t('add_land', session.get('lang', 'en')) }}</a>
+    {% endif %}
 </div>
-{% endif %}
+
+<form method="GET" class="mb-3">
+    <div class="input-group">
+        <input type="text" class="form-control" name="search" placeholder="Search lands..." value="{{ search }}">
+        <button class="btn btn-primary" type="submit"><i class="bi-search"></i> Search</button>
+        {% if search %}
+        <a href="{{ url_for('lands.index') }}" class="btn btn-secondary"><i class="bi-x-circle"></i> Clear</a>
+        {% endif %}
+    </div>
+</form>
+
+<div class="table-responsive">
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Map</th>
+                <th>Name</th>
+                <th>Coordinates</th>
+                <th>Soil Type</th>
+                <th>Area</th>
+                <th>Sectors</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for land in lands %}
+            <tr>
+                <td>{{ land.map | safe }}</td>
+                <td>{{ land.name }}</td>
+                <td>{{ land.latitude }}, {{ land.longitude }}</td>
+                <td>{{ t(land.soil_type, session.get('lang', 'en')) }}</td>
+                <td>{{ land.area }}</td>
+                <td>{{ land.sector_count }}</td>
+                <td>
+                    <a href="{{ url_for('lands.detail', land_id=land._id) }}" class="btn btn-sm btn-primary"><i class="bi-eye"></i></a>
+                    {% if session.get('role') == 'admin' %}
+                    <a href="{{ url_for('lands.edit', land_id=land._id) }}" class="btn btn-sm btn-warning"><i class="bi-pencil"></i></a>
+                    <form method="POST" action="{{ url_for('lands.delete', land_id=land._id) }}" class="d-inline">
+                        <button type="submit" class="btn btn-sm btn-danger"><i class="bi-trash"></i></button>
+                    </form>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
 
 <div class="row">
     {% for land in lands %}
@@ -68,7 +78,7 @@
                     {{ t('area', session.get('lang', 'en')) }}: {{ land.area }}<br>
                     {{ t('sectors', session.get('lang', 'en')) }}: {{ land.sector_count }}
                 </p>
-                <a href="{{ url_for('lands.detail', land_id=land._id) }}" class="btn btn-sm btn-primary">{{ t('land_name', session.get('lang', 'en')) }}</a>
+                <a href="{{ url_for('lands.detail', land_id=land._id) }}" class="btn btn-sm btn-primary">{{ t('view', session.get('lang', 'en')) }}</a>
             </div>
         </div>
     </div>

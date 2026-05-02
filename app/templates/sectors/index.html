@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+
+{% block title %}{{ t('sectors', session.get('lang', 'en')) }} - xFarming{% endblock %}
+
+{% block content %}
+<a href="{{ url_for('lands.index') }}" class="btn btn-secondary mb-3">{{ t('back', session.get('lang', 'en')) }}</a>
+<h2>{{ t('sectors', session.get('lang', 'en')) }}</h2>
+
+{% if session.get('role') == 'admin' %}
+<a href="{{ url_for('sectors.add') }}" class="btn btn-primary mb-3">{{ t('add', session.get('lang', 'en')) }} {{ t('sectors', session.get('lang', 'en')) }}</a>
+{% endif %}
+
+<form method="GET" class="mb-3">
+    <div class="input-group">
+        <input type="text" class="form-control" name="search" placeholder="Search sectors..." value="{{ search }}">
+        <button class="btn btn-primary" type="submit"><i class="bi-search"></i> Search</button>
+        {% if search %}
+        <a href="{{ url_for('sectors.index') }}" class="btn btn-secondary"><i class="bi-x-circle"></i> Clear</a>
+        {% endif %}
+    </div>
+</form>
+
+{% if session.get('role') == 'admin' %}
+<a href="{{ url_for('sectors.add') }}" class="btn btn-primary mb-3"><i class="bi-plus-circle"></i> {{ t('add', session.get('lang', 'en')) }} {{ t('sectors', session.get('lang', 'en')) }}</a>
+{% endif %}
+
+<div class="table-responsive">
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Land</th>
+                <th>Zones</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for sector in sectors %}
+            <tr>
+                <td><i class="bi-grid-fill"></i> {{ sector.name }}</td>
+                <td>{{ sector.land.name if sector.land else '' }}</td>
+                <td>{{ sector.zone_count }}</td>
+                <td>
+                    <a href="{{ url_for('sectors.detail', sector_id=sector._id) }}" class="btn btn-sm btn-primary"><i class="bi-eye"></i></a>
+                    {% if session.get('role') == 'admin' %}
+                    <a href="{{ url_for('sectors.edit', sector_id=sector._id) }}" class="btn btn-sm btn-warning"><i class="bi-pencil"></i></a>
+                    <form method="POST" action="{{ url_for('sectors.delete', sector_id=sector._id) }}" class="d-inline">
+                        <button type="submit" class="btn btn-sm btn-danger"><i class="bi-trash"></i></button>
+                    </form>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

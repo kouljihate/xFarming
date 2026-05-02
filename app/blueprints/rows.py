@@ -1,11 +1,32 @@
 from flask import Blueprint, render_template, session, redirect, url_for, request, flash, abort
 from app.database import get_db
 from app.utils.logging import log_message
+from app.models.validation import RowModel, TreeModel
 from bson import ObjectId
 from datetime import datetime
 
 rows_bp = Blueprint('rows', __name__, url_prefix='/rows')
 rows_bp.strict_slashes = False
+
+@rows_bp.route('/')
+def index():
+    if 'user_id' not in session:
+        return redirect(url_for('auth.login'))
+    
+    db = get_db()
+    search = request.args.get('search', '').strip()
+    
+    query = {}
+    if search:
+        query['name'] = {'$regex': search, '$options': 'i'}
+    
+    rows = list(db.rows.find(query))
+    for row in rows:
+        row['_id'] = str(row['_id'])
+        row['zone'] = db.zones.find_one({'_id': row['zone_id']})
+        row['tree_count'] = db.trees.count_documents({'row_id': ObjectId(row['_id'])})
+    
+    return render_template('rows/index.html', rows=rows, search=search)
 
 @rows_bp.route('/<row_id>')
 def detail(row_id):
@@ -48,6 +69,25 @@ def edit(row_id):
     
     row['_id'] = str(row['_id'])
     return render_template('rows/edit.html', row=row)
+
+@rows_bp.route('/<row_id>/add-tree', methods=['GET', 'POST'])
+def add_tree(row_id):
+    if 'user_id' not in session or session.get('role') != 'admin':
+        flash('Admin access required', 'danger')
+        return redirect(url_for('lands.index'))
+    
+    if request.method == 'POST':
+        db = get_db()
+        tree_data = {
+            'name': request.form.get('name', 'Tree'),
+            'row_id': ObjectId(row_id)
+        }
+        db.trees.insert_one(tree_data)
+        log_message('info', f"Added tree: {tree_data['name']}", session.get('user_id'), session.get('username'))
+        flash('Tree added successfully!', 'success')
+        return redirect(url_for('rows.detail', row_id=row_id))
+    
+    return render_template('rows/add_tree.html', row_id=row_id)
 
 @rows_bp.route('/<row_id>/delete', methods=['POST'])
 def delete(row_id):

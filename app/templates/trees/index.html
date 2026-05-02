@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+
+{% block title %}{{ t('trees', session.get('lang', 'en')) }} - xFarming{% endblock %}
+
+{% block content %}
+<a href="{{ url_for('lands.index') }}" class="btn btn-secondary mb-3">{{ t('back', session.get('lang', 'en')) }}</a>
+<h2>{{ t('trees', session.get('lang', 'en')) }}</h2>
+
+<form method="GET" class="mb-3">
+    <div class="input-group">
+        <input type="text" class="form-control" name="search" placeholder="Search trees..." value="{{ search }}">
+        <button class="btn btn-primary" type="submit">Search</button>
+        {% if search %}
+        <a href="{{ url_for('trees.index') }}" class="btn btn-secondary">Clear</a>
+        {% endif %}
+    </div>
+</form>
+
+{% if session.get('role') == 'admin' %}
+<a href="{{ url_for('trees.add') }}" class="btn btn-primary mb-3">{{ t('add', session.get('lang', 'en')) }} {{ t('trees', session.get('lang', 'en')) }}</a>
+{% endif %}
+
+<form method="GET" class="mb-3">
+    <div class="input-group">
+        <input type="text" class="form-control" name="search" placeholder="Search trees..." value="{{ search }}">
+        <button class="btn btn-primary" type="submit"><i class="bi-search"></i> Search</button>
+        {% if search %}
+        <a href="{{ url_for('trees.index') }}" class="btn btn-secondary"><i class="bi-x-circle"></i> Clear</a>
+        {% endif %}
+    </div>
+</form>
+
+{% if session.get('role') == 'admin' %}
+<a href="{{ url_for('trees.add') }}" class="btn btn-primary mb-3"><i class="bi-plus-circle"></i> {{ t('add', session.get('lang', 'en')) }} {{ t('trees', session.get('lang', 'en')) }}</a>
+{% endif %}
+
+<div class="table-responsive">
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th><i class="bi-tree-fill"></i> Name</th>
+                <th><i class="bi-layout-three-columns"></i> Row</th>
+                <th><i class="bi-map-fill"></i> Zone</th>
+                <th><i class="bi-grid-fill"></i> Sector</th>
+                <th><i class="bi-geo-alt-fill"></i> Land</th>
+                <th><i class="bi-gear"></i> Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for tree in trees %}
+            <tr>
+                <td><i class="bi-tree-fill"></i> {{ tree.name }}</td>
+                <td>{{ tree.row.name if tree.row else '' }}</td>
+                <td>{{ tree.row.zone.name if tree.row and tree.row.zone else '' }}</td>
+                <td>{{ tree.row.zone.sector.name if tree.row and tree.row.zone and tree.row.zone.sector else '' }}</td>
+                <td>{{ tree.row.zone.sector.land.name if tree.row and tree.row.zone and tree.row.zone.sector and tree.row.zone.sector.land else '' }}</td>
+                <td>
+                    <a href="{{ url_for('trees.detail', tree_id=tree._id) }}" class="btn btn-sm btn-primary"><i class="bi-eye"></i></a>
+                    {% if session.get('role') == 'admin' %}
+                    <a href="{{ url_for('trees.edit', tree_id=tree._id) }}" class="btn btn-sm btn-warning"><i class="bi-pencil"></i></a>
+                    <form method="POST" action="{{ url_for('trees.delete', tree_id=tree._id) }}" class="d-inline">
+                        <button type="submit" class="btn btn-sm btn-danger"><i class="bi-trash"></i></button>
+                    </form>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

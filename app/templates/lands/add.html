@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block title %}{{ t('add_land', session.get('lang', 'en')) }} - xFarming{% endblock %}
+
+{% block content %}
+<a href="{{ url_for('lands.index') }}" class="btn btn-secondary mb-3">{{ t('back', session.get('lang', 'en')) }}</a>
+<h2>{{ t('add_land', session.get('lang', 'en')) }}</h2>
+
+<div class="card">
+    <div class="card-body">
+        <form method="POST">
+            <div class="mb-3">
+                <label class="form-label">{{ t('land_name', session.get('lang', 'en')) }}</label>
+                <input type="text" class="form-control" name="name" required>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">{{ t('coordinates', session.get('lang', 'en')) }} ({{ t('latitude', session.get('lang', 'en')) }})</label>
+                <input type="number" step="any" class="form-control" name="latitude" required>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">{{ t('coordinates', session.get('lang', 'en')) }} ({{ t('longitude', session.get('lang', 'en')) }})</label>
+                <input type="number" step="any" class="form-control" name="longitude" required>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">{{ t('soil_type', session.get('lang', 'en')) }}</label>
+                <select class="form-select" name="soil_type">
+                    <option value="sandy">{{ t('sandy', session.get('lang', 'en')) }}</option>
+                    <option value="clay">{{ t('clay', session.get('lang', 'en')) }}</option>
+                    <option value="loam" selected>{{ t('loam', session.get('lang', 'en')) }}</option>
+                    <option value="silt">{{ t('silt', session.get('lang', 'en')) }}</option>
+                </select>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">{{ t('area', session.get('lang', 'en')) }}</label>
+                <input type="number" step="any" class="form-control" name="area" required>
+            </div>
+            <button type="submit" class="btn btn-primary">{{ t('add_land', session.get('lang', 'en')) }}</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

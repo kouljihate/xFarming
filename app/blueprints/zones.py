@@ -1,11 +1,32 @@
 from flask import Blueprint, render_template, session, redirect, url_for, request, flash, abort
 from app.database import get_db
 from app.utils.logging import log_message
+from app.models.validation import ZoneModel, RowModel
 from bson import ObjectId
 from datetime import datetime
 
 zones_bp = Blueprint('zones', __name__, url_prefix='/zones')
 zones_bp.strict_slashes = False
+
+@zones_bp.route('/')
+def index():
+    if 'user_id' not in session:
+        return redirect(url_for('auth.login'))
+    
+    db = get_db()
+    search = request.args.get('search', '').strip()
+    
+    query = {}
+    if search:
+        query['name'] = {'$regex': search, '$options': 'i'}
+    
+    zones = list(db.zones.find(query))
+    for zone in zones:
+        zone['_id'] = str(zone['_id'])
+        zone['sector'] = db.sectors.find_one({'_id': zone['sector_id']})
+        zone['row_count'] = db.rows.count_documents({'zone_id': ObjectId(zone['_id'])})
+    
+    return render_template('zones/index.html', zones=zones, search=search)
 
 @zones_bp.route('/<zone_id>')
 def detail(zone_id):
@@ -48,6 +69,25 @@ def edit(zone_id):
     
     zone['_id'] = str(zone['_id'])
     return render_template('zones/edit.html', zone=zone)
+
+@zones_bp.route('/<zone_id>/add-row', methods=['GET', 'POST'])
+def add_row(zone_id):
+    if 'user_id' not in session or session.get('role') != 'admin':
+        flash('Admin access required', 'danger')
+        return redirect(url_for('lands.index'))
+    
+    if request.method == 'POST':
+        db = get_db()
+        row_data = {
+            'name': request.form.get('name'),
+            'zone_id': ObjectId(zone_id)
+        }
+        db.rows.insert_one(row_data)
+        log_message('info', f"Added row: {row_data['name']}", session.get('user_id'), session.get('username'))
+        flash('Row added successfully!', 'success')
+        return redirect(url_for('zones.detail', zone_id=zone_id))
+    
+    return render_template('zones/add_row.html', zone_id=zone_id)
 
 @zones_bp.route('/<zone_id>/delete', methods=['POST'])
 def delete(zone_id):

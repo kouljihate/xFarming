@@ -4,11 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}xFarming{% endblock %}</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootswatch@5.3.3/dist/minty/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootswatch@5.3.3/dist/{{ 'minty' if session.get('theme', 'light') == 'light' else 'darkly' }}/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
     <link href="{{ url_for('static', filename='css/custom.css') }}" rel="stylesheet">
-    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
 </head>
-<body data-bs-theme="light">
+<body>
     <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
         <div class="container">
             <a class="navbar-brand fw-bold" href="{{ url_for('dashboard.index') }}">
@@ -16,30 +16,49 @@
             </a>
             {% if session.get('username') %}
             <div class="navbar-nav me-auto">
-                <a class="nav-link" href="{{ url_for('dashboard.index') }}">{{ t('dashboard', session.get('lang', 'en')) }}</a>
-                <a class="nav-link" href="{{ url_for('lands.index') }}">{{ t('lands', session.get('lang', 'en')) }}</a>
+                <a class="nav-link" href="{{ url_for('dashboard.index') }}"><i class="bi-speedometer2"></i> {{ t('dashboard', session.get('lang', 'en')) }}</a>
+                <details class="nav-item position-relative">
+                    <summary class="nav-link mb-0" style="cursor: pointer; list-style: none;"><i class="bi-geo-alt"></i> {{ t('lands', session.get('lang', 'en')) }} ▾</summary>
+                    <div class="bg-primary p-2 rounded shadow" style="position: absolute; z-index: 1000; min-width: 180px;">
+                        <a href="{{ url_for('lands.index') }}" class="text-white d-block mb-1 text-decoration-none"><i class="bi-geo-alt-fill"></i> {{ t('lands', session.get('lang', 'en')) }}</a>
+                        <hr class="my-1 border-light opacity-25">
+                        <a href="{{ url_for('sectors.index') }}" class="text-white d-block mb-1 text-decoration-none"><i class="bi-grid-fill"></i> {{ t('sectors', session.get('lang', 'en')) }}</a>
+                        <a href="{{ url_for('zones.index') }}" class="text-white d-block mb-1 text-decoration-none"><i class="bi-map-fill"></i> {{ t('zones', session.get('lang', 'en')) }}</a>
+                        <a href="{{ url_for('rows.index') }}" class="text-white d-block mb-1 text-decoration-none"><i class="bi-layout-three-columns"></i> {{ t('rows', session.get('lang', 'en')) }}</a>
+                        <a href="{{ url_for('trees.index') }}" class="text-white d-block text-decoration-none"><i class="bi-tree-fill"></i> {{ t('trees', session.get('lang', 'en')) }}</a>
+                    </div>
+                </details>
+                <a class="nav-link" href="{{ url_for('activities.index') }}"><i class="bi-list-task"></i> {{ t('activities', session.get('lang', 'en')) }}</a>
+                {% if session.get('role') == 'admin' %}
+                <a class="nav-link" href="{{ url_for('users.index') }}"><i class="bi-people-fill"></i> {{ t('users', session.get('lang', 'en')) }}</a>
+                {% endif %}
+            </div>
+                </details>
+                <a class="nav-link" href="{{ url_for('activities.index') }}">{{ t('activities', session.get('lang', 'en')) }}</a>
+                {% if session.get('role') == 'admin' %}
+                <a class="nav-link" href="{{ url_for('users.index') }}">{{ t('users', session.get('lang', 'en')) }}</a>
+                {% endif %}
+            </div>
                 <a class="nav-link" href="{{ url_for('activities.index') }}">{{ t('activities', session.get('lang', 'en')) }}</a>
                 {% if session.get('role') == 'admin' %}
                 <a class="nav-link" href="{{ url_for('users.index') }}">{{ t('users', session.get('lang', 'en')) }}</a>
                 {% endif %}
             </div>
             <div class="navbar-nav ms-auto">
-                <span class="navbar-text me-3">{{ session.get('username') }} ({{ t(session.get('role'), session.get('lang', 'en')) }})</span>
-                <a class="nav-link" href="{{ url_for('auth.logout') }}">{{ t('logout', session.get('lang', 'en')) }}</a>
-                <div class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">{{ t('language', session.get('lang', 'en')) }}</a>
-                    <ul class="dropdown-menu {% if session.get('lang') == 'ar' %}dropdown-menu-end{% endif %}">
-                        <li><a class="dropdown-item" href="?lang=en">English</a></li>
-                        <li><a class="dropdown-item" href="?lang=ar">العربية</a></li>
-                        <li><a class="dropdown-item" href="?lang=fr">Français</a></li>
-                    </ul>
+                <span class="navbar-text me-3"><i class="bi-person-circle"></i> {{ session.get('username') }} ({{ t(session.get('role'), session.get('lang', 'en')) }})</span>
+                <a class="nav-link" href="{{ url_for('auth.logout') }}"><i class="bi-box-arrow-right"></i> {{ t('logout', session.get('lang', 'en')) }}</a>
+                <div class="nav-item">
+                    <span class="nav-link"><i class="bi-translate"></i> {{ t('language', session.get('lang', 'en')) }}: 
+                        <a href="?lang=en" class="text-white">EN</a> | 
+                        <a href="?lang=ar" class="text-white">AR</a> | 
+                        <a href="?lang=fr" class="text-white">FR</a>
+                    </span>
                 </div>
-                <div class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">{{ t('theme', session.get('lang', 'en')) }}</a>
-                    <ul class="dropdown-menu {% if session.get('lang') == 'ar' %}dropdown-menu-end{% endif %}">
-                        <li><a class="dropdown-item" href="#" onclick="setTheme('light')">{{ t('light', session.get('lang', 'en')) }}</a></li>
-                        <li><a class="dropdown-item" href="#" onclick="setTheme('dark')">{{ t('dark', session.get('lang', 'en')) }}</a></li>
-                    </ul>
+                <div class="nav-item">
+                    <span class="nav-link"><i class="bi-palette"></i> {{ t('theme', session.get('lang', 'en')) }}: 
+                        <a href="{{ url_for('dashboard.set_theme', theme='light') }}" class="text-white"><i class="bi-sun"></i> {{ t('light', session.get('lang', 'en')) }}</a> | 
+                        <a href="{{ url_for('dashboard.set_theme', theme='dark') }}" class="text-white"><i class="bi-moon"></i> {{ t('dark', session.get('lang', 'en')) }}</a>
+                    </span>
                 </div>
             </div>
             {% endif %}
@@ -50,9 +69,8 @@
         {% with messages = get_flashed_messages(with_categories=true) %}
             {% if messages %}
                 {% for category, message in messages %}
-                    <div class="alert alert-{{ category }} alert-dismissible fade show auto-dismiss" role="alert" data-timeout="3000">
+                    <div class="alert alert-{{ category }}">
                         {{ message }}
-                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                     </div>
                 {% endfor %}
             {% endif %}
@@ -60,20 +78,5 @@
 
         {% block content %}{% endblock %}
     </div>
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
-    <script>
-        // Auto-dismiss flash messages after 3 seconds
-        setTimeout(function() {
-            var alerts = document.querySelectorAll('.auto-dismiss');
-            alerts.forEach(function(alert) {
-                var bsAlert = new bootstrap.Alert(alert);
-                setTimeout(function() {
-                    bsAlert.close();
-                }, parseInt(alert.dataset.timeout) || 3000);
-            });
-        }, 500);
-    </script>
 </body>
 </html>

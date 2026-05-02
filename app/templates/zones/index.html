@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+
+{% block title %}{{ t('zones', session.get('lang', 'en')) }} - xFarming{% endblock %}
+
+{% block content %}
+<a href="{{ url_for('lands.index') }}" class="btn btn-secondary mb-3">{{ t('back', session.get('lang', 'en')) }}</a>
+<h2>{{ t('zones', session.get('lang', 'en')) }}</h2>
+
+<form method="GET" class="mb-3">
+    <div class="input-group">
+        <input type="text" class="form-control" name="search" placeholder="Search zones..." value="{{ search }}">
+        <button class="btn btn-primary" type="submit">Search</button>
+        {% if search %}
+        <a href="{{ url_for('zones.index') }}" class="btn btn-secondary">Clear</a>
+        {% endif %}
+    </div>
+</form>
+
+{% if session.get('role') == 'admin' %}
+<a href="{{ url_for('zones.add') }}" class="btn btn-primary mb-3">{{ t('add', session.get('lang', 'en')) }} {{ t('zones', session.get('lang', 'en')) }}</a>
+{% endif %}
+
+<form method="GET" class="mb-3">
+    <div class="input-group">
+        <input type="text" class="form-control" name="search" placeholder="Search zones..." value="{{ search }}">
+        <button class="btn btn-primary" type="submit"><i class="bi-search"></i> Search</button>
+        {% if search %}
+        <a href="{{ url_for('zones.index') }}" class="btn btn-secondary"><i class="bi-x-circle"></i> Clear</a>
+        {% endif %}
+    </div>
+</form>
+
+{% if session.get('role') == 'admin' %}
+<a href="{{ url_for('zones.add') }}" class="btn btn-primary mb-3"><i class="bi-plus-circle"></i> {{ t('add', session.get('lang', 'en')) }} {{ t('zones', session.get('lang', 'en')) }}</a>
+{% endif %}
+
+<div class="table-responsive">
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th><i class="bi-map-fill"></i> Name</th>
+                <th><i class="bi-grid-fill"></i> Sector</th>
+                <th><i class="bi-layout-three-columns"></i> Rows</th>
+                <th><i class="bi-gear"></i> Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for zone in zones %}
+            <tr>
+                <td><i class="bi-map-fill"></i> {{ zone.name }}</td>
+                <td>{{ zone.sector.name if zone.sector else '' }}</td>
+                <td>{{ zone.row_count }}</td>
+                <td>
+                    <a href="{{ url_for('zones.detail', zone_id=zone._id) }}" class="btn btn-sm btn-primary"><i class="bi-eye"></i></a>
+                    {% if session.get('role') == 'admin' %}
+                    <a href="{{ url_for('zones.edit', zone_id=zone._id) }}" class="btn btn-sm btn-warning"><i class="bi-pencil"></i></a>
+                    <form method="POST" action="{{ url_for('zones.delete', zone_id=zone._id) }}" class="d-inline">
+                        <button type="submit" class="btn btn-sm btn-danger"><i class="bi-trash"></i></button>
+                    </form>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}
