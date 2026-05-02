@@ -44,7 +44,11 @@ TRANSLATIONS = {
         'no_activities': 'No activities yet',
         'page': 'Page',
         'previous': 'Previous',
-        'next': 'Next'
+        'next': 'Next',
+        'rows': 'Rows',
+        'trees': 'Trees',
+        'zones': 'Zones',
+        'of': 'of'
     },
     'ar': {
         'dashboard': 'لوحة التحكم',
@@ -91,7 +95,11 @@ TRANSLATIONS = {
         'no_activities': 'لا توجد أنشطة بعد',
         'page': 'صفحة',
         'previous': 'السابق',
-        'next': 'التالي'
+        'next': 'التالي',
+        'rows': 'صفوف',
+        'trees': 'أشجار',
+        'zones': 'مناطق',
+        'of': 'من'
     },
     'fr': {
         'dashboard': 'Tableau de bord',
@@ -138,7 +146,11 @@ TRANSLATIONS = {
         'no_activities': 'Aucune activité pour le moment',
         'page': 'Page',
         'previous': 'Précédent',
-        'next': 'Suivant'
+        'next': 'Suivant',
+        'rows': 'Rangées',
+        'trees': 'Arbres',
+        'zones': 'Zones',
+        'of': 'sur'
     }
 }
 

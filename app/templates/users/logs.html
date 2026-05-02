@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+
+{% block title %}System Logs - xFarming{% endblock %}
+
+{% block content %}
+<a href="{{ url_for('users.index') }}" class="btn btn-secondary mb-3">{{ t('back', session.get('lang', 'en')) }}</a>
+<h2>System Logs</h2>
+
+<div class="mb-3">
+    <a href="{{ url_for('users.view_logs', level='info') }}" class="btn btn-sm btn-success">Info</a>
+    <a href="{{ url_for('users.view_logs', level='warning') }}" class="btn btn-sm btn-warning">Warning</a>
+    <a href="{{ url_for('users.view_logs', level='error') }}" class="btn btn-sm btn-danger">Error</a>
+    <a href="{{ url_for('users.view_logs') }}" class="btn btn-sm btn-secondary">All</a>
+</div>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Timestamp</th>
+            <th>Level</th>
+            <th>Message</th>
+            <th>User</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for log in logs %}
+        <tr>
+            <td>{{ log.timestamp.strftime('%Y-%m-%d %H:%M:%S') }}</td>
+            <td>
+                {% if log.level == 'info' %}
+                    <span class="badge bg-success">Info</span>
+                {% elif log.level == 'warning' %}
+                    <span class="badge bg-warning">Warning</span>
+                {% elif log.level == 'error' %}
+                    <span class="badge bg-danger">Error</span>
+                {% endif %}
+            </td>
+            <td>{{ log.message }}</td>
+            <td>{{ log.username or 'System' }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<nav aria-label="Page navigation">
+    <ul class="pagination">
+        {% if page > 1 %}
+        <li class="page-item">
+            <a class="page-link" href="{{ url_for('users.view_logs', page=page-1, level=level) }}">Previous</a>
+        </li>
+        {% endif %}
+        <li class="page-item disabled">
+            <span class="page-link">Page {{ page }} of {{ pages }}</span>
+        </li>
+        {% if page < pages %}
+        <li class="page-item">
+            <a class="page-link" href="{{ url_for('users.view_logs', page=page+1, level=level) }}">Next</a>
+        </li>
+        {% endif %}
+    </ul>
+</nav>
+{% endblock %}

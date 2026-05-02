@@ -1,8 +1,5 @@
 from flask import Blueprint, render_template, session, redirect, url_for
 from app.database import get_db
-import plotly.express as px
-import plotly.offline as pyo
-import json
 
 dashboard_bp = Blueprint('dashboard', __name__, url_prefix='/dashboard')
 
@@ -23,9 +20,4 @@ def index():
     
     recent_activities = list(db.activities.find().sort('date', -1).limit(10))
     
-    labels = ['Lands', 'Sectors', 'Zones', 'Rows', 'Trees']
-    values = [stats['lands'], stats['sectors'], stats['zones'], stats['rows'], stats['trees']]
-    fig = px.treemap(names=labels, parents=['']*5, values=values, title='Farm Structure')
-    treemap_html = pyo.plot(fig, output_type='div', include_plotlyjs=False)
-    
-    return render_template('dashboard/index.html', stats=stats, activities=recent_activities, treemap=treemap_html)
+    return render_template('dashboard/index.html', stats=stats, activities=recent_activities, treemap=None)

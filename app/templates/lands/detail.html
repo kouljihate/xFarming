@@ -10,6 +10,36 @@
     {{ land.map | safe }}
 </div>
 
+{% if session.get('role') == 'admin' %}
+<button type="button" class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#addSectorModal">
+    Add Sector
+</button>
+
+<div class="modal fade" id="addSectorModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Add Sector</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form method="POST">
+                <input type="hidden" name="entity_type" value="sector">
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">Sector Name</label>
+                        <input type="text" class="form-control" name="name" required>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ t('back', session.get('lang', 'en')) }}</button>
+                    <button type="submit" class="btn btn-primary">Add Sector</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endif %}
+
 <h3>{{ t('sectors', session.get('lang', 'en')) }}</h3>
 <div class="accordion" id="sectorsAccordion">
     {% for sector in sectors %}
@@ -21,11 +51,105 @@
         </h2>
         <div id="sector{{ loop.index }}" class="accordion-collapse collapse" data-bs-parent="#sectorsAccordion">
             <div class="accordion-body">
+                {% if session.get('role') == 'admin' %}
+                <button type="button" class="btn btn-sm btn-primary mb-2" data-bs-toggle="modal" data-bs-target="#addZoneModal{{ loop.index }}">
+                    Add Zone
+                </button>
+                <div class="modal fade" id="addZoneModal{{ loop.index }}" tabindex="-1">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">Add Zone to {{ sector.name }}</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                            </div>
+                            <form method="POST">
+                                <input type="hidden" name="entity_type" value="zone">
+                                <input type="hidden" name="parent_id" value="{{ sector._id }}">
+                                <div class="modal-body">
+                                    <div class="mb-3">
+                                        <label class="form-label">Zone Name</label>
+                                        <input type="text" class="form-control" name="name" required>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ t('back', session.get('lang', 'en')) }}</button>
+                                    <button type="submit" class="btn btn-primary">Add Zone</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+                
                 {% for zone in sector.zones %}
-                <h5>{{ zone.name }} ({{ zone.rows|length }} {{ t('rows', session.get('lang', 'en')) }})</h5>
+                <div class="ms-3">
+                    <h5>{{ zone.name }} ({{ zone.rows|length }} {{ t('rows', session.get('lang', 'en')) }})</h5>
+                    {% if session.get('role') == 'admin' %}
+                    <button type="button" class="btn btn-sm btn-primary mb-2" data-bs-toggle="modal" data-bs-target="#addRowModal{{ sector._id }}{{ zone._id }}">
+                        Add Row
+                    </button>
+                    <div class="modal fade" id="addRowModal{{ sector._id }}{{ zone._id }}" tabindex="-1">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title">Add Row to {{ zone.name }}</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                </div>
+                                <form method="POST">
+                                    <input type="hidden" name="entity_type" value="row">
+                                    <input type="hidden" name="parent_id" value="{{ zone._id }}">
+                                    <div class="modal-body">
+                                        <div class="mb-3">
+                                            <label class="form-label">Row Name</label>
+                                            <input type="text" class="form-control" name="name" required>
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ t('back', session.get('lang', 'en')) }}</button>
+                                        <button type="submit" class="btn btn-primary">Add Row</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+                    
                     {% for row in zone.rows %}
-                    <p>{{ row.name }} ({{ row.trees|length }} {{ t('trees', session.get('lang', 'en')) }})</p>
+                    <div class="ms-3">
+                        <p>{{ row.name }} ({{ row.trees|length }} {{ t('trees', session.get('lang', 'en')) }})
+                        {% if session.get('role') == 'admin' %}
+                        <button type="button" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#addTreeModal{{ row._id }}">
+                            Add Tree
+                        </button>
+                        <div class="modal fade" id="addTreeModal{{ row._id }}" tabindex="-1">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title">Add Tree to {{ row.name }}</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                    </div>
+                                    <form method="POST">
+                                        <input type="hidden" name="entity_type" value="tree">
+                                        <input type="hidden" name="parent_id" value="{{ row._id }}">
+                                        <div class="modal-body">
+                                            <div class="mb-3">
+                                                <label class="form-label">Tree Name</label>
+                                                <input type="text" class="form-control" name="name">
+                                            </div>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ t('back', session.get('lang', 'en')) }}</button>
+                                            <button type="submit" class="btn btn-primary">Add Tree</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                        {% endif %}
+                        </p>
+                    </div>
                     {% endfor %}
+                </div>
                 {% endfor %}
             </div>
         </div>

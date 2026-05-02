@@ -1,5 +1,54 @@
 # xFarming - Version History
 
+## [0.3.0] - 2026-05-02
+
+### Added
+- Enhanced navigation bar with logo (🌾 xFarming) and role-based links
+- Navigation links now show Dashboard, Lands, Activities for all users
+- Admin-only links for User Management in navbar
+- Custom 404 error page with friendly UI and navigation back to dashboard
+- Auto-dismissing flash messages (3 seconds timeout)
+- RTL (Right-to-Left) support for Arabic language
+- 3-level log system (info, warning, error) with MongoDB storage
+- Admin-only log viewer with filtering by log level
+- Colored stat cards on dashboard with icons and shadows
+- "View All" link on dashboard recent activities section
+- Log filtering buttons (Info/Warning/Error/All)
+
+### Fixed
+- Base template now properly handles RTL languages
+- Flash messages auto-dismiss with JavaScript
+- Dashboard stat cards now use consistent styling with Bootstrap shadows
+
+### Technical Details
+- Created `app/utils/logging.py` for centralized logging
+- Added 404 error handler registration in app factory
+- Navigation conditionally displays based on user role
+- Log viewer supports pagination (50 logs per page)
+
+## [0.2.0] - 2026-05-02
+
+### Added
+- Complete CRUD operations for all hierarchical entities (Lands, Sectors, Zones, Rows, Trees)
+- Modal forms for adding new entities at each level
+- Activity logging for all create operations
+- Fixed ObjectId handling across all blueprints and templates
+- Added missing translations for all languages (EN/AR/FR)
+- Simplified dashboard without Plotly dependency (ready for future integration)
+- Test script for verifying application setup
+
+### Fixed
+- ObjectId serialization issues in templates
+- Missing translation keys for hierarchical structure labels
+- Dashboard import errors when Plotly not installed
+- User management ObjectId handling
+
+### Technical Details
+- Proper ObjectId to string conversion for template rendering
+- Activity logging with datetime stamps
+- Form modals for each hierarchical level
+- Multi-language support throughout all entities
+
 ## [0.1.0] - 2026-05-02
 
 ### Added

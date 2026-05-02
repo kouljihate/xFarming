@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, render_template
 from flask_bootstrap import Bootstrap
 from dotenv import load_dotenv
 import os
@@ -14,6 +14,10 @@ def create_app():
     bootstrap.init_app(app)
     
     app.jinja_env.globals['t'] = t_func
+    
+    @app.errorhandler(404)
+    def not_found_error(error):
+        return render_template('404.html'), 404
     
     from app.blueprints.auth import auth_bp
     from app.blueprints.dashboard import dashboard_bp
