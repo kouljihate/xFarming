@@ -33,17 +33,6 @@
                 <a class="nav-link" href="{{ url_for('users.index') }}"><i class="bi-people-fill"></i> {{ t('users', session.get('lang', 'en')) }}</a>
                 {% endif %}
             </div>
-                </details>
-                <a class="nav-link" href="{{ url_for('activities.index') }}">{{ t('activities', session.get('lang', 'en')) }}</a>
-                {% if session.get('role') == 'admin' %}
-                <a class="nav-link" href="{{ url_for('users.index') }}">{{ t('users', session.get('lang', 'en')) }}</a>
-                {% endif %}
-            </div>
-                <a class="nav-link" href="{{ url_for('activities.index') }}">{{ t('activities', session.get('lang', 'en')) }}</a>
-                {% if session.get('role') == 'admin' %}
-                <a class="nav-link" href="{{ url_for('users.index') }}">{{ t('users', session.get('lang', 'en')) }}</a>
-                {% endif %}
-            </div>
             <div class="navbar-nav ms-auto">
                 <span class="navbar-text me-3"><i class="bi-person-circle"></i> {{ session.get('username') }} ({{ t(session.get('role'), session.get('lang', 'en')) }})</span>
                 <a class="nav-link" href="{{ url_for('auth.logout') }}"><i class="bi-box-arrow-right"></i> {{ t('logout', session.get('lang', 'en')) }}</a>

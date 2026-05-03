@@ -8,6 +8,33 @@ from datetime import datetime
 sectors_bp = Blueprint('sectors', __name__, url_prefix='/sectors')
 sectors_bp.strict_slashes = False
 
+@sectors_bp.route('/add', methods=['GET', 'POST'])
+def add():
+    if 'user_id' not in session or session.get('role') != 'admin':
+        flash('Admin access required', 'danger')
+        return redirect(url_for('lands.index'))
+    
+    db = get_db()
+    lands = list(db.lands.find())
+    for land in lands:
+        land['_id'] = str(land['_id'])
+    
+    if request.method == 'POST':
+        try:
+            sector_data = SectorModel(
+                name=request.form.get('name', ''),
+                land_id=request.form.get('land_id')
+            )
+            SectorModel.check_duplicate(db, sector_data.name, land_id=sector_data.land_id)
+            db.sectors.insert_one({'name': sector_data.name, 'land_id': ObjectId(sector_data.land_id)})
+            log_message('info', f"Added sector: {sector_data.name}", session.get('user_id'), session.get('username'))
+            flash('Sector added successfully!', 'success')
+            return redirect(url_for('sectors.index'))
+        except Exception as e:
+            flash(f'Validation error: {str(e)}', 'danger')
+    
+    return render_template('sectors/add.html', lands=lands)
+
 @sectors_bp.route('/')
 def index():
     if 'user_id' not in session:
