@@ -28,6 +28,34 @@ def index():
     
     return render_template('rows/index.html', rows=rows, search=search)
 
+@rows_bp.route('/add', methods=['GET', 'POST'])
+def add():
+    if 'user_id' not in session or session.get('role') != 'admin':
+        flash('Admin access required', 'danger')
+        return redirect(url_for('rows.index'))
+    
+    db = get_db()
+    zones = list(db.zones.find())
+    for zone in zones:
+        zone['_id'] = str(zone['_id'])
+        zone['sector'] = db.sectors.find_one({'_id': zone['sector_id']})
+    
+    if request.method == 'POST':
+        try:
+            row_data = RowModel(
+                name=request.form.get('name', 'Row'),
+                zone_id=request.form.get('zone_id')
+            )
+            RowModel.check_duplicate(db, row_data.name, zone_id=row_data.zone_id)
+            db.rows.insert_one({'name': row_data.name, 'zone_id': ObjectId(row_data.zone_id)})
+            log_message('info', f"Added row: {row_data.name}", session.get('user_id'), session.get('username'))
+            flash('Row added successfully!', 'success')
+            return redirect(url_for('rows.index'))
+        except Exception as e:
+            flash(f'Validation error: {str(e)}', 'danger')
+    
+    return render_template('rows/add.html', zones=zones)
+
 @rows_bp.route('/<row_id>')
 def detail(row_id):
     if 'user_id' not in session:
@@ -51,9 +79,9 @@ def detail(row_id):
 
 @rows_bp.route('/<row_id>/edit', methods=['GET', 'POST'])
 def edit(row_id):
-    if 'user_id' not in session or session.get('role') not in ['admin']:
+    if 'user_id' not in session or session.get('role') != 'admin':
         flash('Admin access required', 'danger')
-        return redirect(url_for('lands.index'))
+        return redirect(url_for('rows.index'))
     
     db = get_db()
     row = db.rows.find_one({'_id': ObjectId(row_id)})
@@ -61,11 +89,18 @@ def edit(row_id):
         abort(404)
     
     if request.method == 'POST':
-        new_name = request.form.get('name')
-        db.rows.update_one({'_id': ObjectId(row_id)}, {'$set': {'name': new_name}})
-        log_message('info', f'Updated row name to {new_name}', session.get('user_id'), session.get('username'))
-        flash('Row updated successfully!', 'success')
-        return redirect(url_for('rows.detail', row_id=row_id))
+        try:
+            row_data = RowModel(
+                name=request.form.get('name', ''),
+                zone_id=str(row['zone_id'])
+            )
+            RowModel.check_duplicate(db, row_data.name, zone_id=row_data.zone_id, exclude_id=row_id)
+            db.rows.update_one({'_id': ObjectId(row_id)}, {'$set': {'name': row_data.name}})
+            log_message('info', f"Updated row: {row_data.name}", session.get('user_id'), session.get('username'))
+            flash('Row updated successfully!', 'success')
+            return redirect(url_for('rows.detail', row_id=row_id))
+        except Exception as e:
+            flash(f'Validation error: {str(e)}', 'danger')
     
     row['_id'] = str(row['_id'])
     return render_template('rows/edit.html', row=row)
@@ -74,18 +109,21 @@ def edit(row_id):
 def add_tree(row_id):
     if 'user_id' not in session or session.get('role') != 'admin':
         flash('Admin access required', 'danger')
-        return redirect(url_for('lands.index'))
+        return redirect(url_for('rows.index'))
     
     if request.method == 'POST':
-        db = get_db()
-        tree_data = {
-            'name': request.form.get('name', 'Tree'),
-            'row_id': ObjectId(row_id)
-        }
-        db.trees.insert_one(tree_data)
-        log_message('info', f"Added tree: {tree_data['name']}", session.get('user_id'), session.get('username'))
-        flash('Tree added successfully!', 'success')
-        return redirect(url_for('rows.detail', row_id=row_id))
+        try:
+            tree_data = TreeModel(
+                name=request.form.get('name', 'Tree'),
+                row_id=row_id
+            )
+            TreeModel.check_duplicate(db, tree_data.name, row_id=tree_data.row_id)
+            db.trees.insert_one({'name': tree_data.name, 'row_id': ObjectId(tree_data.row_id)})
+            log_message('info', f"Added tree: {tree_data.name}", session.get('user_id'), session.get('username'))
+            flash('Tree added successfully!', 'success')
+            return redirect(url_for('rows.detail', row_id=row_id))
+        except Exception as e:
+            flash(f'Validation error: {str(e)}', 'danger')
     
     return render_template('rows/add_tree.html', row_id=row_id)
 

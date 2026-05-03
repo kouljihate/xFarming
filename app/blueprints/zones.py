@@ -28,6 +28,33 @@ def index():
     
     return render_template('zones/index.html', zones=zones, search=search)
 
+@zones_bp.route('/add', methods=['GET', 'POST'])
+def add():
+    if 'user_id' not in session or session.get('role') != 'admin':
+        flash('Admin access required', 'danger')
+        return redirect(url_for('lands.index'))
+    
+    db = get_db()
+    sectors = list(db.sectors.find())
+    for sector in sectors:
+        sector['_id'] = str(sector['_id'])
+    
+    if request.method == 'POST':
+        try:
+            zone_data = ZoneModel(
+                name=request.form.get('name', ''),
+                sector_id=request.form.get('sector_id')
+            )
+            ZoneModel.check_duplicate(db, zone_data.name, sector_id=zone_data.sector_id)
+            db.zones.insert_one({'name': zone_data.name, 'sector_id': ObjectId(zone_data.sector_id)})
+            log_message('info', f"Added zone: {zone_data.name}", session.get('user_id'), session.get('username'))
+            flash('Zone added successfully!', 'success')
+            return redirect(url_for('zones.index'))
+        except Exception as e:
+            flash(f'Validation error: {str(e)}', 'danger')
+    
+    return render_template('zones/add.html', sectors=sectors)
+
 @zones_bp.route('/<zone_id>')
 def detail(zone_id):
     if 'user_id' not in session:
@@ -51,7 +78,7 @@ def detail(zone_id):
 
 @zones_bp.route('/<zone_id>/edit', methods=['GET', 'POST'])
 def edit(zone_id):
-    if 'user_id' not in session or session.get('role') not in ['admin']:
+    if 'user_id' not in session or session.get('role') != 'admin':
         flash('Admin access required', 'danger')
         return redirect(url_for('lands.index'))
     
@@ -61,11 +88,18 @@ def edit(zone_id):
         abort(404)
     
     if request.method == 'POST':
-        new_name = request.form.get('name')
-        db.zones.update_one({'_id': ObjectId(zone_id)}, {'$set': {'name': new_name}})
-        log_message('info', f'Updated zone name to {new_name}', session.get('user_id'), session.get('username'))
-        flash('Zone updated successfully!', 'success')
-        return redirect(url_for('zones.detail', zone_id=zone_id))
+        try:
+            zone_data = ZoneModel(
+                name=request.form.get('name', ''),
+                sector_id=str(zone['sector_id'])
+            )
+            ZoneModel.check_duplicate(db, zone_data.name, sector_id=zone_data.sector_id, exclude_id=zone_id)
+            db.zones.update_one({'_id': ObjectId(zone_id)}, {'$set': {'name': zone_data.name}})
+            log_message('info', f"Updated zone: {zone_data.name}", session.get('user_id'), session.get('username'))
+            flash('Zone updated successfully!', 'success')
+            return redirect(url_for('zones.detail', zone_id=zone_id))
+        except Exception as e:
+            flash(f'Validation error: {str(e)}', 'danger')
     
     zone['_id'] = str(zone['_id'])
     return render_template('zones/edit.html', zone=zone)
@@ -77,15 +111,18 @@ def add_row(zone_id):
         return redirect(url_for('lands.index'))
     
     if request.method == 'POST':
-        db = get_db()
-        row_data = {
-            'name': request.form.get('name'),
-            'zone_id': ObjectId(zone_id)
-        }
-        db.rows.insert_one(row_data)
-        log_message('info', f"Added row: {row_data['name']}", session.get('user_id'), session.get('username'))
-        flash('Row added successfully!', 'success')
-        return redirect(url_for('zones.detail', zone_id=zone_id))
+        try:
+            row_data = RowModel(
+                name=request.form.get('name', ''),
+                zone_id=zone_id
+            )
+            RowModel.check_duplicate(db, row_data.name, zone_id=row_data.zone_id)
+            db.rows.insert_one({'name': row_data.name, 'zone_id': ObjectId(row_data.zone_id)})
+            log_message('info', f"Added row: {row_data.name}", session.get('user_id'), session.get('username'))
+            flash('Row added successfully!', 'success')
+            return redirect(url_for('zones.detail', zone_id=zone_id))
+        except Exception as e:
+            flash(f'Validation error: {str(e)}', 'danger')
     
     return render_template('zones/add_row.html', zone_id=zone_id)
 

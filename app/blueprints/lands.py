@@ -18,6 +18,8 @@ def add():
         flash('Permission denied', 'danger')
         return redirect(url_for('lands.index'))
     
+    db = get_db()
+    
     if request.method == 'POST':
         try:
             land_data = LandModel(
@@ -28,7 +30,6 @@ def add():
                 area=float(request.form.get('area', 0)),
                 boundaries=request.form.get('boundaries', '')
             )
-            db = get_db()
             LandModel.check_duplicate(db, land_data.name)
             db.lands.insert_one(land_data.dict())
             log_message('info', f"Added land: {land_data.name}", session.get('user_id'), session.get('username'))
@@ -38,6 +39,38 @@ def add():
             flash(f'Validation error: {str(e)}', 'danger')
     
     return render_template('lands/add.html')
+
+@lands_bp.route('/<land_id>/edit', methods=['GET', 'POST'])
+def edit(land_id):
+    if 'user_id' not in session or session.get('role') != 'admin':
+        flash('Admin access required', 'danger')
+        return redirect(url_for('lands.index'))
+    
+    db = get_db()
+    land = db.lands.find_one({'_id': ObjectId(land_id)})
+    if not land:
+        abort(404)
+    
+    if request.method == 'POST':
+        try:
+            land_data = LandModel(
+                name=request.form.get('name', ''),
+                latitude=float(request.form.get('latitude', 0)),
+                longitude=float(request.form.get('longitude', 0)),
+                soil_type=request.form.get('soil_type', 'loam'),
+                area=float(request.form.get('area', 0)),
+                boundaries=request.form.get('boundaries', '')
+            )
+            LandModel.check_duplicate(db, land_data.name, exclude_id=land_id)
+            db.lands.update_one({'_id': ObjectId(land_id)}, {'$set': land_data.dict()})
+            log_message('info', f"Updated land: {land_data.name}", session.get('user_id'), session.get('username'))
+            flash('Land updated successfully!', 'success')
+            return redirect(url_for('lands.detail', land_id=land_id))
+        except Exception as e:
+            flash(f'Validation error: {str(e)}', 'danger')
+    
+    land['_id'] = str(land['_id'])
+    return render_template('lands/edit.html', land=land)
 
 @lands_bp.route('/<land_id>/add-sector', methods=['GET', 'POST'])
 def add_sector(land_id):
@@ -169,3 +202,18 @@ def detail(land_id):
                     tree['_id'] = str(tree['_id'])
     
     return render_template('lands/detail.html', land=land, sectors=sectors)
+
+@lands_bp.route('/<land_id>/delete', methods=['POST'])
+def delete(land_id):
+    if 'user_id' not in session or session.get('role') != 'admin':
+        flash('Admin access required', 'danger')
+        return redirect(url_for('lands.index'))
+    
+    db = get_db()
+    land = db.lands.find_one({'_id': ObjectId(land_id)})
+    if land:
+        db.lands.delete_one({'_id': ObjectId(land_id)})
+        log_message('warning', f'Deleted land {land["name"]}', session.get('user_id'), session.get('username'))
+        flash('Land deleted successfully!', 'success')
+    
+    return redirect(url_for('lands.index'))
