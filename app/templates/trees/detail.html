@@ -9,7 +9,7 @@
     {% if session.get('role') == 'admin' %}
     <div>
         <a href="{{ url_for('trees.edit', tree_id=tree._id) }}" class="btn btn-warning">Edit</a>
-        <form method="POST" action="{{ url_for('trees.delete', tree_id=tree._id) }}" class="d-inline">
+        <form method="POST" action="{{ url_for('lands.delete_tree', land_id=land._id, sector_id=sector._id, zone_id=zone._id, row_id=row._id, tree_id=tree._id) }}" class="d-inline">
             <button type="submit" class="btn btn-danger" onclick="return confirm('Delete this tree?')">Delete</button>
         </form>
     </div>
@@ -19,8 +19,22 @@
 <div class="card">
     <div class="card-body">
         <h5 class="card-title">Tree Information</h5>
-        <p><strong>Name:</strong> {{ tree.name }}</p>
-        <p><strong>Located in:</strong> {{ row.name }} > {{ zone.name }} > {{ sector.name }} > {{ land.name }}</p>
+        <div class="row">
+            <div class="col-md-6">
+                <p><strong>Name:</strong> {{ tree.name }}</p>
+                <p><strong>Tree ID:</strong> {{ tree.tree_id or 'N/A' }}</p>
+                <p><strong>Crop Variety:</strong> {{ tree.crop_variety or 'N/A' }}</p>
+                <p><strong>Planting Date:</strong> {{ tree.planting_date or 'N/A' }}</p>
+                <p><strong>Age:</strong> {{ tree.age or 0 }} years</p>
+            </div>
+            <div class="col-md-6">
+                <p><strong>Status:</strong> <span class="badge bg-{{ 'success' if tree.status == 'healthy' else 'warning' if tree.status == 'needs_attention' else 'danger' }}">{{ tree.status or 'healthy' }}</span></p>
+                <p><strong>Health Status:</strong> <span class="badge bg-{{ 'success' if tree.health_status == 'good' else 'warning' if tree.health_status == 'fair' else 'danger' }}">{{ tree.health_status or 'good' }}</span></p>
+                <p><strong>Height:</strong> {{ tree.height or 0 }} m</p>
+                <p><strong>Last Inspection:</strong> {{ tree.last_inspection or 'N/A' }}</p>
+                <p><strong>Location:</strong> {{ row.name }} > {{ zone.name }} > {{ sector.name }} > {{ land.name }}</p>
+            </div>
+        </div>
     </div>
 </div>
 {% endblock %}

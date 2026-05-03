@@ -9,35 +9,42 @@
     {% if session.get('role') == 'admin' %}
     <div>
         <a href="{{ url_for('rows.edit', row_id=row._id) }}" class="btn btn-warning">Edit</a>
-        <form method="POST" action="{{ url_for('rows.delete', row_id=row._id) }}" class="d-inline">
-            <button type="submit" class="btn btn-danger">Delete</button>
+        <form method="POST" action="{{ url_for('lands.delete_row', land_id=land._id, sector_id=sector._id, zone_id=zone._id, row_id=row._id) }}" class="d-inline">
+            <button type="submit" class="btn btn-danger" onclick="return confirm('Delete this row?')">Delete</button>
         </form>
-        <a href="{{ url_for('rows.add_tree', row_id=row._id) }}" class="btn btn-primary">Add Tree</a>
+        <a href="{{ url_for('trees.add') }}" class="btn btn-primary">Add Tree</a>
     </div>
     {% endif %}
 </div>
 
-<div class="card">
+<div class="card mb-4">
     <div class="card-body">
         <h5 class="card-title">Row Information</h5>
+        <p><strong>Row Number:</strong> {{ row.row_number or 'N/A' }}</p>
         <p><strong>Located in:</strong> {{ zone.name }} > {{ sector.name }} > {{ land.name }}</p>
+        <p><strong>Trees:</strong> {{ trees|length if trees else 0 }}</p>
     </div>
 </div>
 
-<h3 class="mt-4">{{ t('trees', session.get('lang', 'en')) }}</h3>
+<h3>{{ t('trees', session.get('lang', 'en')) }}</h3>
 <div class="row">
     {% for tree in trees %}
     <div class="col-md-3 mb-3">
         <div class="card">
             <div class="card-body">
                 <h5 class="card-title">{{ tree.name }}</h5>
+                <p class="card-text">
+                    <small class="text-muted">{{ tree.crop_variety or 'No variety' }}</small><br>
+                    <span class="badge bg-{{ 'success' if tree.health_status == 'good' else 'warning' if tree.health_status == 'fair' else 'danger' }}">{{ tree.health_status or 'good' }}</span>
+                </p>
+                <a href="{{ url_for('trees.detail', tree_id=tree._id) }}" class="btn btn-sm btn-primary">View</a>
                 {% if session.get('role') == 'admin' %}
-                <a href="{{ url_for('trees.edit', tree_id=tree._id) }}" class="btn btn-sm btn-warning">Edit</a>
-                <form method="POST" action="{{ url_for('trees.delete', tree_id=tree._id) }}" class="d-inline">
-                    <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+                <form method="POST" action="{{ url_for('lands.delete_tree', land_id=land._id, sector_id=sector._id, zone_id=zone._id, row_id=row._id, tree_id=tree._id) }}" class="d-inline">
+                    <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Delete this tree?')">
+                        <i class="bi-trash"></i>
+                    </button>
                 </form>
                 {% endif %}
-                <a href="{{ url_for('trees.detail', tree_id=tree._id) }}" class="btn btn-sm btn-primary">View</a>
             </div>
         </div>
     </div>

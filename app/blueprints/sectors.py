@@ -1,39 +1,11 @@
 from flask import Blueprint, render_template, session, redirect, url_for, request, flash, abort
 from app.database import get_db
 from app.utils.logging import log_message
-from app.models.validation import SectorModel, ZoneModel
+from app.models.validation import SectorModel
 from bson import ObjectId
-from datetime import datetime
 
 sectors_bp = Blueprint('sectors', __name__, url_prefix='/sectors')
 sectors_bp.strict_slashes = False
-
-@sectors_bp.route('/add', methods=['GET', 'POST'])
-def add():
-    if 'user_id' not in session or session.get('role') != 'admin':
-        flash('Admin access required', 'danger')
-        return redirect(url_for('lands.index'))
-    
-    db = get_db()
-    lands = list(db.lands.find())
-    for land in lands:
-        land['_id'] = str(land['_id'])
-    
-    if request.method == 'POST':
-        try:
-            sector_data = SectorModel(
-                name=request.form.get('name', ''),
-                land_id=request.form.get('land_id')
-            )
-            SectorModel.check_duplicate(db, sector_data.name, land_id=sector_data.land_id)
-            db.sectors.insert_one({'name': sector_data.name, 'land_id': ObjectId(sector_data.land_id)})
-            log_message('info', f"Added sector: {sector_data.name}", session.get('user_id'), session.get('username'))
-            flash('Sector added successfully!', 'success')
-            return redirect(url_for('sectors.index'))
-        except Exception as e:
-            flash(f'Validation error: {str(e)}', 'danger')
-    
-    return render_template('sectors/add.html', lands=lands)
 
 @sectors_bp.route('/')
 def index():
@@ -41,13 +13,56 @@ def index():
         return redirect(url_for('auth.login'))
     
     db = get_db()
-    sectors = list(db.sectors.find())
-    for sector in sectors:
-        sector['_id'] = str(sector['_id'])
-        sector['land'] = db.lands.find_one({'_id': sector['land_id']})
-        sector['zone_count'] = db.zones.count_documents({'sector_id': sector['_id']})
+    search = request.args.get('search', '').strip()
+    lands = list(db.lands.find())
+    sectors = []
+    lands_for_select = []
     
-    return render_template('sectors/index.html', sectors=sectors)
+    for land in lands:
+        land['_id'] = str(land['_id'])
+        lands_for_select.append(land)
+        for sector in land.get('sectors', []):
+            if search and search.lower() not in sector['name'].lower():
+                continue
+            sector['land'] = land
+            sector['land_id'] = land['_id']
+            sector['zone_count'] = len(sector.get('zones', []))
+            sectors.append(sector)
+    
+    return render_template('sectors/index.html', sectors=sectors, lands=lands_for_select, search=search)
+
+@sectors_bp.route('/add', methods=['POST'])
+def add():
+    if 'user_id' not in session or session.get('role') != 'admin':
+        flash('Admin access required', 'danger')
+        return redirect(url_for('lands.index'))
+    
+    db = get_db()
+    name = request.form.get('name')
+    land_id = request.form.get('land_id')
+    
+    try:
+        sector_data = SectorModel(name=name)
+        
+        lands = list(db.lands.find())
+        for land in lands:
+            if str(land['_id']) == land_id:
+                if 'sectors' not in land:
+                    land['sectors'] = []
+                
+                sector_dict = sector_data.model_dump()
+                sector_dict['_id'] = str(ObjectId())
+                sector_dict['zones'] = []
+                
+                land['sectors'].append(sector_dict)
+                db.lands.update_one({'_id': land['_id']}, {'$set': {'sectors': land.get('sectors', [])}})
+                log_message('info', f"Added sector: {name}", session.get('user_id'), session.get('username'))
+                flash('Sector added successfully!', 'success')
+                break
+    except Exception as e:
+        flash(f'Validation error: {str(e)}', 'danger')
+    
+    return redirect(url_for('sectors.index'))
 
 @sectors_bp.route('/<sector_id>')
 def detail(sector_id):
@@ -55,76 +70,72 @@ def detail(sector_id):
         return redirect(url_for('auth.login'))
     
     db = get_db()
-    sector = db.sectors.find_one({'_id': ObjectId(sector_id)})
-    if not sector:
-        abort(404)
+    lands = list(db.lands.find())
     
-    sector['_id'] = str(sector['_id'])
-    land = db.lands.find_one({'_id': sector['land_id']})
+    for land in lands:
+        for sector in land.get('sectors', []):
+            if sector['_id'] == sector_id:
+                sector['land'] = land
+                sector['_id'] = str(sector['_id'])
+                
+                for zone in sector.get('zones', []):
+                    zone['_id'] = str(zone['_id'])
+                    zone['row_count'] = len(zone.get('rows', []))
+                    for row in zone.get('rows', []):
+                        row['_id'] = str(row['_id'])
+                        row['tree_count'] = len(row.get('trees', []))
+                
+                return render_template('sectors/detail.html', sector=sector, land=land, zones=sector.get('zones', []))
     
-    zones = list(db.zones.find({'sector_id': ObjectId(sector_id)}))
-    for zone in zones:
-        zone['_id'] = str(zone['_id'])
-        zone['rows'] = list(db.rows.find({'zone_id': ObjectId(zone['_id'])}))
-        for row in zone['rows']:
-            row['_id'] = str(row['_id'])
-            row['tree_count'] = db.trees.count_documents({'row_id': ObjectId(row['_id'])})
-    
-    return render_template('sectors/detail.html', sector=sector, land=land, zones=zones)
+    abort(404)
 
-@sectors_bp.route('/<sector_id>/edit', methods=['GET', 'POST'])
+@sectors_bp.route('/<sector_id>/edit', methods=['POST'])
 def edit(sector_id):
-    if 'user_id' not in session or session.get('role') not in ['admin']:
-        flash('Admin access required', 'danger')
-        return redirect(url_for('lands.detail', land_id=''))
-    
-    db = get_db()
-    sector = db.sectors.find_one({'_id': ObjectId(sector_id)})
-    if not sector:
-        abort(404)
-    
-    if request.method == 'POST':
-        new_name = request.form.get('name')
-        db.sectors.update_one({'_id': ObjectId(sector_id)}, {'$set': {'name': new_name}})
-        log_message('info', f'Updated sector name to {new_name}', session.get('user_id'), session.get('username'))
-        flash('Sector updated successfully!', 'success')
-        return redirect(url_for('sectors.detail', sector_id=sector_id))
-    
-    sector['_id'] = str(sector['_id'])
-    return render_template('sectors/edit.html', sector=sector)
-
-@sectors_bp.route('/<sector_id>/add-zone', methods=['GET', 'POST'])
-def add_zone(sector_id):
     if 'user_id' not in session or session.get('role') != 'admin':
         flash('Admin access required', 'danger')
         return redirect(url_for('lands.index'))
     
-    if request.method == 'POST':
-        db = get_db()
-        zone_data = {
-            'name': request.form.get('name'),
-            'sector_id': ObjectId(sector_id)
-        }
-        db.zones.insert_one(zone_data)
-        log_message('info', f"Added zone: {zone_data['name']}", session.get('user_id'), session.get('username'))
-        flash('Zone added successfully!', 'success')
-        return redirect(url_for('sectors.detail', sector_id=sector_id))
+    db = get_db()
+    lands = list(db.lands.find())
     
-    return render_template('sectors/add_zone.html', sector_id=sector_id)
+    for land in lands:
+        for sector in land.get('sectors', []):
+            if sector['_id'] == sector_id:
+                new_name = request.form.get('name')
+                sector['name'] = new_name
+                db.lands.update_one({'_id': land['_id']}, {'$set': {'sectors': land.get('sectors', [])}})
+                log_message('info', f'Updated sector name to {new_name}', session.get('user_id'), session.get('username'))
+                flash('Sector updated successfully!', 'success')
+                return redirect(url_for('sectors.index'))
+    
+    abort(404)
 
-@sectors_bp.route('/<sector_id>/delete', methods=['POST'])
-def delete(sector_id):
+@sectors_bp.route('/bulk_add', methods=['POST'])
+def bulk_add():
     if 'user_id' not in session or session.get('role') != 'admin':
         flash('Admin access required', 'danger')
-        return redirect(url_for('lands.detail', land_id=''))
+        return redirect(url_for('lands.index'))
     
     db = get_db()
-    sector = db.sectors.find_one({'_id': ObjectId(sector_id)})
-    if sector:
-        land_id = str(sector['land_id'])
-        db.sectors.delete_one({'_id': ObjectId(sector_id)})
-        log_message('warning', f'Deleted sector {sector["name"]}', session.get('user_id'), session.get('username'))
-        flash('Sector deleted successfully!', 'success')
-        return redirect(url_for('lands.detail', land_id=land_id))
+    land_id = request.form.get('land_id')
+    names = request.form.get('names', '').strip().split('\n')
     
-    return redirect(url_for('lands.index'))
+    lands = list(db.lands.find())
+    for land in lands:
+        if str(land['_id']) == land_id:
+            if 'sectors' not in land:
+                land['sectors'] = []
+            for name in names:
+                name = name.strip()
+                if name:
+                    land['sectors'].append({
+                        '_id': str(ObjectId()),
+                        'name': name,
+                        'zones': []
+                    })
+            db.lands.update_one({'_id': land['_id']}, {'$set': {'sectors': land.get('sectors', [])}})
+            log_message('info', f'Bulk added {len([n for n in names if n.strip()])} sectors', session.get('user_id'), session.get('username'))
+            flash('Sectors added successfully!', 'success')
+            break
+    
+    return redirect(url_for('sectors.index'))

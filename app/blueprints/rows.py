@@ -1,9 +1,8 @@
 from flask import Blueprint, render_template, session, redirect, url_for, request, flash, abort
 from app.database import get_db
 from app.utils.logging import log_message
-from app.models.validation import RowModel, TreeModel
+from app.models.validation import RowModel
 from bson import ObjectId
-from datetime import datetime
 
 rows_bp = Blueprint('rows', __name__, url_prefix='/rows')
 rows_bp.strict_slashes = False
@@ -15,46 +14,64 @@ def index():
     
     db = get_db()
     search = request.args.get('search', '').strip()
+    lands = list(db.lands.find())
+    rows = []
+    zones = []
     
-    query = {}
-    if search:
-        query['name'] = {'$regex': search, '$options': 'i'}
+    for land in lands:
+        land['_id'] = str(land['_id'])
+        for sector in land.get('sectors', []):
+            sector['_id'] = str(sector['_id'])
+            for zone in sector.get('zones', []):
+                zone['_id'] = str(zone['_id'])
+                zone['sector'] = sector
+                zones.append(zone)
+                for row in zone.get('rows', []):
+                    if search and search.lower() not in row['name'].lower():
+                        continue
+                    row['_id'] = str(row['_id'])
+                    row['zone'] = zone
+                    row['zone_id'] = zone['_id']
+                    row['tree_count'] = len(row.get('trees', []))
+                    rows.append(row)
     
-    rows = list(db.rows.find(query))
-    for row in rows:
-        row['_id'] = str(row['_id'])
-        row['zone'] = db.zones.find_one({'_id': row['zone_id']})
-        row['tree_count'] = db.trees.count_documents({'row_id': ObjectId(row['_id'])})
-    
-    return render_template('rows/index.html', rows=rows, search=search)
+    return render_template('rows/index.html', rows=rows, zones=zones, search=search)
 
-@rows_bp.route('/add', methods=['GET', 'POST'])
+@rows_bp.route('/add', methods=['POST'])
 def add():
     if 'user_id' not in session or session.get('role') != 'admin':
         flash('Admin access required', 'danger')
-        return redirect(url_for('rows.index'))
+        return redirect(url_for('lands.index'))
     
     db = get_db()
-    zones = list(db.zones.find())
-    for zone in zones:
-        zone['_id'] = str(zone['_id'])
-        zone['sector'] = db.sectors.find_one({'_id': zone['sector_id']})
+    name = request.form.get('name')
+    zone_id = request.form.get('zone_id')
     
-    if request.method == 'POST':
-        try:
-            row_data = RowModel(
-                name=request.form.get('name', 'Row'),
-                zone_id=request.form.get('zone_id')
-            )
-            RowModel.check_duplicate(db, row_data.name, zone_id=row_data.zone_id)
-            db.rows.insert_one({'name': row_data.name, 'zone_id': ObjectId(row_data.zone_id)})
-            log_message('info', f"Added row: {row_data.name}", session.get('user_id'), session.get('username'))
-            flash('Row added successfully!', 'success')
-            return redirect(url_for('rows.index'))
-        except Exception as e:
-            flash(f'Validation error: {str(e)}', 'danger')
+    try:
+        row_data = RowModel(name=name)
+        
+        lands = list(db.lands.find())
+        for land in lands:
+            for sector in land.get('sectors', []):
+                for zone in sector.get('zones', []):
+                    if zone['_id'] == zone_id:
+                        if 'rows' not in zone:
+                            zone['rows'] = []
+                        
+                        row_dict = row_data.model_dump()
+                        row_dict['_id'] = str(ObjectId())
+                        row_dict['row_number'] = len(zone['rows'])+1
+                        row_dict['trees'] = []
+                        
+                        zone['rows'].append(row_dict)
+                        db.lands.update_one({'_id': land['_id']}, {'$set': {'sectors': land.get('sectors', [])}})
+                        log_message('info', f"Added row: {name}", session.get('user_id'), session.get('username'))
+                        flash('Row added successfully!', 'success')
+                        break
+    except Exception as e:
+        flash(f'Validation error: {str(e)}', 'danger')
     
-    return render_template('rows/add.html', zones=zones)
+    return redirect(url_for('rows.index'))
 
 @rows_bp.route('/<row_id>')
 def detail(row_id):
@@ -62,84 +79,75 @@ def detail(row_id):
         return redirect(url_for('auth.login'))
     
     db = get_db()
-    row = db.rows.find_one({'_id': ObjectId(row_id)})
-    if not row:
-        abort(404)
+    lands = list(db.lands.find())
     
-    row['_id'] = str(row['_id'])
-    zone = db.zones.find_one({'_id': row['zone_id']})
-    sector = db.sectors.find_one({'_id': zone['sector_id']})
-    land = db.lands.find_one({'_id': sector['land_id']})
+    for land in lands:
+        land['_id'] = str(land['_id'])
+        for sector in land.get('sectors', []):
+            sector['_id'] = str(sector['_id'])
+            for zone in sector.get('zones', []):
+                zone['_id'] = str(zone['_id'])
+                for row in zone.get('rows', []):
+                    if row['_id'] == row_id:
+                        row['_id'] = str(row['_id'])
+                        trees = row.get('trees', [])
+                        for tree in trees:
+                            tree['_id'] = str(tree['_id'])
+                        return render_template('rows/detail.html', row=row, zone=zone, sector=sector, land=land, trees=trees)
     
-    trees = list(db.trees.find({'row_id': ObjectId(row_id)}))
-    for tree in trees:
-        tree['_id'] = str(tree['_id'])
-    
-    return render_template('rows/detail.html', row=row, zone=zone, sector=sector, land=land, trees=trees)
+    abort(404)
 
-@rows_bp.route('/<row_id>/edit', methods=['GET', 'POST'])
+@rows_bp.route('/<row_id>/edit', methods=['POST'])
 def edit(row_id):
-    if 'user_id' not in session or session.get('role') != 'admin':
-        flash('Admin access required', 'danger')
-        return redirect(url_for('rows.index'))
-    
-    db = get_db()
-    row = db.rows.find_one({'_id': ObjectId(row_id)})
-    if not row:
-        abort(404)
-    
-    if request.method == 'POST':
-        try:
-            row_data = RowModel(
-                name=request.form.get('name', ''),
-                zone_id=str(row['zone_id'])
-            )
-            RowModel.check_duplicate(db, row_data.name, zone_id=row_data.zone_id, exclude_id=row_id)
-            db.rows.update_one({'_id': ObjectId(row_id)}, {'$set': {'name': row_data.name}})
-            log_message('info', f"Updated row: {row_data.name}", session.get('user_id'), session.get('username'))
-            flash('Row updated successfully!', 'success')
-            return redirect(url_for('rows.detail', row_id=row_id))
-        except Exception as e:
-            flash(f'Validation error: {str(e)}', 'danger')
-    
-    row['_id'] = str(row['_id'])
-    return render_template('rows/edit.html', row=row)
-
-@rows_bp.route('/<row_id>/add-tree', methods=['GET', 'POST'])
-def add_tree(row_id):
-    if 'user_id' not in session or session.get('role') != 'admin':
-        flash('Admin access required', 'danger')
-        return redirect(url_for('rows.index'))
-    
-    if request.method == 'POST':
-        try:
-            tree_data = TreeModel(
-                name=request.form.get('name', 'Tree'),
-                row_id=row_id
-            )
-            TreeModel.check_duplicate(db, tree_data.name, row_id=tree_data.row_id)
-            db.trees.insert_one({'name': tree_data.name, 'row_id': ObjectId(tree_data.row_id)})
-            log_message('info', f"Added tree: {tree_data.name}", session.get('user_id'), session.get('username'))
-            flash('Tree added successfully!', 'success')
-            return redirect(url_for('rows.detail', row_id=row_id))
-        except Exception as e:
-            flash(f'Validation error: {str(e)}', 'danger')
-    
-    return render_template('rows/add_tree.html', row_id=row_id)
-
-@rows_bp.route('/<row_id>/delete', methods=['POST'])
-def delete(row_id):
     if 'user_id' not in session or session.get('role') != 'admin':
         flash('Admin access required', 'danger')
         return redirect(url_for('lands.index'))
     
     db = get_db()
-    row = db.rows.find_one({'_id': ObjectId(row_id)})
-    if row:
-        zone_id = str(row['zone_id'])
-        db.rows.delete_one({'_id': ObjectId(row_id)})
-        log_message('warning', f'Deleted row {row["name"]}', session.get('user_id'), session.get('username'))
-        flash('Row deleted successfully!', 'success')
-        return redirect(url_for('zones.detail', zone_id=zone_id))
+    lands = list(db.lands.find())
     
-    return redirect(url_for('lands.index'))
+    for land in lands:
+        for sector in land.get('sectors', []):
+            for zone in sector.get('zones', []):
+                if zone['_id'] == zone_id:
+                    new_name = request.form.get('name')
+                    zone['name'] = new_name
+                    db.lands.update_one({'_id': land['_id']}, {'$set': {'sectors': land.get('sectors', [])}})
+                    log_message('info', f"Updated zone: {new_name}", session.get('user_id'), session.get('username'))
+                    flash('Zone updated successfully!', 'success')
+                    return redirect(url_for('zones.index'))
+    
+    abort(404)
+
+@rows_bp.route('/bulk_add', methods=['POST'])
+def bulk_add():
+    if 'user_id' not in session or session.get('role') != 'admin':
+        flash('Admin access required', 'danger')
+        return redirect(url_for('lands.index'))
+    
+    db = get_db()
+    zone_id = request.form.get('zone_id')
+    names = request.form.get('names', '').strip().split('\n')
+    
+    lands = list(db.lands.find())
+    for land in lands:
+        for sector in land.get('sectors', []):
+            for zone in sector.get('zones', []):
+                if zone['_id'] == zone_id:
+                    if 'rows' not in zone:
+                        zone['rows'] = []
+                    for name in names:
+                        name = name.strip()
+                        if name:
+                            zone['rows'].append({
+                                '_id': str(ObjectId()),
+                                'row_number': len(zone['rows'])+1,
+                                'name': name,
+                                'trees': []
+                            })
+                    db.lands.update_one({'_id': land['_id']}, {'$set': {'sectors': land.get('sectors', [])}})
+                    log_message('info', f'Bulk added {len([n for n in names if n.strip()])} rows', session.get('user_id'), session.get('username'))
+                    flash('Rows added successfully!', 'success')
+                    break
+    
+    return redirect(url_for('rows.index'))

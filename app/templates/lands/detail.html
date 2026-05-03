@@ -10,21 +10,65 @@
     {{ land.map | safe }}
 </div>
 
+<div class="row mb-3">
+    <div class="col-md-3">
+        <div class="card text-white bg-primary">
+            <div class="card-body">
+                <h5 class="card-title"><i class="bi-geo-alt"></i> Coordinates</h5>
+                <p class="card-text">{{ land.latitude }}, {{ land.longitude }}</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-white bg-success">
+            <div class="card-body">
+                <h5 class="card-title"><i class="bi-layers"></i> Soil Type</h5>
+                <p class="card-text">{{ t(land.soil_type, session.get('lang', 'en')) }}</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-white bg-info">
+            <div class="card-body">
+                <h5 class="card-title"><i class="bi-aspect-ratio"></i> Area</h5>
+                <p class="card-text">{{ land.area }} ha</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-white bg-warning">
+            <div class="card-body">
+                <h5 class="card-title"><i class="bi-grid-fill"></i> Sectors</h5>
+                <p class="card-text">{{ land.sector_count }}</p>
+            </div>
+        </div>
+    </div>
+</div>
+
 {% if session.get('role') == 'admin' %}
-<a href="{{ url_for('lands.add_sector', land_id=land._id) }}" class="btn btn-primary mb-3">Add Sector</a>
+<a href="{{ url_for('sectors.add') }}" class="btn btn-primary mb-3">
+    <i class="bi-plus-circle"></i> Add Sector
+</a>
 {% endif %}
 
 <h3>{{ t('sectors', session.get('lang', 'en')) }}</h3>
 <div class="row">
-    {% for sector in sectors %}
+    {% for sector in land.sectors %}
     <div class="col-md-4 mb-3">
         <div class="card">
             <div class="card-body">
                 <h5 class="card-title">{{ sector.name }}</h5>
                 <p class="card-text">
-                    {{ sector.zones|length }} {{ t('zones', session.get('lang', 'en')) }}
+                    {{ sector.zones|length if sector.zones else 0 }} {{ t('zones', session.get('lang', 'en')) }}
                 </p>
                 <a href="{{ url_for('sectors.detail', sector_id=sector._id) }}" class="btn btn-sm btn-primary">{{ t('view', session.get('lang', 'en')) }}</a>
+                {% if session.get('role') == 'admin' %}
+                <form method="POST" action="{{ url_for('lands.delete_sector', land_id=land._id, sector_id=sector._id) }}" class="d-inline">
+                    <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Delete this sector?')">
+                        <i class="bi-trash"></i>
+                    </button>
+                </form>
+                {% endif %}
             </div>
         </div>
     </div>

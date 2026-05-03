@@ -9,30 +9,39 @@
     {% if session.get('role') == 'admin' %}
     <div>
         <a href="{{ url_for('zones.edit', zone_id=zone._id) }}" class="btn btn-warning">Edit</a>
-        <form method="POST" action="{{ url_for('zones.delete', zone_id=zone._id) }}" class="d-inline">
-            <button type="submit" class="btn btn-danger">Delete</button>
+        <form method="POST" action="{{ url_for('lands.delete_zone', land_id=land._id, sector_id=sector._id, zone_id=zone._id) }}" class="d-inline">
+            <button type="submit" class="btn btn-danger" onclick="return confirm('Delete this zone?')">Delete</button>
         </form>
-        <a href="{{ url_for('zones.add_row', zone_id=zone._id) }}" class="btn btn-primary">Add Row</a>
+        <a href="{{ url_for('rows.add') }}" class="btn btn-primary">Add Row</a>
     </div>
     {% endif %}
 </div>
 
-<div class="card">
+<div class="card mb-4">
     <div class="card-body">
         <h5 class="card-title">Zone Information</h5>
+        <p><strong>Zone ID:</strong> {{ zone.zone_id or 'N/A' }}</p>
         <p><strong>Located in:</strong> {{ sector.name }} > {{ land.name }}</p>
+        <p><strong>Rows:</strong> {{ zone.row_count or 0 }}</p>
     </div>
 </div>
 
-<h3 class="mt-4">{{ t('rows', session.get('lang', 'en')) }}</h3>
+<h3>{{ t('rows', session.get('lang', 'en')) }}</h3>
 <div class="row">
     {% for row in rows %}
     <div class="col-md-4 mb-3">
         <div class="card">
             <div class="card-body">
                 <h5 class="card-title">{{ row.name }}</h5>
-                <p class="card-text">{{ row.tree_count }} {{ t('trees', session.get('lang', 'en')) }}</p>
+                <p class="card-text">{{ row.tree_count or 0 }} {{ t('trees', session.get('lang', 'en')) }}</p>
                 <a href="{{ url_for('rows.detail', row_id=row._id) }}" class="btn btn-sm btn-primary">{{ t('view', session.get('lang', 'en')) }}</a>
+                {% if session.get('role') == 'admin' %}
+                <form method="POST" action="{{ url_for('lands.delete_row', land_id=land._id, sector_id=sector._id, zone_id=zone._id, row_id=row._id) }}" class="d-inline">
+                    <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Delete this row?')">
+                        <i class="bi-trash"></i>
+                    </button>
+                </form>
+                {% endif %}
             </div>
         </div>
     </div>
