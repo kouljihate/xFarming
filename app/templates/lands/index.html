@@ -17,50 +17,120 @@
         <a href="{{ url_for('trees.index') }}" class="btn btn-outline-primary">{{ t('trees', session.get('lang', 'en'))
             }}</a>
     </div>
-    {% if session.get('role') in ['admin', 'worker'] %}
-    <button type="button" class="btn btn-success ms-2" data-bs-toggle="modal" data-bs-target="#addLandModal">
-        <i class="bi-plus-circle"></i> {{ t('add_land', session.get('lang', 'en')) }}
-    </button>
-    {% endif %}
+{% if session.get('role') in ['admin', 'worker'] %}
+<a href="#addLandForm" class="btn btn-success ms-2">
+    <i class="bi-plus-circle"></i> {{ t('add_land', session.get('lang', 'en')) }}
+</a>
+{% endif %}
+
+{% if session.get('role') in ['admin', 'worker'] %}
+<div class="card shadow-sm mb-4" id="addLandForm">
+    <div class="card-header bg-success text-white">
+        <h5 class="mb-0"><i class="bi-plus-circle me-2"></i>{{ t('add_land', session.get('lang', 'en')) }}</h5>
+    </div>
+    <div class="card-body">
+        <form method="POST" action="{{ url_for('lands.add') }}">
+            <div class="row">
+                <div class="col-md-6">
+                    <h6 class="text-muted mb-3">Basic Info</h6>
+                    <div class="mb-3">
+                        <label class="form-label"><i class="bi-tag me-1"></i>Farm ID</label>
+                        <input type="text" class="form-control" name="farm_id" placeholder="FARM001" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label"><i class="bi-geo-alt me-1"></i>{{ t('land_name', session.get('lang', 'en')) }}</label>
+                        <input type="text" class="form-control" name="name" placeholder="Green Valley Farm" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label"><i class="bi-person me-1"></i>Owner Name</label>
+                        <input type="text" class="form-control" name="owner_name" placeholder="John Smith">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label"><i class="bi-envelope me-1"></i>Owner Email</label>
+                        <input type="email" class="form-control" name="owner_email" placeholder="john@example.com">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label"><i class="bi-phone me-1"></i>Owner Phone</label>
+                        <input type="tel" class="form-control" name="owner_phone" placeholder="+1-555-123-4567">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <h6 class="text-muted mb-3">Location</h6>
+                    <div class="mb-3">
+                        <label class="form-label"><i class="bi-house me-1"></i>Street</label>
+                        <input type="text" class="form-control" name="street" placeholder="1234 Rural Route 5">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label"><i class="bi-building me-1"></i>City</label>
+                        <input type="text" class="form-control" name="city" placeholder="Springfield">
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">State</label>
+                                <input type="text" class="form-control" name="state" placeholder="IL">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Postal Code</label>
+                                <input type="text" class="form-control" name="postal_code" placeholder="62701">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label"><i class="bi-globe me-1"></i>Country</label>
+                        <input type="text" class="form-control" name="country" placeholder="USA">
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label class="form-label">Latitude</label>
+                                <input type="number" step="any" class="form-control" name="latitude" placeholder="39.7817">
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label class="form-label">Longitude</label>
+                                <input type="number" step="any" class="form-control" name="longitude" placeholder="-89.6501">
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label class="form-label">Area (acres)</label>
+                                <input type="number" step="any" class="form-control" name="area" placeholder="500">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="d-flex justify-content-end mt-3">
+                <button type="reset" class="btn btn-secondary me-2">Clear</button>
+                <button type="submit" class="btn btn-success"><i class="bi-check-circle me-1"></i>Add Land</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endif %}
 </div>
 
-<form method="GET" class="mb-3">
-    <div class="input-group">
-        <input type="text" class="form-control" name="search" placeholder="Search lands..." value="{{ search }}">
-        <button class="btn btn-primary" type="submit"><i class="bi-search"></i> Search</button>
-        {% if search %}
-        <a href="{{ url_for('lands.index') }}" class="btn btn-secondary"><i class="bi-x-circle"></i> Clear</a>
-        {% endif %}
-    </div>
-</form>
-
-<div class="table-responsive">
-    <table class="table table-striped">
-        <thead>
-            <tr>
-                <th>Map</th>
-                <th>Farm ID</th>
-                <th>Name</th>
-                <th>Owner</th>
-                <th>Location</th>
-                <th>Area (acres)</th>
-                <th>Sectors</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for land in lands %}
-            <tr>
-                <td>{{ land.map | safe }}</td>
-                <td>{{ land.farm_id or 'N/A' }}</td>
-                <td>{{ land.name }}</td>
-                <td>{{ land.owner.name if land.owner else 'N/A' }}</td>
-                <td>{{ land.location.address.city if land.location and land.location.address else 'N/A' }}</td>
-                <td>{{ land.location.total_area.value if land.location and land.location.total_area else 0 }}</td>
-                <td>{{ land.sector_count }}</td>
-                <td>
-                    <a href="{{ url_for('lands.detail', land_id=land._id) }}" class="btn btn-sm btn-primary"><i
-                            class="bi-eye"></i></a>
+<!-- Lands List (Compact) -->
+<div class="mt-4">
+    <h5><i class="bi-list-ul me-2"></i>Lands List</h5>
+    <div class="row">
+        {% for land in lands %}
+        <div class="col-md-4 mb-3">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h6 class="card-title">{{ land.name }}</h6>
+                    <p class="card-text">
+                        <small class="text-muted">
+                            <i class="bi-tag me-1"></i>{{ land.farm_id or 'N/A' }}<br>
+                            <i class="bi-person me-1"></i>{{ land.owner.name if land.owner else 'N/A' }}<br>
+                            <i class="bi-geo-alt me-1"></i>{{ land.location.address.city if land.location and land.location.address else 'N/A' }}
+                        </small>
+                    </p>
+                    <a href="{{ url_for('lands.detail', land_id=land._id) }}" class="btn btn-sm btn-primary">View</a>
                     {% if session.get('role') == 'admin' %}
                     <button type="button" class="btn btn-sm btn-warning" data-bs-toggle="modal"
                         data-bs-target="#editLandModal{{ land._id }}">
@@ -71,11 +141,11 @@
                         <i class="bi-trash"></i>
                     </button>
                     {% endif %}
-                </td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
 </div>
 
 {% if session.get('role') in ['admin', 'worker'] %}

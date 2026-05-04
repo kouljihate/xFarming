@@ -3,24 +3,31 @@
 {% block title %}{{ t('login', session.get('lang', 'en')) }} - xFarming{% endblock %}
 
 {% block content %}
-<div class="row justify-content-center">
-    <div class="col-md-6">
-        <div class="card">
-            <div class="card-header">
-                <h4 class="mb-0">{{ t('login', session.get('lang', 'en')) }}</h4>
-            </div>
-            <div class="card-body">
-                <form method="POST">
-                    <div class="mb-3">
-                        <label for="username" class="form-label">{{ t('username', session.get('lang', 'en')) }}</label>
-                        <input type="text" class="form-control" id="username" name="username" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="password" class="form-label">{{ t('password', session.get('lang', 'en')) }}</label>
-                        <input type="password" class="form-control" id="password" name="password" required>
-                    </div>
-                    <button type="submit" class="btn btn-primary">{{ t('login', session.get('lang', 'en')) }}</button>
-                </form>
+<div class="container">
+    <div class="row justify-content-center align-items-center" style="min-height: 80vh;">
+        <div class="col-md-6 col-lg-4">
+            <div class="card shadow-lg border-0">
+                <div class="card-header bg-primary text-white text-center py-3">
+                    <h4 class="mb-0"><i class="bi-box-arrow-in-right me-2"></i>{{ t('login', session.get('lang', 'en')) }}</h4>
+                </div>
+                <div class="card-body p-4">
+                    <form method="POST">
+                        <div class="mb-3">
+                            <label for="username" class="form-label"><i class="bi-person me-1"></i>{{ t('username', session.get('lang', 'en')) }}</label>
+                            <input type="text" class="form-control form-control-lg" id="username" name="username" placeholder="{{ t('username', session.get('lang', 'en')) }}" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="password" class="form-label"><i class="bi-lock me-1"></i>{{ t('password', session.get('lang', 'en')) }}</label>
+                            <input type="password" class="form-control form-control-lg" id="password" name="password" placeholder="{{ t('password', session.get('lang', 'en')) }}" required>
+                        </div>
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary btn-lg">{{ t('login', session.get('lang', 'en')) }}</button>
+                        </div>
+                    </form>
+                </div>
+                <div class="card-footer text-center text-muted py-3">
+                    <small>🌾 xFarming - Smart Farm Management</small>
+                </div>
             </div>
         </div>
     </div>
