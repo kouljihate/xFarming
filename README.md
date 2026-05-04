@@ -222,4 +222,20 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 
 ## Version History
 
-See [NEWS.md](NEWS.md) for detailed version history and changes.
+### v0.6.0 (2026-05-04)
+- Bootstrap Tabs in Add Land modal (Basic Info, Address & Location, Legal Documents, Photos)
+- Photos tab with multiple file upload support
+- Backend photo upload handling (saved to `static/uploads/lands/`)
+- Light/Dark theme toggle buttons in sidebar
+- ZERO state pages for all modules (Lands, Sectors, Zones, Rows, Trees)
+- Language buttons organized in btn-group structure
+- Removed duplicate forms, fixed template syntax errors
+- Updated Land layout to match exact JSON structure
+
+### v0.5.0 (2026-05-03)
+- Refactored all blueprints to use validation.py Pydantic models
+- TreeModel, RowModel, ZoneModel, SectorModel, LandModel integration
+- Bulk add functionality for all hierarchy levels
+- Updated forms/templates to match validation.py structure
+
+See [NEWS.md](NEWS.md) for complete version history.

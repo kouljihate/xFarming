@@ -5,9 +5,15 @@ from app.models.validation import LandModel, SectorModel, ZoneModel, RowModel, T
 from bson import ObjectId
 from datetime import datetime
 import folium
+import os
+from werkzeug.utils import secure_filename
 
 lands_bp = Blueprint('lands', __name__, url_prefix='/lands')
 lands_bp.strict_slashes = False
+
+# Ensure upload directory exists
+UPLOAD_FOLDER = 'static/uploads/lands'
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
 @lands_bp.route('/add', methods=['POST'])
 def add():

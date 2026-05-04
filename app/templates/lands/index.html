@@ -21,9 +21,7 @@
     <button type="button" class="btn btn-success ms-2" data-bs-toggle="modal" data-bs-target="#addLandModal">
         <i class="bi-plus-circle"></i> {{ t('add_land', session.get('lang', 'en')) }}
     </button>
-    {% endif %}
 
-    {% if session.get('role') in ['admin', 'worker'] %}
     <!-- Add Land Modal -->
     <div class="modal fade" id="addLandModal" tabindex="-1">
         <div class="modal-dialog modal-lg">
@@ -49,6 +47,11 @@
                             <li class="nav-item" role="presentation">
                                 <a class="nav-link" id="legal-tab" data-bs-toggle="tab" href="#legal" role="tab">
                                     <i class="bi-file-text me-1"></i>Legal Documents
+                                </a>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <a class="nav-link" id="photos-tab" data-bs-toggle="tab" href="#photos" role="tab">
+                                    <i class="bi-images me-1"></i>Photos
                                 </a>
                             </li>
                         </ul>
@@ -149,6 +152,44 @@
                                     <input type="date" class="form-control" name="legal_date">
                                 </div>
                             </div>
+                        <!-- Legal Documents Tab -->
+                            <div class="tab-pane fade" id="legal" role="tabpanel">
+                                <div class="mb-3">
+                                    <label class="form-label"><i class="bi-file-text me-1"></i>Legal Document Types (comma-separated)</label>
+                                    <input type="text" class="form-control" name="legal_types" placeholder="Document Administratif, Malkiya, Titre">
+                                    <small class="text-muted">Enter document types separated by commas</small>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label"><i class="bi-check-circle me-1"></i>Delivered Status</label>
+                                    <select class="form-select" name="legal_delivered">
+                                        <option value="">Not Specified</option>
+                                        <option value="delivered">Delivered</option>
+                                        <option value="pending">Pending</option>
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label"><i class="bi-calendar me-1"></i>Legal Date</label>
+                                    <input type="date" class="form-control" name="legal_date">
+                                </div>
+                            </div>
+                            
+                            <!-- Photos Tab -->
+                            <div class="tab-pane fade" id="photos" role="tabpanel">
+                                <div class="mb-3">
+                                    <label class="form-label"><i class="bi-images me-1"></i>Upload Multiple Photos</label>
+                                    <input type="file" class="form-control" name="photos" multiple accept="image/*">
+                                    <small class="text-muted">Hold Ctrl (or Cmd) to select multiple files</small>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label"><i class="bi-card-text me-1"></i>Photo Descriptions (Optional)</label>
+                                    <textarea class="form-control" name="photo_descriptions" rows="4" placeholder="Enter descriptions for each photo (one per line)"></textarea>
+                                    <small class="text-muted">Enter one description per line, matching the order of selected photos</small>
+                                </div>
+                                <div class="alert alert-info">
+                                    <i class="bi-info-circle me-1"></i>
+                                    Photos will be saved and linked to this land record. You can view them in the land detail page.
+                                </div>
+                            </div>
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -156,6 +197,9 @@
                         <button type="submit" class="btn btn-success"><i class="bi-check-circle me-1"></i>Add Land</button>
                     </div>
                 </form>
+            </div>
+        </div>
+    </div>
             </div>
         </div>
     </div>
@@ -240,18 +284,13 @@
                                             <label class="form-label">Area (acres)</label>
                                             <input type="number" step="any" class="form-control" name="area"
                                                 placeholder="500">
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
                         </div>
                     </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                        <button type="submit" class="btn btn-success"><i class="bi-check-circle me-1"></i>Add
-                            Land</button>
-                    </div>
                 </form>
+            </div>
+        </div>
+    </div>
+{% endif %}
             </div>
         </div>
     </div>
