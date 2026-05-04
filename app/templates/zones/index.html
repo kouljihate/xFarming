@@ -10,7 +10,8 @@
 <button type="button" class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#addZoneModal">
     <i class="bi-plus-circle"></i> {{ t('add', session.get('lang', 'en')) }} {{ t('zones', session.get('lang', 'en')) }}
 </button>
-<button type="button" class="btn btn-outline-primary mb-3 ms-2" data-bs-toggle="modal" data-bs-target="#bulkAddZoneModal">
+<button type="button" class="btn btn-outline-primary mb-3 ms-2" data-bs-toggle="modal"
+    data-bs-target="#bulkAddZoneModal">
     <i class="bi-stack"></i> {{ t('bulk_add', session.get('lang', 'en')) }} {{ t('zones', session.get('lang', 'en')) }}
 </button>
 {% endif %}
@@ -43,12 +44,15 @@
                 <td>{{ zone.sector.name if zone.sector else '' }}</td>
                 <td>{{ zone.row_count }}</td>
                 <td>
-                    <a href="{{ url_for('zones.detail', zone_id=zone._id) }}" class="btn btn-sm btn-primary"><i class="bi-eye"></i></a>
+                    <a href="{{ url_for('zones.detail', zone_id=zone._id) }}" class="btn btn-sm btn-primary"><i
+                            class="bi-eye"></i></a>
                     {% if session.get('role') == 'admin' %}
-                    <button type="button" class="btn btn-sm btn-warning" data-bs-toggle="modal" data-bs-target="#editZoneModal{{ zone._id }}">
+                    <button type="button" class="btn btn-sm btn-warning" data-bs-toggle="modal"
+                        data-bs-target="#editZoneModal{{ zone._id }}">
                         <i class="bi-pencil"></i>
                     </button>
-                    <button type="button" class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#deleteZoneModal{{ zone._id }}">
+                    <button type="button" class="btn btn-sm btn-danger" data-bs-toggle="modal"
+                        data-bs-target="#deleteZoneModal{{ zone._id }}">
                         <i class="bi-trash"></i>
                     </button>
                     {% endif %}
@@ -60,8 +64,8 @@
 </div>
 {% else %}
 <div class="text-center py-5">
-    <h1 class="display-1 text-muted">ZERO</h1>
-    <p class="lead text-muted">No zones found</p>
+    <h1 class="display-1 text-muted">No Zone Found</h1>
+    <!-- <p class="lead text-muted">No zones found</p> -->
     {% if session.get('role') == 'admin' %}
     <button type="button" class="btn btn-primary mt-3" data-bs-toggle="modal" data-bs-target="#addZoneModal">
         <i class="bi-plus-circle"></i> Add Your First Zone
@@ -77,7 +81,8 @@
         <div class="modal-content">
             <form method="POST" action="{{ url_for('zones.add') }}">
                 <div class="modal-header">
-                    <h5 class="modal-title">{{ t('add', session.get('lang', 'en')) }} {{ t('zones', session.get('lang', 'en')) }}</h5>
+                    <h5 class="modal-title">{{ t('add', session.get('lang', 'en')) }} {{ t('zones', session.get('lang',
+                        'en')) }}</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
@@ -89,7 +94,8 @@
                         <label class="form-label">Sector</label>
                         <select class="form-select" name="sector_id" required>
                             {% for sector in sectors %}
-                            <option value="{{ sector._id }}">{{ sector.name }} ({{ sector.land.name if sector.land else 'Unknown' }})</option>
+                            <option value="{{ sector._id }}">{{ sector.name }} ({{ sector.land.name if sector.land else
+                                'Unknown' }})</option>
                             {% endfor %}
                         </select>
                     </div>
@@ -133,7 +139,8 @@
 <div class="modal fade" id="deleteZoneModal{{ zone._id }}" tabindex="-1">
     <div class="modal-dialog">
         <div class="modal-content">
-            <form method="POST" action="{{ url_for('lands.delete_zone', land_id=zone.sector.land._id if zone.sector and zone.sector.land else '', sector_id=zone.sector._id if zone.sector else '', zone_id=zone._id) }}">
+            <form method="POST"
+                action="{{ url_for('lands.delete_zone', land_id=zone.sector.land._id if zone.sector and zone.sector.land else '', sector_id=zone.sector._id if zone.sector else '', zone_id=zone._id) }}">
                 <div class="modal-header">
                     <h5 class="modal-title">Delete {{ zone.name }}</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>

@@ -5,13 +5,14 @@
 {% block content %}
 <h2>{{ t('dashboard', session.get('lang', 'en')) }}</h2>
 
-<div class="row mb-4">
-    <div class="col-lg-3 col-md-6 mb-3">
+<div class="row mb-3">
+    <div class="col-lg-2 col-md-6 mb-3">
         <div class="card text-white bg-primary border-0 shadow">
             <div class="card-body">
                 <div class="d-flex justify-content-between align-items-center">
                     <div>
-                        <h6 class="card-title text-uppercase mb-0">{{ t('total_lands', session.get('lang', 'en')) }}</h6>
+                        <h6 class="card-title text-uppercase mb-0">{{ t('total_lands', session.get('lang', 'en')) }}
+                        </h6>
                         <p class="card-text display-4 mb-0">{{ stats.lands }}</p>
                     </div>
                     <div class="fs-1 opacity-50">
@@ -21,12 +22,13 @@
             </div>
         </div>
     </div>
-    <div class="col-lg-3 col-md-6 mb-3">
+    <div class="col-lg-2 col-md-6 mb-3">
         <div class="card text-white bg-success border-0 shadow">
             <div class="card-body">
                 <div class="d-flex justify-content-between align-items-center">
                     <div>
-                        <h6 class="card-title text-uppercase mb-0">{{ t('total_sectors', session.get('lang', 'en')) }}</h6>
+                        <h6 class="card-title text-uppercase mb-0">{{ t('total_sectors', session.get('lang', 'en')) }}
+                        </h6>
                         <p class="card-text display-4 mb-0">{{ stats.sectors }}</p>
                     </div>
                     <div class="fs-1 opacity-50">
@@ -36,12 +38,13 @@
             </div>
         </div>
     </div>
-    <div class="col-lg-3 col-md-6 mb-3">
+    <div class="col-lg-2 col-md-6 mb-3">
         <div class="card text-white bg-info border-0 shadow">
             <div class="card-body">
                 <div class="d-flex justify-content-between align-items-center">
                     <div>
-                        <h6 class="card-title text-uppercase mb-0">{{ t('total_zones', session.get('lang', 'en')) }}</h6>
+                        <h6 class="card-title text-uppercase mb-0">{{ t('total_zones', session.get('lang', 'en')) }}
+                        </h6>
                         <p class="card-text display-4 mb-0">{{ stats.zones }}</p>
                     </div>
                     <div class="fs-1 opacity-50">
@@ -51,7 +54,7 @@
             </div>
         </div>
     </div>
-    <div class="col-lg-3 col-md-6 mb-3">
+    <div class="col-lg-2 col-md-6 mb-3">
         <div class="card text-white bg-warning border-0 shadow">
             <div class="card-body">
                 <div class="d-flex justify-content-between align-items-center">
@@ -66,65 +69,81 @@
             </div>
         </div>
     </div>
+    <div class="col-lg-2 col-md-6 mb-3">
+        <div class="card text-white bg-success border-0 shadow">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="card-title text-uppercase mb-0">{{ t('total_trees', session.get('lang', 'en')) }}
+                        </h6>
+                        <p class="card-text display-4 mb-0">{{ stats.trees }}</p>
+                    </div>
+                    <div class="fs-1 opacity-50">
+                        🌳
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
 <div class="row mb-4">
-    <div class="col-md-6">
-        <div class="card">
-            <div class="card-header d-flex justify-content-between align-items-center">
-                <h5 class="mb-0">{{ t('recent_activities', session.get('lang', 'en')) }}</h5>
-                <a href="{{ url_for('activities.index') }}" class="btn btn-sm btn-primary">View All</a>
-            </div>
-            <div class="card-body">
-                {% if activities %}
-                    <ul class="list-group">
-                    {% for activity in activities %}
-                        <li class="list-group-item">
-                            {{ activity.date.strftime('%Y-%m-%d %H:%M') if activity.date else '' }} - {{ t(activity.type, session.get('lang', 'en')) }}
-                            {% if activity.notes %}<br><small>{{ activity.notes }}</small>{% endif %}
-                        </li>
-                    {% endfor %}
-                    </ul>
-                {% else %}
-                    <p>{{ t('no_activities', session.get('lang', 'en')) }}</p>
-                {% endif %}
-            </div>
+    <div class="card">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">{{ t('recent_activities', session.get('lang', 'en')) }}</h5>
+            <a href="{{ url_for('activities.index') }}" class="btn btn-sm btn-primary">View All</a>
+        </div>
+        <div class="card-body">
+            {% if activities %}
+            <ul class="list-group">
+                {% for activity in activities %}
+                <li class="list-group-item">
+                    {{ activity.date.strftime('%Y-%m-%d %H:%M') if activity.date else '' }} - {{ t(activity.type,
+                    session.get('lang', 'en')) }}
+                    {% if activity.notes %}<br><small>{{ activity.notes }}</small>{% endif %}
+                </li>
+                {% endfor %}
+            </ul>
+            {% else %}
+            <p>{{ t('no_activities', session.get('lang', 'en')) }}</p>
+            {% endif %}
         </div>
     </div>
-    <div class="col-md-6">
-        <div class="card">
-            <div class="card-header">
-                <h5 class="mb-0">Farm Structure</h5>
+</div>
+<div class="row mb-4">
+    <div class="card">
+        <div class="card-header">
+            <h5 class="mb-0">Farm Treemap</h5>
+        </div>
+        <div class="card-body">
+            {% if treemap %}
+            {{ treemap | safe }}
+            {% else %}
+            <div class="row text-center">
+                <div class="col-4">
+                    <h3>{{ stats.lands }}</h3>
+                    <small>Lands</small>
+                </div>
+                <div class="col-4">
+                    <h3>{{ stats.sectors }}</h3>
+                    <small>Sectors</small>
+                </div>
+                <div class="col-4">
+                    <h3>{{ stats.zones }}</h3>
+                    <small>Zones</small>
+                </div>
+                <div class="col-4 mt-3">
+                    <h3>{{ stats.rows }}</h3>
+                    <small>Rows</small>
+                </div>
+                <div class="col-4 mt-3">
+                    <h3>{{ stats.trees }}</h3>
+                    <small>Trees</small>
+                </div>
             </div>
-            <div class="card-body">
-                {% if treemap %}
-                    {{ treemap | safe }}
-                {% else %}
-                    <div class="row text-center">
-                        <div class="col-4">
-                            <h3>{{ stats.lands }}</h3>
-                            <small>Lands</small>
-                        </div>
-                        <div class="col-4">
-                            <h3>{{ stats.sectors }}</h3>
-                            <small>Sectors</small>
-                        </div>
-                        <div class="col-4">
-                            <h3>{{ stats.zones }}</h3>
-                            <small>Zones</small>
-                        </div>
-                        <div class="col-4 mt-3">
-                            <h3>{{ stats.rows }}</h3>
-                            <small>Rows</small>
-                        </div>
-                        <div class="col-4 mt-3">
-                            <h3>{{ stats.trees }}</h3>
-                            <small>Trees</small>
-                        </div>
-                    </div>
-                {% endif %}
-            </div>
+            {% endif %}
         </div>
     </div>
+
 </div>
 {% endblock %}

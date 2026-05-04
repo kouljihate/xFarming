@@ -1,14 +1,18 @@
 <!DOCTYPE html>
-<html lang="{{ session.get('lang', 'en') }}" {% if session.get('lang') == 'ar' %}dir="rtl"{% endif %}>
+<html lang="{{ session.get('lang', 'en') }}" {% if session.get('lang')=='ar' %}dir="rtl" {% endif %}>
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}xFarming{% endblock %}</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootswatch@5.3.3/dist/{{ session.get('theme', 'minty') }}/bootstrap.min.css" rel="stylesheet">
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootswatch@5.3.3/dist/{{ session.get('theme', 'minty') }}/bootstrap.min.css"
+        rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
     <link href="{{ url_for('static', filename='css/custom.css') }}" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </head>
+
 <body>
     <div class="container-fluid">
         <div class="row">
@@ -16,103 +20,174 @@
             {% if session.get('username') %}
             <nav class="col-md-3 col-lg-2 d-md-block bg-primary sidebar collapse" style="min-height: 100vh;">
                 <div class="d-flex flex-column position-sticky top-0 pt-3" style="min-height: 100vh;">
-                    <a class="d-flex align-items-center mb-3 text-white text-decoration-none" href="{{ url_for('dashboard.index') }}">
+                    <a class="d-flex align-items-center mb-3 text-white text-decoration-none"
+                        href="{{ url_for('dashboard.index') }}">
                         <span style="font-size: 1.5rem;">🌾</span>
                         <span class="ms-2 fs-4 fw-bold">xFarming</span>
                     </a>
                     <ul class="nav flex-column">
-                        <li><a class="nav-link text-white" href="{{ url_for('dashboard.index') }}"><i class="bi-speedometer2"></i> {{ t('dashboard', session.get('lang', 'en')) }}</a></li>
+                        <li><a class="nav-link text-white" href="{{ url_for('dashboard.index') }}"><i
+                                    class="bi-speedometer2"></i> {{ t('dashboard', session.get('lang', 'en')) }}</a>
+                        </li>
                         <li class="nav-item">
                             <details class="w-100">
-                                <summary class="nav-link text-white mb-0 d-flex align-items-center" style="cursor: pointer; list-style: none;">
+                                <summary class="nav-link text-white mb-0 d-flex align-items-center"
+                                    style="cursor: pointer; list-style: none;">
                                     <i class="bi-geo-alt me-2"></i> {{ t('lands', session.get('lang', 'en')) }}
                                     <i class="bi-chevron-down ms-auto small"></i>
                                 </summary>
                                 <div class="ms-4 mt-1">
-                                    <a class="nav-link text-white py-1" href="{{ url_for('lands.index') }}"><i class="bi-geo-alt-fill me-2"></i> {{ t('lands', session.get('lang', 'en')) }}</a>
-                                    <a class="nav-link text-white py-1" href="{{ url_for('sectors.index') }}"><i class="bi-grid-fill me-2"></i> {{ t('sectors', session.get('lang', 'en')) }}</a>
-                                    <a class="nav-link text-white py-1" href="{{ url_for('zones.index') }}"><i class="bi-map-fill me-2"></i> {{ t('zones', session.get('lang', 'en')) }}</a>
-                                    <a class="nav-link text-white py-1" href="{{ url_for('rows.index') }}"><i class="bi-layout-three-columns me-2"></i> {{ t('rows', session.get('lang', 'en')) }}</a>
-                                    <a class="nav-link text-white py-1" href="{{ url_for('trees.index') }}"><i class="bi-tree-fill me-2"></i> {{ t('trees', session.get('lang', 'en')) }}</a>
+                                    <a class="nav-link text-white py-1" href="{{ url_for('lands.index') }}"><i
+                                            class="bi-geo-alt-fill me-2"></i> {{ t('lands', session.get('lang', 'en'))
+                                        }}</a>
+                                    <a class="nav-link text-white py-1" href="{{ url_for('sectors.index') }}"><i
+                                            class="bi-grid-fill me-2"></i> {{ t('sectors', session.get('lang', 'en'))
+                                        }}</a>
+                                    <a class="nav-link text-white py-1" href="{{ url_for('zones.index') }}"><i
+                                            class="bi-map-fill me-2"></i> {{ t('zones', session.get('lang', 'en'))
+                                        }}</a>
+                                    <a class="nav-link text-white py-1" href="{{ url_for('rows.index') }}"><i
+                                            class="bi-layout-three-columns me-2"></i> {{ t('rows', session.get('lang',
+                                        'en')) }}</a>
+                                    <a class="nav-link text-white py-1" href="{{ url_for('trees.index') }}"><i
+                                            class="bi-tree-fill me-2"></i> {{ t('trees', session.get('lang', 'en'))
+                                        }}</a>
                                 </div>
                             </details>
                         </li>
-                        <li><a class="nav-link text-white" href="{{ url_for('activities.index') }}"><i class="bi-list-task"></i> {{ t('activities', session.get('lang', 'en')) }}</a></li>
+                        <li><a class="nav-link text-white" href="{{ url_for('activities.index') }}"><i
+                                    class="bi-list-task"></i> {{ t('activities', session.get('lang', 'en')) }}</a></li>
                         {% if session.get('role') == 'admin' %}
-                        <li><a class="nav-link text-white" href="{{ url_for('users.index') }}"><i class="bi-people-fill"></i> {{ t('users', session.get('lang', 'en')) }}</a></li>
+                        <li><a class="nav-link text-white" href="{{ url_for('users.index') }}"><i
+                                    class="bi-people-fill"></i> {{ t('users', session.get('lang', 'en')) }}</a></li>
                         {% endif %}
                     </ul>
-                    
+
                     <!-- Spacer to push Language & Theme to bottom -->
                     <div class="flex-grow-1"></div>
-                    
+
                     <!-- Language & Theme at bottom of sidebar (Footer) -->
                     <div class="p-3 mt-auto">
                         <div class="mb-2">
-                            <small class="text-white-50">{{ t('language', session.get('lang', 'en')) }}:</small>
+                            <!-- <small class="text-white-50">{{ t('language', session.get('lang', 'en')) }}:</small> -->
                             <div class="btn-group btn-group-sm mt-1" role="group" aria-label="Language Selection">
-                                <a href="?lang=en" class="btn btn-outline-light btn-sm {% if session.get('lang', 'en') == 'en' %}active{% endif %}">EN</a>
-                                <a href="?lang=ar" class="btn btn-outline-light btn-sm {% if session.get('lang', 'en') == 'ar' %}active{% endif %}">AR</a>
-                                <a href="?lang=fr" class="btn btn-outline-light btn-sm {% if session.get('lang', 'en') == 'fr' %}active{% endif %}">FR</a>
+                                <a href="?lang=en"
+                                    class="btn btn-outline-light btn-sm {% if session.get('lang', 'en') == 'en' %}active{% endif %}">EN</a>
+                                <a href="?lang=ar"
+                                    class="btn btn-outline-light btn-sm {% if session.get('lang', 'en') == 'ar' %}active{% endif %}">AR</a>
+                                <a href="?lang=fr"
+                                    class="btn btn-outline-light btn-sm {% if session.get('lang', 'en') == 'fr' %}active{% endif %}">FR</a>
+                            </div>
+                        </div>
+                        <div class="mb-2">
+                            <!-- <small class="text-white-50">{{ t('theme', session.get('lang', 'en')) }}:</small> -->
+                            <div class="btn-group btn-group-sm" role="group" aria-label="Theme Selection">
+                                <a href="/dashboard/set-theme/minty"
+                                    class="btn btn-outline-light btn-sm {% if session.get('theme', 'minty') == 'minty' %}active{% endif %}">Light</a>
+                                <a href="/dashboard/set-theme/darkly"
+                                    class="btn btn-outline-light btn-sm {% if session.get('theme', 'minty') == 'darkly' %}active{% endif %}">Dark</a>
                             </div>
                         </div>
                         <div>
-                            <small class="text-white-50">{{ t('theme', session.get('lang', 'en')) }}:</small><br>
-                            <select onchange="window.location.href='/dashboard/set-theme/' + this.value" class="form-select form-select-sm bg-primary text-white border-light">
-                                <option value="minty" {% if session.get('theme', 'minty') == 'minty' %}selected{% endif %}>Minty (Light)</option>
-                                <option value="darkly" {% if session.get('theme') == 'darkly' %}selected{% endif %}>Darkly (Dark)</option>
-                                <option value="cerulean" {% if session.get('theme') == 'cerulean' %}selected{% endif %}>Cerulean</option>
-                                <option value="cosmo" {% if session.get('theme') == 'cosmo' %}selected{% endif %}>Cosmo</option>
-                                <option value="flatly" {% if session.get('theme') == 'flatly' %}selected{% endif %}>Flatly</option>
-                                <option value="journal" {% if session.get('theme') == 'journal' %}selected{% endif %}>Journal</option>
-                                <option value="litera" {% if session.get('theme') == 'litera' %}selected{% endif %}>Litera</option>
-                                <option value="lumen" {% if session.get('theme') == 'lumen' %}selected{% endif %}>Lumen</option>
-                                <option value="lux" {% if session.get('theme') == 'lux' %}selected{% endif %}>Lux</option>
-                                <option value="materia" {% if session.get('theme') == 'materia' %}selected{% endif %}>Materia</option>
-                                <option value="pulse" {% if session.get('theme') == 'pulse' %}selected{% endif %}>Pulse</option>
-                                <option value="sandstone" {% if session.get('theme') == 'sandstone' %}selected{% endif %}>Sandstone</option>
-                                <option value="simplex" {% if session.get('theme') == 'simplex' %}selected{% endif %}>Simplex</option>
-                                <option value="sketchy" {% if session.get('theme') == 'sketchy' %}selected{% endif %}>Sketchy</option>
-                                <option value="spacelab" {% if session.get('theme') == 'spacelab' %}selected{% endif %}>Spacelab</option>
-                                <option value="united" {% if session.get('theme') == 'united' %}selected{% endif %}>United</option>
-                                <option value="yeti" {% if session.get('theme') == 'yeti' %}selected{% endif %}>Yeti</option>
-                                <option value="cyborg" {% if session.get('theme') == 'cyborg' %}selected{% endif %}>Cyborg (Dark)</option>
-                                <option value="solar" {% if session.get('theme') == 'solar' %}selected{% endif %}>Solar (Dark)</option>
-                                <option value="superhero" {% if session.get('theme') == 'superhero' %}selected{% endif %}>Superhero (Dark)</option>
+                            <!-- <small class="text-white-50">{{ t('more_themes', session.get('lang', 'en')) }}:</small><br> -->
+                            <select onchange="window.location.href='/dashboard/set-theme/' + this.value"
+                                class="form-select form-select-sm bg-primary text-white border-light">
+                                <option value="minty" {% if session.get('theme', 'minty' )=='minty' %}selected{% endif
+                                    %}>Minty (Light)</option>
+                                <option value="darkly" {% if session.get('theme')=='darkly' %}selected{% endif %}>Darkly
+                                    (Dark)</option>
+                                <option value="cerulean" {% if session.get('theme')=='cerulean' %}selected{% endif %}>
+                                    Cerulean</option>
+                                <option value="cosmo" {% if session.get('theme')=='cosmo' %}selected{% endif %}>Cosmo
+                                </option>
+                                <option value="flatly" {% if session.get('theme')=='flatly' %}selected{% endif %}>Flatly
+                                </option>
+                                <option value="journal" {% if session.get('theme')=='journal' %}selected{% endif %}>
+                                    Journal</option>
+                                <option value="litera" {% if session.get('theme')=='litera' %}selected{% endif %}>Litera
+                                </option>
+                                <option value="lumen" {% if session.get('theme')=='lumen' %}selected{% endif %}>Lumen
+                                </option>
+                                <option value="lux" {% if session.get('theme')=='lux' %}selected{% endif %}>Lux</option>
+                                <option value="materia" {% if session.get('theme')=='materia' %}selected{% endif %}>
+                                    Materia</option>
+                                <option value="pulse" {% if session.get('theme')=='pulse' %}selected{% endif %}>Pulse
+                                </option>
+                                <option value="sandstone" {% if session.get('theme')=='sandstone' %}selected{% endif %}>
+                                    Sandstone</option>
+                                <option value="simplex" {% if session.get('theme')=='simplex' %}selected{% endif %}>
+                                    Simplex</option>
+                                <option value="sketchy" {% if session.get('theme')=='sketchy' %}selected{% endif %}>
+                                    Sketchy</option>
+                                <option value="spacelab" {% if session.get('theme')=='spacelab' %}selected{% endif %}>
+                                    Spacelab</option>
+                                <option value="united" {% if session.get('theme')=='united' %}selected{% endif %}>United
+                                </option>
+                                <option value="yeti" {% if session.get('theme')=='yeti' %}selected{% endif %}>Yeti
+                                </option>
+                                <option value="cyborg" {% if session.get('theme')=='cyborg' %}selected{% endif %}>Cyborg
+                                    (Dark)</option>
+                                <option value="solar" {% if session.get('theme')=='solar' %}selected{% endif %}>Solar
+                                    (Dark)</option>
+                                <option value="superhero" {% if session.get('theme')=='superhero' %}selected{% endif %}>
+                                    Superhero (Dark)</option>
                             </select>
                         </div>
                     </div>
                 </div>
             </nav>
             {% endif %}
-            
+
             <!-- Main Content -->
             <main class="{% if session.get('username') %}col-md-9 ms-sm-auto col-lg-10{% else %}col-12{% endif %}">
                 {% if session.get('username') %}
                 <!-- Top Header with User & Logout -->
                 <nav class="navbar navbar-light bg-white shadow-sm mb-4">
                     <div class="container-fluid">
-                        <span class="navbar-text"><i class="bi-person-circle"></i> {{ session.get('username') }} ({{ t(session.get('role'), session.get('lang', 'en')) }})</span>
-                        <a class="nav-link d-inline" href="{{ url_for('auth.logout') }}"><i class="bi-box-arrow-right"></i> {{ t('logout', session.get('lang', 'en')) }}</a>
+                        <span class="navbar-text"><i class="bi-person-circle"></i> {{ session.get('username') }} ({{
+                            t(session.get('role'), session.get('lang', 'en')) }})</span>
+                        <a class="nav-link d-inline" href="{{ url_for('auth.logout') }}"><i
+                                class="bi-box-arrow-right"></i> {{ t('logout', session.get('lang', 'en')) }}</a>
                     </div>
                 </nav>
                 {% endif %}
-                
+
                 <div class="container-fluid px-4">
                     {% with messages = get_flashed_messages(with_categories=true) %}
-                        {% if messages %}
-                            {% for category, message in messages %}
-                                <div class="alert alert-{{ category }}">
+                    {% if messages %}
+                    {% for category, message in messages %}
+                    <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
+                        <div class="toast align-items-center text-white bg-{{ category }} border-success border-1 fade show"
+                            role="alert" aria-live="assertive" aria-atomic="true" id="toast{{ loop.index }}">
+                            <div class="d-flex">
+                                <div class="toast-body">
                                     {{ message }}
                                 </div>
+                                <button type="button" class="btn-close btn-close-white me-2 m-auto"
+                                    data-bs-dismiss="toast" aria-label="Close"></button>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                    <script>
+                        setTimeout(function () {
+                            {% for category, message in messages %}
+                            var toastEl = document.getElementById('toast{{ loop.index }}');
+                            if (toastEl) {
+                                var toast = new bootstrap.Toast(toastEl, { delay: 5000 });
+                                toast.hide();
+                            }
                             {% endfor %}
-                        {% endif %}
+                        }, 5000);
+                    </script>
+                    {% endif %}
                     {% endwith %}
-                    
+
                     {% block content %}{% endblock %}
                 </div>
             </main>
         </div>
     </div>
 </body>
+
 </html>

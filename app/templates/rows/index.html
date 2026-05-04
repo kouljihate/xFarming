@@ -10,7 +10,8 @@
 <button type="button" class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#addRowModal">
     <i class="bi-plus-circle"></i> {{ t('add', session.get('lang', 'en')) }} {{ t('rows', session.get('lang', 'en')) }}
 </button>
-<button type="button" class="btn btn-outline-primary mb-3 ms-2" data-bs-toggle="modal" data-bs-target="#bulkAddRowModal">
+<button type="button" class="btn btn-outline-primary mb-3 ms-2" data-bs-toggle="modal"
+    data-bs-target="#bulkAddRowModal">
     <i class="bi-stack"></i> {{ t('bulk_add', session.get('lang', 'en')) }} {{ t('rows', session.get('lang', 'en')) }}
 </button>
 {% endif %}
@@ -67,8 +68,8 @@
 </div>
 {% else %}
 <div class="text-center py-5">
-    <h1 class="display-1 text-muted">ZERO</h1>
-    <p class="lead text-muted">No rows found</p>
+    <h1 class="display-1 text-muted">No Row Found</h1>
+    <!-- <p class="lead text-muted">No rows found</p> -->
     {% if session.get('role') == 'admin' %}
     <button type="button" class="btn btn-primary mt-3" data-bs-toggle="modal" data-bs-target="#addRowModal">
         <i class="bi-plus-circle"></i> Add Your First Row

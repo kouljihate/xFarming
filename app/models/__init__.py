@@ -2,13 +2,14 @@ from datetime import datetime
 from bson import ObjectId
 
 class Land:
-    def __init__(self, name, latitude, longitude, soil_type, area, boundaries):
+    def __init__(self, name, latitude, longitude, soil_type, area, boundaries, sectors=None):
         self.name = name
         self.latitude = latitude
         self.longitude = longitude
         self.soil_type = soil_type
         self.area = area
         self.boundaries = boundaries
+        self.sectors = sectors or []
         self.created_at = datetime.utcnow()
     
     def to_dict(self):
@@ -19,6 +20,7 @@ class Land:
             'soil_type': self.soil_type,
             'area': self.area,
             'boundaries': self.boundaries,
+            'sectors': self.sectors,
             'created_at': self.created_at
         }
 

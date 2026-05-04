@@ -383,3 +383,78 @@ def delete_tree(land_id, sector_id, zone_id, row_id, tree_id):
         flash('Tree deleted successfully!', 'success')
     
     return redirect(url_for('lands.detail', land_id=land_id))
+
+@lands_bp.route('/<land_id>/upload_photo', methods=['POST'])
+def upload_photo(land_id):
+    if 'user_id' not in session or session.get('role') not in ['admin', 'worker']:
+        abort(403)
+    
+    db = get_db()
+    land = db.lands.find_one({'_id': ObjectId(land_id)})
+    if not land:
+        abort(404)
+    
+    photos = request.files.getlist('photos')
+    descriptions = request.form.getlist('descriptions[]')
+    
+    uploaded_photos = land.get('photos', [])
+    
+    for i, photo in enumerate(photos):
+        if photo and photo.filename:
+            filename = secure_filename(photo.filename)
+            timestamp = datetime.now().strftime('%Y%m%d_%H%M%S_')
+            new_filename = timestamp + filename
+            photo_path = os.path.join(UPLOAD_FOLDER, new_filename)
+            photo.save(photo_path)
+            
+            description = descriptions[i] if i < len(descriptions) else ''
+            
+            uploaded_photos.append({
+                'filename': new_filename,
+                'path': f'/static/uploads/lands/{new_filename}',
+                'description': description,
+                'uploaded_at': datetime.now().isoformat()
+            })
+    
+    db.lands.update_one(
+        {'_id': ObjectId(land_id)},
+        {'$set': {'photos': uploaded_photos}}
+    )
+    
+    log_message('info', f'Uploaded {len(photos)} photo(s) to land', session.get('user_id'), session.get('username'))
+    flash('Photos uploaded successfully!', 'success')
+    return redirect(url_for('lands.detail', land_id=land_id))
+
+@lands_bp.route('/<land_id>/delete_photo/<filename>', methods=['POST'])
+def delete_photo(land_id, filename):
+    if 'user_id' not in session or session.get('role') not in ['admin', 'worker']:
+        abort(403)
+    
+    db = get_db()
+    land = db.lands.find_one({'_id': ObjectId(land_id)})
+    if not land:
+        abort(404)
+    
+    photos = land.get('photos', [])
+    photo_to_delete = None
+    
+    for photo in photos:
+        if photo['filename'] == filename:
+            photo_to_delete = photo
+            break
+    
+    if photo_to_delete:
+        file_path = os.path.join(UPLOAD_FOLDER, filename)
+        if os.path.exists(file_path):
+            os.remove(file_path)
+        
+        photos = [p for p in photos if p['filename'] != filename]
+        db.lands.update_one(
+            {'_id': ObjectId(land_id)},
+            {'$set': {'photos': photos}}
+        )
+        
+        log_message('warning', f'Deleted photo {filename} from land', session.get('user_id'), session.get('username'))
+        flash('Photo deleted successfully!', 'success')
+    
+    return redirect(url_for('lands.detail', land_id=land_id))

@@ -41,17 +41,22 @@
             <tr>
                 <td><i class="bi-tree-fill"></i> {{ tree.name }}</td>
                 <td>{{ tree.crop_variety or '-' }}</td>
-                <td><span class="badge bg-{{ 'success' if tree.health_status == 'good' else 'warning' if tree.health_status == 'fair' else 'danger' }}">{{ tree.health_status or 'good' }}</span></td>
+                <td><span
+                        class="badge bg-{{ 'success' if tree.health_status == 'good' else 'warning' if tree.health_status == 'fair' else 'danger' }}">{{
+                        tree.health_status or 'good' }}</span></td>
                 <td>{{ tree.row.name if tree.row else '' }}</td>
                 <td>{{ tree.row.zone.name if tree.row and tree.row.zone else '' }}</td>
                 <td>{{ tree.row.zone.sector.name if tree.row and tree.row.zone and tree.row.zone.sector else '' }}</td>
                 <td>
-                    <a href="{{ url_for('trees.detail', tree_id=tree._id) }}" class="btn btn-sm btn-primary"><i class="bi-eye"></i></a>
+                    <a href="{{ url_for('trees.detail', tree_id=tree._id) }}" class="btn btn-sm btn-primary"><i
+                            class="bi-eye"></i></a>
                     {% if session.get('role') == 'admin' %}
-                    <button type="button" class="btn btn-sm btn-warning" data-bs-toggle="modal" data-bs-target="#editTreeModal{{ tree._id }}">
+                    <button type="button" class="btn btn-sm btn-warning" data-bs-toggle="modal"
+                        data-bs-target="#editTreeModal{{ tree._id }}">
                         <i class="bi-pencil"></i>
                     </button>
-                    <button type="button" class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#deleteTreeModal{{ tree._id }}">
+                    <button type="button" class="btn btn-sm btn-danger" data-bs-toggle="modal"
+                        data-bs-target="#deleteTreeModal{{ tree._id }}">
                         <i class="bi-trash"></i>
                     </button>
                     {% endif %}
@@ -63,8 +68,8 @@
 </div>
 {% else %}
 <div class="text-center py-5">
-    <h1 class="display-1 text-muted">ZERO</h1>
-    <p class="lead text-muted">No trees found</p>
+    <h1 class="display-1 text-muted">No Tree Found</h1>
+    <!-- <p class="lead text-muted">No trees found</p> -->
     {% if session.get('role') == 'admin' %}
     <button type="button" class="btn btn-primary mt-3" data-bs-toggle="modal" data-bs-target="#addTreeModal">
         <i class="bi-plus-circle"></i> Plant Your First Tree
@@ -80,7 +85,8 @@
         <div class="modal-content">
             <form method="POST" action="{{ url_for('trees.add') }}">
                 <div class="modal-header">
-                    <h5 class="modal-title">{{ t('add', session.get('lang', 'en')) }} {{ t('trees', session.get('lang', 'en')) }}</h5>
+                    <h5 class="modal-title">{{ t('add', session.get('lang', 'en')) }} {{ t('trees', session.get('lang',
+                        'en')) }}</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
@@ -96,11 +102,13 @@
                             </div>
                             <div class="mb-3">
                                 <label class="form-label">Species</label>
-                                <input type="text" class="form-control" name="species" placeholder="e.g., Persea americana">
+                                <input type="text" class="form-control" name="species"
+                                    placeholder="e.g., Persea americana">
                             </div>
                             <div class="mb-3">
                                 <label class="form-label">Variety</label>
-                                <input type="text" class="form-control" name="crop_variety" placeholder="e.g., Hass, Fuerte">
+                                <input type="text" class="form-control" name="crop_variety"
+                                    placeholder="e.g., Hass, Fuerte">
                             </div>
                             <div class="mb-3">
                                 <label class="form-label">Planting Date</label>
@@ -132,7 +140,8 @@
                                 <label class="form-label">Row</label>
                                 <select class="form-select" name="row_id" required>
                                     {% for row in rows %}
-                                    <option value="{{ row._id }}">{{ row.name }} ({{ row.zone.name if row.zone else 'Unknown' }})</option>
+                                    <option value="{{ row._id }}">{{ row.name }} ({{ row.zone.name if row.zone else
+                                        'Unknown' }})</option>
                                     {% endfor %}
                                 </select>
                             </div>
@@ -162,7 +171,8 @@
                         <label class="form-label">Row</label>
                         <select class="form-select" name="row_id" required>
                             {% for row in rows %}
-                            <option value="{{ row._id }}">{{ row.name }} ({{ row.zone.name if row.zone else 'Unknown' }})</option>
+                            <option value="{{ row._id }}">{{ row.name }} ({{ row.zone.name if row.zone else 'Unknown'
+                                }})</option>
                             {% endfor %}
                         </select>
                     </div>
@@ -200,41 +210,52 @@
                             </div>
                             <div class="mb-3">
                                 <label class="form-label">Tree Number</label>
-                                <input type="text" class="form-control" name="tree_number" value="{{ tree.tree_number or '' }}">
+                                <input type="text" class="form-control" name="tree_number"
+                                    value="{{ tree.tree_number or '' }}">
                             </div>
                             <div class="mb-3">
                                 <label class="form-label">Species</label>
-                                <input type="text" class="form-control" name="species" value="{{ tree.basic_info.species if tree.basic_info else '' }}">
+                                <input type="text" class="form-control" name="species"
+                                    value="{{ tree.basic_info.species if tree.basic_info else '' }}">
                             </div>
                             <div class="mb-3">
                                 <label class="form-label">Variety</label>
-                                <input type="text" class="form-control" name="crop_variety" value="{{ tree.basic_info.variety if tree.basic_info else '' }}">
+                                <input type="text" class="form-control" name="crop_variety"
+                                    value="{{ tree.basic_info.variety if tree.basic_info else '' }}">
                             </div>
                             <div class="mb-3">
                                 <label class="form-label">Planting Date</label>
-                                <input type="date" class="form-control" name="planting_date" value="{{ tree.basic_info.planting_date if tree.basic_info else '' }}">
+                                <input type="date" class="form-control" name="planting_date"
+                                    value="{{ tree.basic_info.planting_date if tree.basic_info else '' }}">
                             </div>
                             <div class="mb-3">
                                 <label class="form-label">Age (years)</label>
-                                <input type="number" class="form-control" name="age" value="{{ tree.basic_info.age_years if tree.basic_info else 0 }}">
+                                <input type="number" class="form-control" name="age"
+                                    value="{{ tree.basic_info.age_years if tree.basic_info else 0 }}">
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="mb-3">
                                 <label class="form-label">Status (metadata)</label>
                                 <select class="form-select" name="status">
-                                    <option value="healthy" {% if tree.metadata and tree.metadata.status == 'healthy' %}selected{% endif %}>Healthy</option>
-                                    <option value="needs_attention" {% if tree.metadata and tree.metadata.status == 'needs_attention' %}selected{% endif %}>Needs Attention</option>
-                                    <option value="critical" {% if tree.metadata and tree.metadata.status == 'critical' %}selected{% endif %}>Critical</option>
+                                    <option value="healthy" {% if tree.metadata and tree.metadata.status=='healthy'
+                                        %}selected{% endif %}>Healthy</option>
+                                    <option value="needs_attention" {% if tree.metadata and
+                                        tree.metadata.status=='needs_attention' %}selected{% endif %}>Needs Attention
+                                    </option>
+                                    <option value="critical" {% if tree.metadata and tree.metadata.status=='critical'
+                                        %}selected{% endif %}>Critical</option>
                                 </select>
                             </div>
                             <div class="mb-3">
                                 <label class="form-label">Latitude</label>
-                                <input type="number" step="any" class="form-control" name="latitude" value="{{ tree.location_precise.latitude if tree.location_precise else 0.0 }}">
+                                <input type="number" step="any" class="form-control" name="latitude"
+                                    value="{{ tree.location_precise.latitude if tree.location_precise else 0.0 }}">
                             </div>
                             <div class="mb-3">
                                 <label class="form-label">Longitude</label>
-                                <input type="number" step="any" class="form-control" name="longitude" value="{{ tree.location_precise.longitude if tree.location_precise else 0.0 }}">
+                                <input type="number" step="any" class="form-control" name="longitude"
+                                    value="{{ tree.location_precise.longitude if tree.location_precise else 0.0 }}">
                             </div>
                         </div>
                     </div>
@@ -252,7 +273,8 @@
 <div class="modal fade" id="deleteTreeModal{{ tree._id }}" tabindex="-1">
     <div class="modal-dialog">
         <div class="modal-content">
-            <form method="POST" action="{{ url_for('lands.delete_tree', land_id=tree.row.zone.sector.land._id if tree.row and tree.row.zone and tree.row.zone.sector and tree.row.zone.sector.land else '', sector_id=tree.row.zone.sector._id if tree.row and tree.row.zone and tree.row.zone.sector else '', zone_id=tree.row.zone._id if tree.row and tree.row.zone else '', row_id=tree.row._id if tree.row else '', tree_id=tree._id) }}">
+            <form method="POST"
+                action="{{ url_for('lands.delete_tree', land_id=tree.row.zone.sector.land._id if tree.row and tree.row.zone and tree.row.zone.sector and tree.row.zone.sector.land else '', sector_id=tree.row.zone.sector._id if tree.row and tree.row.zone and tree.row.zone.sector else '', zone_id=tree.row.zone._id if tree.row and tree.row.zone else '', row_id=tree.row._id if tree.row else '', tree_id=tree._id) }}">
                 <div class="modal-header">
                     <h5 class="modal-title">Delete {{ tree.name }}</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
