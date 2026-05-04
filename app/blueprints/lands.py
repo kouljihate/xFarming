@@ -18,13 +18,20 @@ def add():
     db = get_db()
     
     try:
+        # Process legal types from comma-separated string
+        legal_types_str = request.form.get('legal_types', '')
+        if legal_types_str:
+            legal_types = [t.strip() for t in legal_types_str.split(',') if t.strip()]
+        else:
+            legal_types = ['Document Administratif', 'Malkiya', 'Titre']
+        
         land_data = LandModel(
             farm_id=request.form.get('farm_id', ''),
             name=request.form.get('name', ''),
             legal={
-                'type': ['Document Administratif', 'Malkiya', 'Titre'],
-                'deleivered': '',
-                'date': ''
+                'type': legal_types,
+                'deleivered': request.form.get('legal_delivered', ''),
+                'date': request.form.get('legal_date', '')
             },
             owner={
                 'party_id': 'P001',
