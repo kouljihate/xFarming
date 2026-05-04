@@ -40,7 +40,7 @@ def add():
                 'date': request.form.get('legal_date', '')
             },
             owner={
-                'party_id': 'P001',
+                'party_id': request.form.get('owner_party_id', 'P001'),
                 'name': request.form.get('owner_name', ''),
                 'contact': {
                     'email': request.form.get('owner_email', ''),
@@ -105,6 +105,7 @@ def edit(land_id):
         
         # Build owner dict
         owner = land.get('owner', {})
+        owner['party_id'] = request.form.get('owner_party_id', owner.get('party_id', 'P001'))
         owner['name'] = request.form.get('owner_name', '')
         if 'contact' not in owner:
             owner['contact'] = {}

@@ -5,7 +5,7 @@ import os
 from app.config import Config
 from app.translations import t as t_func
 
-__version__ = '0.7.0'
+__version__ = '0.7.1'
 
 bootstrap = Bootstrap()
 

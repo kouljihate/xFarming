@@ -18,17 +18,26 @@
                                 <label class="form-label">{{ t('land_name', session.get('lang', 'en')) }}</label>
                                 <input type="text" class="form-control" name="name" value="{{ land.name }}" required>
                             </div>
-                            <div class="mb-3">
-                                <label class="form-label">Owner Name</label>
-                                <input type="text" class="form-control" name="owner_name" value="{{ land.owner.name if land.owner else '' }}">
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label">Owner Email</label>
-                                <input type="email" class="form-control" name="owner_email" value="{{ land.owner.contact.email if land.owner and land.owner.contact else '' }}">
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label">Owner Phone</label>
-                                <input type="tel" class="form-control" name="owner_phone" value="{{ land.owner.contact.phone if land.owner and land.owner.contact else '' }}">
+                            
+                            <!-- Owner Information Group -->
+                            <div class="border p-3 rounded mb-3">
+                                <h6 class="mb-3"><i class="bi-person-badge me-2"></i>Owner Information</h6>
+                                <div class="mb-3">
+                                    <label class="form-label">Party ID</label>
+                                    <input type="text" class="form-control" name="owner_party_id" value="{{ land.owner.party_id if land.owner else 'P001' }}">
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Owner Name</label>
+                                    <input type="text" class="form-control" name="owner_name" value="{{ land.owner.name if land.owner else '' }}">
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Owner Email</label>
+                                    <input type="email" class="form-control" name="owner_email" value="{{ land.owner.contact.email if land.owner and land.owner.contact else '' }}">
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Owner Phone</label>
+                                    <input type="tel" class="form-control" name="owner_phone" value="{{ land.owner.contact.phone if land.owner and land.owner.contact else '' }}">
+                                </div>
                             </div>
                         </div>
                         <div class="col-md-6">

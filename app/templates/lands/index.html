@@ -3,7 +3,7 @@
 {% block title %}{{ t('lands', session.get('lang', 'en')) }} - xFarming{% endblock %}
 
 {% block content %}
-<a href="{{ url_for('main.index') }}" class="btn btn-secondary mb-3">{{ t('back', session.get('lang', 'en')) }}</a>
+<a href="{{ url_for('lands.index') }}" class="btn btn-secondary mb-3">{{ t('back', session.get('lang', 'en')) }}</a>
 <h2>{{ t('lands', session.get('lang', 'en')) }}</h2>
 
 {% if session.get('role') in ['admin', 'worker'] %}
@@ -40,12 +40,15 @@
                 <td>{{ land.farm_id or '-' }}</td>
                 <td>{{ land.owner.name if land.owner else '-' }}</td>
                 <td>
-                    <a href="{{ url_for('lands.detail', land_id=land._id) }}" class="btn btn-sm btn-primary"><i class="bi-eye"></i></a>
+                    <a href="{{ url_for('lands.detail', land_id=land._id) }}" class="btn btn-sm btn-primary"><i
+                            class="bi-eye"></i></a>
                     {% if session.get('role') == 'admin' %}
-                    <button type="button" class="btn btn-sm btn-warning" data-bs-toggle="modal" data-bs-target="#editLandModal{{ land._id }}">
+                    <button type="button" class="btn btn-sm btn-warning" data-bs-toggle="modal"
+                        data-bs-target="#editLandModal{{ land._id }}">
                         <i class="bi-pencil"></i>
                     </button>
-                    <button type="button" class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#deleteLandModal{{ land._id }}">
+                    <button type="button" class="btn btn-sm btn-danger" data-bs-toggle="modal"
+                        data-bs-target="#deleteLandModal{{ land._id }}">
                         <i class="bi-trash"></i>
                     </button>
                     {% endif %}

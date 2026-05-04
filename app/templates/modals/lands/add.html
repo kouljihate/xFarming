@@ -43,17 +43,27 @@
                                 <label class="form-label"><i class="bi-geo-alt me-1"></i>{{ t('land_name', session.get('lang', 'en')) }}</label>
                                 <input type="text" class="form-control" name="name" placeholder="Green Valley Farm" required>
                             </div>
-                            <div class="mb-3">
-                                <label class="form-label"><i class="bi-person me-1"></i>Owner Name</label>
-                                <input type="text" class="form-control" name="owner_name" placeholder="John Smith">
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label"><i class="bi-envelope me-1"></i>Owner Email</label>
-                                <input type="email" class="form-control" name="owner_email" placeholder="john@example.com">
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label"><i class="bi-phone me-1"></i>Owner Phone</label>
-                                <input type="tel" class="form-control" name="owner_phone" placeholder="+1-555-123-4567">
+                            
+                            <!-- Owner Information Group -->
+                            <div class="border p-3 rounded mb-3">
+                                <h6 class="mb-3"><i class="bi-person-badge me-2"></i>Owner Information</h6>
+                                <div class="mb-3">
+                                    <label class="form-label"><i class="bi-123 me-1"></i>Party ID</label>
+                                    <input type="text" class="form-control" name="owner_party_id" placeholder="P001" value="P001">
+                                    <small class="text-muted">Unique identifier for the owner party</small>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label"><i class="bi-person me-1"></i>Owner Name</label>
+                                    <input type="text" class="form-control" name="owner_name" placeholder="John Smith">
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label"><i class="bi-envelope me-1"></i>Owner Email</label>
+                                    <input type="email" class="form-control" name="owner_email" placeholder="john@example.com">
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label"><i class="bi-phone me-1"></i>Owner Phone</label>
+                                    <input type="tel" class="form-control" name="owner_phone" placeholder="+1-555-123-4567">
+                                </div>
                             </div>
                         </div>
 

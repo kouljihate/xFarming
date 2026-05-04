@@ -1,15 +1,21 @@
 # xFarming - Version History
 
+## [0.7.1] - 2026-05-04
+
+### Added
+- Automated version bump for commit
+
+
 ## [0.7.0] - 2026-05-04
 
 ### Added
-- Updated multiple templates and static assets
-- Modified translations and data models
-- Enhanced UI/UX components
+- Owner Information group in Add/Edit Land Basic Info tab
+- Party ID field for owner identification
+- Grouped owner fields (Party ID, Name, Email, Phone) in UI
 
 ### Changed
-- Refactored blueprint logic and template structures
-- Updated custom CSS styles
+- Backend now uses form-submitted Party ID instead of hardcoded value
+- Updated Add/Edit Land modals to align with LandModel owner structure
 
 ### Fixed
 - Addressed template syntax and routing issues
