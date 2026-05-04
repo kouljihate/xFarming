@@ -123,6 +123,7 @@
 <!-- Lands List (Compact) -->
 <div class="mt-4">
     <h5><i class="bi-list-ul me-2"></i>Lands List</h5>
+    {% if lands %}
     <div class="row">
         {% for land in lands %}
         <div class="col-md-4 mb-3">
@@ -152,6 +153,17 @@
         </div>
         {% endfor %}
     </div>
+    {% else %}
+    <div class="text-center py-5">
+        <h1 class="display-1 text-muted">ZERO</h1>
+        <p class="lead text-muted">No lands found</p>
+        {% if session.get('role') in ['admin', 'worker'] %}
+        <button type="button" class="btn btn-success mt-3" data-bs-toggle="modal" data-bs-target="#addLandModal">
+            <i class="bi-plus-circle"></i> Add Your First Land
+        </button>
+        {% endif %}
+    </div>
+    {% endif %}
 </div>
 
 {% if session.get('role') in ['admin', 'worker'] %}

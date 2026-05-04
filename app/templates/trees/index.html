@@ -22,6 +22,7 @@
     </div>
 </form>
 
+{% if trees %}
 <div class="table-responsive">
     <table class="table table-striped">
         <thead>
@@ -60,6 +61,17 @@
         </tbody>
     </table>
 </div>
+{% else %}
+<div class="text-center py-5">
+    <h1 class="display-1 text-muted">ZERO</h1>
+    <p class="lead text-muted">No trees found</p>
+    {% if session.get('role') == 'admin' %}
+    <button type="button" class="btn btn-primary mt-3" data-bs-toggle="modal" data-bs-target="#addTreeModal">
+        <i class="bi-plus-circle"></i> Plant Your First Tree
+    </button>
+    {% endif %}
+</div>
+{% endif %}
 
 {% if session.get('role') == 'admin' %}
 <!-- Add Tree Modal -->

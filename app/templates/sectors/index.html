@@ -28,6 +28,7 @@
     </div>
 </form>
 
+{% if sectors %}
 <div class="table-responsive">
     <table class="table table-striped">
         <thead>
@@ -36,7 +37,6 @@
                 <th>Land</th>
                 <th>Zones</th>
                 <th>Actions</th>
-
             </tr>
         </thead>
         <tbody>
@@ -64,6 +64,17 @@
         </tbody>
     </table>
 </div>
+{% else %}
+<div class="text-center py-5">
+    <h1 class="display-1 text-muted">ZERO</h1>
+    <p class="lead text-muted">No sectors found</p>
+    {% if session.get('role') == 'admin' %}
+    <button type="button" class="btn btn-primary mt-3" data-bs-toggle="modal" data-bs-target="#addSectorModal">
+        <i class="bi-plus-circle"></i> Add Your First Sector
+    </button>
+    {% endif %}
+</div>
+{% endif %}
 
 {% if session.get('role') == 'admin' %}
 <!-- Add Sector Modal -->
