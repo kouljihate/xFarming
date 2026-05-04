@@ -115,7 +115,7 @@ class LandModel(BaseModel):
     farm_id: str = Field(default='', min_length=1, max_length=50)
     name: str = Field(..., min_length=1, max_length=100)
     legal: Optional[dict] = Field(default_factory=lambda: {
-        'type': [], 'delevered': '', 'date': ''
+        'type': ['Document Administratif', 'Malkiya', 'Titre'], 'deleivered': '', 'date': ''
     })
     owner: Optional[dict] = Field(default_factory=lambda: {
         'party_id': '', 'name': '', 'contact': {'email': '', 'phone': ''}

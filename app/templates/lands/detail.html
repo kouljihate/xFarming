@@ -14,16 +14,16 @@
     <div class="col-md-3">
         <div class="card text-white bg-primary">
             <div class="card-body">
-                <h5 class="card-title"><i class="bi-geo-alt"></i> Coordinates</h5>
-                <p class="card-text">{{ land.latitude }}, {{ land.longitude }}</p>
+                <h5 class="card-title"><i class="bi-geo-alt"></i> Farm ID</h5>
+                <p class="card-text">{{ land.farm_id or 'N/A' }}</p>
             </div>
         </div>
     </div>
     <div class="col-md-3">
         <div class="card text-white bg-success">
             <div class="card-body">
-                <h5 class="card-title"><i class="bi-layers"></i> Soil Type</h5>
-                <p class="card-text">{{ t(land.soil_type, session.get('lang', 'en')) }}</p>
+                <h5 class="card-title"><i class="bi-person"></i> Owner</h5>
+                <p class="card-text">{{ land.owner.name if land.owner else 'N/A' }}</p>
             </div>
         </div>
     </div>
@@ -31,7 +31,7 @@
         <div class="card text-white bg-info">
             <div class="card-body">
                 <h5 class="card-title"><i class="bi-aspect-ratio"></i> Area</h5>
-                <p class="card-text">{{ land.area }} ha</p>
+                <p class="card-text">{{ land.location.total_area.value if land.location and land.location.total_area else 0 }} acres</p>
             </div>
         </div>
     </div>
@@ -40,6 +40,48 @@
             <div class="card-body">
                 <h5 class="card-title"><i class="bi-grid-fill"></i> Sectors</h5>
                 <p class="card-text">{{ land.sector_count }}</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Land Details Card -->
+<div class="card mb-4">
+    <div class="card-body">
+        <h5 class="card-title">Land Information</h5>
+        <div class="row">
+            <div class="col-md-6">
+                <p><strong>Farm ID:</strong> {{ land.farm_id or 'N/A' }}</p>
+                <p><strong>Owner:</strong> {{ land.owner.name if land.owner else 'N/A' }}</p>
+                <p><strong>Email:</strong> {{ land.owner.contact.email if land.owner and land.owner.contact else 'N/A' }}</p>
+                <p><strong>Phone:</strong> {{ land.owner.contact.phone if land.owner and land.owner.contact else 'N/A' }}</p>
+                <p><strong>Legal Documents:</strong> 
+                    {% if land.legal and land.legal.type %}
+                        {{ land.legal.type|join(', ') }}
+                    {% else %}
+                        N/A
+                    {% endif %}
+                </p>
+            </div>
+            <div class="col-md-6">
+                <p><strong>Address:</strong> 
+                    {% if land.location and land.location.address %}
+                        {{ land.location.address.street or '' }}, {{ land.location.address.city or '' }}, 
+                        {{ land.location.address.state or '' }} {{ land.location.address.postal_code or '' }}, 
+                        {{ land.location.address.country or '' }}
+                    {% else %}
+                        N/A
+                    {% endif %}
+                </p>
+                <p><strong>Coordinates:</strong> 
+                    {% if land.location and land.location.coordinates %}
+                        {{ land.location.coordinates.latitude or 0 }}, {{ land.location.coordinates.longitude or 0 }}
+                    {% else %}
+                        N/A
+                    {% endif %}
+                </p>
+                <p><strong>Status:</strong> {{ land.metadata.status if land.metadata else 'N/A' }}</p>
+                <p><strong>Established:</strong> {{ land.metadata.established_date if land.metadata else 'N/A' }}</p>
             </div>
         </div>
     </div>

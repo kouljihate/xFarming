@@ -19,8 +19,29 @@ def add():
     
     try:
         land_data = LandModel(
+            farm_id=request.form.get('farm_id', ''),
             name=request.form.get('name', ''),
+            legal={
+                'type': ['Document Administratif', 'Malkiya', 'Titre'],
+                'deleivered': '',
+                'date': ''
+            },
+            owner={
+                'party_id': 'P001',
+                'name': request.form.get('owner_name', ''),
+                'contact': {
+                    'email': request.form.get('owner_email', ''),
+                    'phone': request.form.get('owner_phone', '')
+                }
+            },
             location={
+                'address': {
+                    'street': request.form.get('street', ''),
+                    'city': request.form.get('city', ''),
+                    'state': request.form.get('state', ''),
+                    'postal_code': request.form.get('postal_code', ''),
+                    'country': request.form.get('country', '')
+                },
                 'coordinates': {
                     'latitude': float(request.form.get('latitude', 0)),
                     'longitude': float(request.form.get('longitude', 0))
@@ -55,23 +76,48 @@ def edit(land_id):
     try:
         # Build location dict from form data
         location = land.get('location', {})
+        if 'address' not in location:
+            location['address'] = {}
+        location['address']['street'] = request.form.get('street', '')
+        location['address']['city'] = request.form.get('city', '')
+        location['address']['state'] = request.form.get('state', '')
+        location['address']['postal_code'] = request.form.get('postal_code', '')
+        location['address']['country'] = request.form.get('country', '')
+        
         location['coordinates'] = {
             'latitude': float(request.form.get('latitude', 0)),
             'longitude': float(request.form.get('longitude', 0))
         }
         location['total_area'] = {'value': float(request.form.get('area', 0)), 'unit': 'acres'}
         
+        # Build owner dict
+        owner = land.get('owner', {})
+        owner['name'] = request.form.get('owner_name', '')
+        if 'contact' not in owner:
+            owner['contact'] = {}
+        owner['contact']['email'] = request.form.get('owner_email', '')
+        owner['contact']['phone'] = request.form.get('owner_phone', '')
+        
         land_data = LandModel(
+            farm_id=request.form.get('farm_id', land.get('farm_id', '')),
             name=request.form.get('name', ''),
+            owner=owner,
             location=location,
+            legal={'type': ['Document Administratif', 'Malkiya', 'Titre'], 'deleivered': '', 'date': ''},
             metadata={'established_date': '', 'last_updated': '', 'status': 'active'}
         )
         LandModel.check_duplicate(db, land_data.name, exclude_id=land_id)
         
-        # Update only specific fields
+        # Update fields
         db.lands.update_one(
             {'_id': ObjectId(land_id)}, 
-            {'$set': {'name': land_data.name, 'location': location}}
+            {'$set': {
+                'farm_id': land_data.farm_id,
+                'name': land_data.name,
+                'owner': owner,
+                'location': location,
+                'legal': land_data.legal
+            }}
         )
         log_message('info', f"Updated land: {land_data.name}", session.get('user_id'), session.get('username'))
         flash('Land updated successfully!', 'success')
