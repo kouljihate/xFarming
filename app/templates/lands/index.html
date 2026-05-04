@@ -51,6 +51,10 @@
                         data-bs-target="#deleteLandModal{{ land._id }}">
                         <i class="bi-trash"></i>
                     </button>
+                    <button type="button" class="btn btn-sm btn-info" data-bs-toggle="modal"
+                        data-bs-target="#addSectorModal{{ land._id }}">
+                        <i class="bi-plus-circle"></i>
+                    </button>
                     {% endif %}
                 </td>
             </tr>
@@ -77,6 +81,7 @@
 {% for land in lands %}
 {% include "modals/lands/edit.html" %}
 {% include "modals/lands/delete.html" %}
+{% include "modals/sectors/add.html" %}
 {% endfor %}
 {% endif %}
 
