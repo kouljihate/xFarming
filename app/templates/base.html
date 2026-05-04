@@ -49,10 +49,12 @@
                     <!-- Language & Theme at bottom of sidebar (Footer) -->
                     <div class="p-3 mt-auto">
                         <div class="mb-2">
-                            <small class="text-white-50">{{ t('language', session.get('lang', 'en')) }}:</small><br>
-                            <a href="?lang=en" class="text-white-50">EN</a> | 
-                            <a href="?lang=ar" class="text-white-50">AR</a> | 
-                            <a href="?lang=fr" class="text-white-50">FR</a>
+                            <small class="text-white-50">{{ t('language', session.get('lang', 'en')) }}:</small>
+                            <div class="btn-group btn-group-sm mt-1" role="group" aria-label="Language Selection">
+                                <a href="?lang=en" class="btn btn-outline-light btn-sm {% if session.get('lang', 'en') == 'en' %}active{% endif %}">EN</a>
+                                <a href="?lang=ar" class="btn btn-outline-light btn-sm {% if session.get('lang', 'en') == 'ar' %}active{% endif %}">AR</a>
+                                <a href="?lang=fr" class="btn btn-outline-light btn-sm {% if session.get('lang', 'en') == 'fr' %}active{% endif %}">FR</a>
+                            </div>
                         </div>
                         <div>
                             <small class="text-white-50">{{ t('theme', session.get('lang', 'en')) }}:</small><br>
