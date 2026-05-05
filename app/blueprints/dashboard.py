@@ -1,5 +1,6 @@
 from flask import Blueprint, render_template, session, redirect, url_for, request
-import json
+import plotly.graph_objects as go
+import plotly.offline as pyo
 
 dashboard_bp = Blueprint('dashboard', __name__, url_prefix='/dashboard')
 dashboard_bp.strict_slashes = False
@@ -27,11 +28,14 @@ def index():
     
     recent_activities = list(db.activities.find().sort('date', -1).limit(10))
     
-    # Get all lands for the map
+    # Generate Plotly Mapbox of ALL Lands
     lands = list(db.lands.find())
     
-    # Prepare lands data for JSON
-    lands_data = []
+    lats = []
+    lngs = []
+    texts = []
+    custom_data = []
+    
     for land in lands:
         lat = land.get('latitude')
         lng = land.get('longitude')
@@ -40,22 +44,47 @@ def index():
         try:
             lat_f = float(lat)
             lng_f = float(lng)
+            lats.append(lat_f)
+            lngs.append(lng_f)
+            texts.append(land.get('name', 'Unknown'))
             sector_count = db.sectors.count_documents({'land_id': land['_id']})
-            lands_data.append({
-                'name': land.get('name', 'Unknown'),
-                'lat': lat_f,
-                'lng': lng_f,
-                'soil_type': land.get('soil_type', 'N/A'),
-                'area': land.get('area', 'N/A'),
-                'sectors': sector_count,
-                'boundaries': land.get('boundaries') if land.get('boundaries') else None
-            })
+            custom_data.append([land.get('soil_type', 'N/A'), land.get('area', 'N/A'), sector_count])
         except (ValueError, TypeError):
             continue
     
-    lands_json = json.dumps(lands_data)
+    if lats:
+        fig = go.Figure(go.Scattermapbox(
+            lat=lats,
+            lon=lngs,
+            mode='markers',
+            marker=go.scattermapbox.Marker(
+                size=14,
+                color='green'
+            ),
+            text=texts,
+            customdata=custom_data,
+            hovertemplate='<b>%{text}</b><br>' +
+                         'Soil Type: %{customdata[0]}<br>' +
+                         'Area: %{customdata[1]} acres<br>' +
+                         'Sectors: %{customdata[2]}<br>' +
+                         '<extra></extra>'
+        ))
+        
+        fig.update_layout(
+            mapbox=dict(
+                style='open-street-map',
+                center=dict(lat=sum(lats)/len(lats), lon=sum(lngs)/len(lngs)),
+                zoom=10
+            ),
+            margin=dict(t=10, l=10, r=10, b=10),
+            height=500
+        )
+        
+        map_html = pyo.plot(fig, output_type='div', include_plotlyjs=True)
+    else:
+        map_html = None
     
-    return render_template('dashboard/index.html', stats=stats, activities=recent_activities, lands_json=lands_json, lands_count=len(lands))
+    return render_template('dashboard/index.html', stats=stats, activities=recent_activities, map_html=map_html)
 
 @dashboard_bp.route('/set-theme/<theme>')
 def set_theme(theme):

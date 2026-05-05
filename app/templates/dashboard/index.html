@@ -2,15 +2,7 @@
 
 {% block title %}{{ t('dashboard', session.get('lang', 'en')) }} - xFarming{% endblock %}
 
-{% block extra_css %}
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-<style>
-    #lands-map {
-        height: 500px;
-        width: 100%;
-    }
-</style>
-{% endblock %}
+{% block extra_js %}{% endblock %}
 
 {% block content %}
 <h2>{{ t('dashboard', session.get('lang', 'en')) }}</h2>
@@ -125,62 +117,15 @@
         <div class="card-header">
             <h5 class="mb-0">Map of ALL Lands</h5>
         </div>
-        <div class="card-body" style="padding: 0;">
-            {% if lands_count > 0 %}
-            <div id="lands-map"></div>
+        <div class="card-body">
+            {% if map_html %}
+            <div style="height: 500px; width: 100%;">
+                {{ map_html | safe }}
+            </div>
             {% else %}
             <p class="text-center p-3">No lands available to display on map.</p>
             {% endif %}
         </div>
     </div>
 </div>
-{% endblock %}
-
-{% block extra_js %}
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        try {
-            var landsData = {{ lands_json | safe }};
-            console.log('Lands data:', landsData);
-            
-            if (landsData && landsData.length > 0) {
-                // Calculate center
-                var avgLat = landsData.reduce(function(sum, l) { return sum + l.lat; }, 0) / landsData.length;
-                var avgLng = landsData.reduce(function(sum, l) { return sum + l.lng; }, 0) / landsData.length;
-                
-                console.log('Map center:', avgLat, avgLng);
-                
-                // Create map
-                var map = L.map('lands-map').setView([avgLat, avgLng], 10);
-                
-                // Add OpenStreetMap tiles
-                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-                }).addTo(map);
-                
-                // Add markers for each land
-                landsData.forEach(function(land) {
-                    console.log('Adding marker for:', land.name, 'at', land.lat, land.lng);
-                    
-                    var popupContent = '<b>' + land.name + '</b><br>' +
-                        'Soil Type: ' + land.soil_type + '<br>' +
-                        'Area: ' + land.area + ' acres<br>' +
-                        'Sectors: ' + land.sectors;
-                    
-                    L.marker([land.lat, land.lng])
-                        .addTo(map)
-                        .bindPopup(popupContent)
-                        .bindTooltip(land.name);
-                });
-                
-                console.log('Map created successfully with', landsData.length, 'markers');
-            } else {
-                console.log('No lands data available');
-            }
-        } catch(e) {
-            console.error('Error creating map:', e);
-        }
-    });
-</script>
 {% endblock %}
