@@ -38,8 +38,12 @@ def index():
     custom_data = []
     
     for land in lands:
-        lat = land.get('latitude')
-        lng = land.get('longitude')
+        # Coordinates are nested in location.coordinates
+        location = land.get('location', {})
+        coordinates = location.get('coordinates', {})
+        lat = coordinates.get('latitude')
+        lng = coordinates.get('longitude')
+        
         if lat is None or lng is None:
             continue
         try:
@@ -49,7 +53,10 @@ def index():
             lngs.append(lng_f)
             texts.append(land.get('name', 'Unknown'))
             sector_count = db.sectors.count_documents({'land_id': land['_id']})
-            custom_data.append([land.get('soil_type', 'N/A'), land.get('area', 'N/A'), sector_count])
+            # Get area from nested structure
+            total_area = land.get('location', {}).get('total_area', {})
+            area = total_area.get('value', 'N/A') if isinstance(total_area, dict) else 'N/A'
+            custom_data.append([land.get('soil_type', 'N/A'), area, sector_count])
         except (ValueError, TypeError):
             continue
     
