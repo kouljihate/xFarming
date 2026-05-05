@@ -48,9 +48,6 @@
                 <td>
                     <a href="{{ url_for('sectors.detail', sector_id=sector._id) }}" class="btn btn-sm btn-primary"><i
                             class="bi-eye"></i></a>
-                    <a href="{{ url_for('zones.add', land_id=sector.land._id, sector_id=sector._id) }}" 
-                        class="btn btn-sm btn-success" title="Add Zone">
-                        <i class="bi-plus-circle"></i></a>
                     {% if session.get('role') == 'admin' %}
                     <button type="button" class="btn btn-sm btn-warning" data-bs-toggle="modal"
                         data-bs-target="#editSectorModal{{ sector._id }}">
@@ -60,6 +57,9 @@
                         data-bs-target="#deleteSectorModal{{ sector._id }}">
                         <i class="bi-trash"></i>
                     </button>
+                    <a href="{{ url_for('zones.add', land_id=sector.land._id, sector_id=sector._id) }}" 
+                        class="btn btn-sm btn-success" title="Add Zone">
+                        <i class="bi-plus-circle"></i></a>
                     {% endif %}
                 </td>
             </tr>
