@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block title %}Add Activity - xFarming{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card shadow">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0"><i class="bi-plus-circle me-2"></i>Add Activity</h5>
+            </div>
+            <div class="card-body">
+                <form method="POST">
+                    <div class="mb-3">
+                        <label for="type" class="form-label">Activity Type</label>
+                        <select class="form-select" id="type" name="type" required>
+                            <option value="">Select type...</option>
+                            <option value="land_created">Land Created</option>
+                            <option value="land_updated">Land Updated</option>
+                            <option value="sector_created">Sector Created</option>
+                            <option value="zone_created">Zone Created</option>
+                            <option value="row_created">Row Created</option>
+                            <option value="tree_created">Tree Created</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="notes" class="form-label">Notes</label>
+                        <textarea class="form-control" id="notes" name="notes" rows="3" placeholder="Enter activity notes..."></textarea>
+                    </div>
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-primary">Add Activity</button>
+                        <a href="{{ url_for('activities.index') }}" class="btn btn-outline-secondary">Cancel</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
