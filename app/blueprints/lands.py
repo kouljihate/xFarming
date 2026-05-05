@@ -148,20 +148,40 @@ def add_sector(land_id):
     
     if request.method == 'POST':
         db = get_db()
-        sector_name = request.form.get('name')
-        land = db.lands.find_one({'_id': ObjectId(land_id)})
-        if land:
-            if 'sectors' not in land:
-                land['sectors'] = []
-            land['sectors'].append({
-                '_id': str(ObjectId()),
-                'name': sector_name,
-                'zones': []
-            })
-            db.lands.update_one({'_id': ObjectId(land_id)}, {'$set': {'sectors': land['sectors']}})
-            log_message('info', f"Added sector: {sector_name}", session.get('user_id'), session.get('username'))
-            flash('Sector added successfully!', 'success')
-        return redirect(url_for('lands.detail', land_id=land_id))
+        try:
+            # Validate with SectorModel
+            sector_data = SectorModel(
+                name=request.form.get('name', ''),
+                description=request.form.get('description', ''),
+                location={
+                    'area': {'value': float(request.form.get('area', 0) or 0), 'unit': request.form.get('area_unit', 'acres')},
+                    'soil_type': request.form.get('soil_type', 'loam'),
+                    'slope': request.form.get('slope', ''),
+                    'irrigation_type': request.form.get('irrigation_type', '')
+                },
+                metadata={
+                    'status': request.form.get('status', 'active'),
+                    'notes': request.form.get('notes', '')
+                }
+            )
+            
+            land = db.lands.find_one({'_id': ObjectId(land_id)})
+            if land:
+                if 'sectors' not in land:
+                    land['sectors'] = []
+                
+                sector_dict = sector_data.model_dump()
+                sector_dict['_id'] = str(ObjectId())
+                sector_dict['zones'] = []
+                
+                land['sectors'].append(sector_dict)
+                db.lands.update_one({'_id': ObjectId(land_id)}, {'$set': {'sectors': land['sectors']}})
+                log_message('info', f"Added sector: {sector_data.name}", session.get('user_id'), session.get('username'))
+                flash('Sector added successfully!', 'success')
+            return redirect(url_for('lands.detail', land_id=land_id))
+        except Exception as e:
+            flash(f'Validation error: {str(e)}', 'danger')
+            return redirect(url_for('lands.detail', land_id=land_id))
     
     return render_template('lands/add_sector.html', land_id=land_id)
 

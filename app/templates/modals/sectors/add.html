@@ -1,5 +1,5 @@
 <div class="modal fade" id="addSectorModal{{ land._id }}" tabindex="-1">
-    <div class="modal-dialog">
+    <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header bg-primary text-white">
                 <h5 class="modal-title"><i class="bi-plus-circle me-2"></i>Add Sector to {{ land.name }}</h5>
@@ -10,6 +10,46 @@
                     <div class="mb-3">
                         <label class="form-label"><i class="bi-tag me-1"></i>Sector Name</label>
                         <input type="text" class="form-control" name="name" required placeholder="Sector A">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Description</label>
+                        <textarea class="form-control" name="description" rows="2"></textarea>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Area</label>
+                            <input type="number" step="0.01" class="form-control" name="area" value="0">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Unit</label>
+                            <select class="form-select" name="area_unit">
+                                <option value="acres">Acres</option>
+                                <option value="hectares">Hectares</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">Soil Type</label>
+                            <select class="form-select" name="soil_type">
+                                <option value="loam">Loam</option>
+                                <option value="clay">Clay</option>
+                                <option value="sandy">Sandy</option>
+                                <option value="silt">Silt</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">Slope</label>
+                            <input type="text" class="form-control" name="slope">
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">Irrigation Type</label>
+                            <input type="text" class="form-control" name="irrigation_type">
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Notes</label>
+                        <textarea class="form-control" name="notes" rows="2"></textarea>
                     </div>
                 </div>
                 <div class="modal-footer">

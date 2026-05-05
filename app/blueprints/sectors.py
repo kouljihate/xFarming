@@ -38,11 +38,24 @@ def add():
         return redirect(url_for('lands.index'))
     
     db = get_db()
-    name = request.form.get('name')
     land_id = request.form.get('land_id')
     
     try:
-        sector_data = SectorModel(name=name)
+        # Validate with SectorModel
+        sector_data = SectorModel(
+            name=request.form.get('name', ''),
+            description=request.form.get('description', ''),
+            location={
+                'area': {'value': float(request.form.get('area', 0) or 0), 'unit': request.form.get('area_unit', 'acres')},
+                'soil_type': request.form.get('soil_type', 'loam'),
+                'slope': request.form.get('slope', ''),
+                'irrigation_type': request.form.get('irrigation_type', '')
+            },
+            metadata={
+                'status': request.form.get('status', 'active'),
+                'notes': request.form.get('notes', '')
+            }
+        )
         
         lands = list(db.lands.find())
         for land in lands:
@@ -56,7 +69,7 @@ def add():
                 
                 land['sectors'].append(sector_dict)
                 db.lands.update_one({'_id': land['_id']}, {'$set': {'sectors': land.get('sectors', [])}})
-                log_message('info', f"Added sector: {name}", session.get('user_id'), session.get('username'))
+                log_message('info', f"Added sector: {sector_data.name}", session.get('user_id'), session.get('username'))
                 flash('Sector added successfully!', 'success')
                 break
     except Exception as e:
@@ -101,11 +114,34 @@ def edit(sector_id):
     for land in lands:
         for sector in land.get('sectors', []):
             if sector['_id'] == sector_id:
-                new_name = request.form.get('name')
-                sector['name'] = new_name
-                db.lands.update_one({'_id': land['_id']}, {'$set': {'sectors': land.get('sectors', [])}})
-                log_message('info', f'Updated sector name to {new_name}', session.get('user_id'), session.get('username'))
-                flash('Sector updated successfully!', 'success')
+                try:
+                    # Validate with SectorModel
+                    sector_data = SectorModel(
+                        name=request.form.get('name', ''),
+                        description=request.form.get('description', ''),
+                        location={
+                            'area': {'value': float(request.form.get('area', 0) or 0), 'unit': request.form.get('area_unit', 'acres')},
+                            'soil_type': request.form.get('soil_type', 'loam'),
+                            'slope': request.form.get('slope', ''),
+                            'irrigation_type': request.form.get('irrigation_type', '')
+                        },
+                        metadata={
+                            'status': request.form.get('status', 'active'),
+                            'notes': request.form.get('notes', '')
+                        }
+                    )
+                    
+                    # Update sector with validated data
+                    sector['name'] = sector_data.name
+                    sector['description'] = sector_data.description
+                    sector['location'] = sector_data.location
+                    sector['metadata'] = sector_data.metadata
+                    
+                    db.lands.update_one({'_id': land['_id']}, {'$set': {'sectors': land.get('sectors', [])}})
+                    log_message('info', f"Updated sector: {sector_data.name}", session.get('user_id'), session.get('username'))
+                    flash('Sector updated successfully!', 'success')
+                except Exception as e:
+                    flash(f'Validation error: {str(e)}', 'danger')
                 return redirect(url_for('sectors.index'))
     
     abort(404)
