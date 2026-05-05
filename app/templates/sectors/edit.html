@@ -9,6 +9,16 @@
 <div class="card">
     <div class="card-body">
         <form method="POST">
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Sector ID</label>
+                    <input type="text" class="form-control" name="sector_id" value="{{ sector.get('sector_id', '') }}">
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Sector Number</label>
+                    <input type="number" class="form-control" name="sector_number" value="{{ sector.get('sector_number', 1) }}" min="1">
+                </div>
+            </div>
             <div class="mb-3">
                 <label class="form-label">Sector Name</label>
                 <input type="text" class="form-control" name="name" value="{{ sector.name }}" required>
@@ -52,16 +62,6 @@
             <div class="mb-3">
                 <label class="form-label">Boundary (JSON)</label>
                 <textarea class="form-control" name="boundary" rows="3">{{ sector.get('boundary', '') }}</textarea>
-            </div>
-            <div class="row">
-                <div class="col-md-6 mb-3">
-                    <label class="form-label">Sector ID</label>
-                    <input type="text" class="form-control" name="sector_id" value="{{ sector.get('sector_id', '') }}">
-                </div>
-                <div class="col-md-6 mb-3">
-                    <label class="form-label">Sector Number</label>
-                    <input type="number" class="form-control" name="sector_number" value="{{ sector.get('sector_number', 1) }}" min="1">
-                </div>
             </div>
             <div class="mb-3">
                 <label class="form-label">Status</label>
