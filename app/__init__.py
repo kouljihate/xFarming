@@ -5,7 +5,7 @@ import os
 from app.config import Config
 from app.translations import t as t_func
 
-__version__ = '0.7.7'
+__version__ = '0.7.8'
 
 bootstrap = Bootstrap()
 
@@ -16,6 +16,7 @@ def create_app():
     bootstrap.init_app(app)
     
     app.jinja_env.globals['t'] = t_func
+    app.jinja_env.globals['app_version'] = __version__
     
     @app.errorhandler(404)
     def not_found_error(error):
