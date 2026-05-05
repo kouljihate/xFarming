@@ -161,17 +161,24 @@ def bulk_add():
         if str(land['_id']) == land_id:
             if 'sectors' not in land:
                 land['sectors'] = []
+            added_count = 0
             for name in names:
                 name = name.strip()
                 if name:
-                    land['sectors'].append({
-                        '_id': str(ObjectId()),
-                        'name': name,
-                        'zones': []
-                    })
-            db.lands.update_one({'_id': land['_id']}, {'$set': {'sectors': land.get('sectors', [])}})
-            log_message('info', f'Bulk added {len([n for n in names if n.strip()])} sectors', session.get('user_id'), session.get('username'))
-            flash('Sectors added successfully!', 'success')
+                    try:
+                        # Validate with SectorModel
+                        sector_data = SectorModel(name=name)
+                        sector_dict = sector_data.model_dump()
+                        sector_dict['_id'] = str(ObjectId())
+                        sector_dict['zones'] = []
+                        land['sectors'].append(sector_dict)
+                        added_count += 1
+                    except Exception as e:
+                        flash(f'Validation error for "{name}": {str(e)}', 'danger')
+            if added_count > 0:
+                db.lands.update_one({'_id': land['_id']}, {'$set': {'sectors': land.get('sectors', [])}})
+                log_message('info', f'Bulk added {added_count} sectors', session.get('user_id'), session.get('username'))
+                flash(f'{added_count} sectors added successfully!', 'success')
             break
     
     return redirect(url_for('sectors.index'))

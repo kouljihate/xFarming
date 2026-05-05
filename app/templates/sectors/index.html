@@ -110,6 +110,38 @@
     </div>
 </div>
 
+<!-- Bulk Add Sector Modal -->
+<div class="modal fade" id="bulkAddSectorModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form method="POST" action="{{ url_for('sectors.bulk_add') }}">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi-stack me-2"></i>Bulk Add Sectors</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">Land</label>
+                        <select class="form-select" name="land_id" required>
+                            {% for land in lands %}
+                            <option value="{{ land._id }}">{{ land.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Sector Names (one per line)</label>
+                        <textarea class="form-control" name="names" rows="5" placeholder="Sector A&#10;Sector B&#10;Sector C" required></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Add Sectors</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
 <!-- Edit and Delete Modals for each sector -->
 {% for sector in sectors %}
 <!-- Edit Sector Modal -->
