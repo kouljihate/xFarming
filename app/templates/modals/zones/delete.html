@@ -3,9 +3,9 @@
         <div class="modal-content">
             <form method="POST"
                 action="{{ url_for('lands.delete_zone', land_id=zone.sector.land._id if zone.sector and zone.sector.land else '', sector_id=zone.sector._id if zone.sector else '', zone_id=zone._id) }}">
-                <div class="modal-header">
+                <div class="modal-header bg-{{ session.get('theme', 'minty') }} text-white">
                     <h5 class="modal-title">Delete {{ zone.name }}</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
                     <p>Are you sure you want to delete zone "{{ zone.name }}"?</p>

@@ -2,9 +2,9 @@
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <form method="POST" action="{{ url_for('lands.edit', land_id=land._id) }}">
-                <div class="modal-header">
+                <div class="modal-header bg-{{ session.get('theme', 'minty') }} text-white">
                     <h5 class="modal-title">Edit {{ land.name }}</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
                     <div class="row">

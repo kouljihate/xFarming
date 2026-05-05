@@ -84,10 +84,9 @@
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <form method="POST" action="{{ url_for('trees.add') }}">
-                <div class="modal-header">
-                    <h5 class="modal-title">{{ t('add', session.get('lang', 'en')) }} {{ t('trees', session.get('lang',
-                        'en')) }}</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                <div class="modal-header bg-{{ session.get('theme', 'minty') }} text-white">
+                    <h5 class="modal-title">Delete {{ tree.name }}</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
                     <div class="row">
@@ -162,9 +161,9 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <form method="POST" action="{{ url_for('trees.bulk_add') }}">
-                <div class="modal-header">
+                <div class="modal-header bg-{{ session.get('theme', 'minty') }} text-white">
                     <h5 class="modal-title">Bulk Add Trees</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
                     <div class="mb-3">
@@ -197,9 +196,9 @@
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <form method="POST" action="{{ url_for('trees.edit', tree_id=tree._id) }}">
-                <div class="modal-header">
+                <div class="modal-header bg-{{ session.get('theme', 'minty') }} text-white">
                     <h5 class="modal-title">Edit {{ tree.name }}</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
                     <div class="row">
@@ -275,10 +274,17 @@
         <div class="modal-content">
             <form method="POST"
                 action="{{ url_for('lands.delete_tree', land_id=tree.row.zone.sector.land._id if tree.row and tree.row.zone and tree.row.zone.sector and tree.row.zone.sector.land else '', sector_id=tree.row.zone.sector._id if tree.row and tree.row.zone and tree.row.zone.sector else '', zone_id=tree.row.zone._id if tree.row and tree.row.zone else '', row_id=tree.row._id if tree.row else '', tree_id=tree._id) }}">
-                <div class="modal-header">
-                    <h5 class="modal-title">Delete {{ tree.name }}</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            <div class="modal-header bg-{{ session.get('theme', 'minty') }} text-white">
+                    <h5 class="modal-title">{{ t('add', session.get('lang', 'en')) }} {{ t('trees', session.get('lang', 'en')) }}</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                 </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Tree Name (for display)</label>
+                                <input type="text" class="form-control" name="name" value="Tree">
+                            </div>
                 <div class="modal-body">
                     <p>Are you sure you want to delete tree "{{ tree.name }}"?</p>
                 </div>
