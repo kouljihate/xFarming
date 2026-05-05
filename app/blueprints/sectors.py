@@ -41,8 +41,31 @@ def add():
     land_id = request.form.get('land_id')
     
     try:
+        import json
+        
+        # Parse boundary if provided
+        boundary = None
+        boundary_str = request.form.get('boundary', '').strip()
+        if boundary_str:
+            try:
+                boundary = json.loads(boundary_str)
+            except:
+                boundary = {'type': 'Polygon', 'coordinates': []}
+        else:
+            boundary = {'type': 'Polygon', 'coordinates': []}
+        
+        # Get sector_id and sector_number
+        sector_id = request.form.get('sector_id', '').strip()
+        sector_number = request.form.get('sector_number', 1)
+        try:
+            sector_number = int(sector_number)
+        except:
+            sector_number = 1
+        
         # Validate with SectorModel
         sector_data = SectorModel(
+            sector_id=sector_id,
+            sector_number=sector_number,
             name=request.form.get('name', ''),
             description=request.form.get('description', ''),
             location={
@@ -51,6 +74,7 @@ def add():
                 'slope': request.form.get('slope', ''),
                 'irrigation_type': request.form.get('irrigation_type', '')
             },
+            boundary=boundary,
             metadata={
                 'status': request.form.get('status', 'active'),
                 'notes': request.form.get('notes', '')

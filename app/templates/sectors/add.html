@@ -61,6 +61,21 @@
                 <textarea class="form-control" name="notes" rows="2"></textarea>
             </div>
             <div class="mb-3">
+                <label class="form-label">Boundary (JSON - Optional)</label>
+                <textarea class="form-control" name="boundary" rows="3" placeholder='{"type": "Polygon", "coordinates": [[[lon, lat], ...]]}'></textarea>
+                <small class="text-muted">Enter boundary as JSON with type and coordinates</small>
+            </div>
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Sector ID (Optional)</label>
+                    <input type="text" class="form-control" name="sector_id" placeholder="Auto-generated if empty">
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Sector Number</label>
+                    <input type="number" class="form-control" name="sector_number" value="1" min="1">
+                </div>
+            </div>
+            <div class="mb-3">
                 <label class="form-label">Land</label>
                 <select class="form-select" name="land_id" required>
                     {% for land in lands %}

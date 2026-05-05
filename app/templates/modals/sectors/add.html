@@ -51,6 +51,20 @@
                         <label class="form-label">Notes</label>
                         <textarea class="form-control" name="notes" rows="2"></textarea>
                     </div>
+                    <div class="mb-3">
+                        <label class="form-label">Boundary (JSON - Optional)</label>
+                        <textarea class="form-control" name="boundary" rows="2" placeholder='{"type": "Polygon", "coordinates": []}'></textarea>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Sector ID</label>
+                            <input type="text" class="form-control" name="sector_id" placeholder="Auto-generated">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Sector Number</label>
+                            <input type="number" class="form-control" name="sector_number" value="1" min="1">
+                        </div>
+                    </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
