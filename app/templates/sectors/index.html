@@ -112,7 +112,7 @@
 
 <!-- Bulk Add Sector Modal -->
 <div class="modal fade" id="bulkAddSectorModal" tabindex="-1">
-    <div class="modal-dialog">
+    <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <form method="POST" action="{{ url_for('sectors.bulk_add') }}">
                 <div class="modal-header">
@@ -128,9 +128,55 @@
                             {% endfor %}
                         </select>
                     </div>
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">Start With (Prefix)</label>
+                            <input type="text" class="form-control" name="start_with" value="Sector" placeholder="Sector">
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">Start Number</label>
+                            <input type="number" class="form-control" name="start_number" value="1" min="1">
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">Count</label>
+                            <input type="number" class="form-control" name="count" value="5" min="1" max="50">
+                        </div>
+                    </div>
                     <div class="mb-3">
-                        <label class="form-label">Sector Names (one per line)</label>
-                        <textarea class="form-control" name="names" rows="5" placeholder="Sector A&#10;Sector B&#10;Sector C" required></textarea>
+                        <label class="form-label">Description (Optional)</label>
+                        <textarea class="form-control" name="description" rows="2" placeholder="Auto-generated description"></textarea>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Area (per sector)</label>
+                            <input type="number" step="0.01" class="form-control" name="area" value="0">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Unit</label>
+                            <select class="form-select" name="area_unit">
+                                <option value="acres">Acres</option>
+                                <option value="hectares">Hectares</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">Soil Type</label>
+                            <select class="form-select" name="soil_type">
+                                <option value="loam">Loam</option>
+                                <option value="clay">Clay</option>
+                                <option value="sandy">Sandy</option>
+                                <option value="silt">Silt</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">Slope</label>
+                            <input type="text" class="form-control" name="slope" placeholder="Flat">
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">Irrigation Type</label>
+                            <input type="text" class="form-control" name="irrigation_type" placeholder="Drip">
+                        </div>
                     </div>
                 </div>
                 <div class="modal-footer">
