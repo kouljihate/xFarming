@@ -2,6 +2,10 @@
 
 A Flask-based web application for managing agricultural lands with hierarchical structure: Lands → Sectors → Zones → Rows → Trees.
 
+## Development Rules
+
+- **NO JavaScript**: Use ONLY Python for all functionality. All visualizations and maps must be generated server-side (Plotly, etc.) and rendered as HTML.
+
 ## Features
 
 - **Multi-level Hierarchy Management**: Organize lands into sectors, zones, rows, and individual trees
