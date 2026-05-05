@@ -1,4 +1,5 @@
 from flask import Blueprint, render_template, session, redirect, url_for, request
+from app.database import get_db
 import plotly.graph_objects as go
 import plotly.offline as pyo
 
