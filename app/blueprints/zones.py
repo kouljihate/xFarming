@@ -48,20 +48,34 @@ def add():
     try:
         import json
         
+        # Safe float conversion
+        def safe_float(value, default=0.0):
+            try:
+                val = float(value or default)
+                return val
+            except (ValueError, TypeError):
+                return default
+        
+        # Safe int conversion
+        def safe_int(value, default=0):
+            try:
+                val = int(value or default)
+                return val
+            except (ValueError, TypeError):
+                return default
+        
         # Parse pollinators (comma-separated)
         pollinators_str = request.form.get('pollinators', '')
         pollinators = [p.strip() for p in pollinators_str.split(',') if p.strip()] if pollinators_str else []
         
         # Parse boundary if provided
-        boundary = None
+        boundary = {'type': 'Polygon', 'coordinates': []}
         boundary_str = request.form.get('boundary', '').strip()
         if boundary_str:
             try:
                 boundary = json.loads(boundary_str)
             except:
-                boundary = {'type': 'Polygon', 'coordinates': []}
-        else:
-            boundary = {'type': 'Polygon', 'coordinates': []}
+                pass
         
         # Get zone_id and zone_number
         zone_id = request.form.get('zone_id', '').strip()
@@ -74,9 +88,9 @@ def add():
             name=request.form.get('name', ''),
             description=request.form.get('description', ''),
             location={
-                'area': {'value': float(request.form.get('area_value', 0) or 0, 'unit': request.form.get('area_unit', 'acres')},
-                'row_spacing': {'value': float(request.form.get('row_spacing_value', 0) or 0, 'unit': request.form.get('row_spacing_unit', 'feet')},
-                'tree_spacing': {'value': float(request.form.get('tree_spacing_value', 0) or 0, 'unit': request.form.get('tree_spacing_unit', 'feet')},
+                'area': {'value': safe_float(request.form.get('area_value'), 0), 'unit': request.form.get('area_unit', 'acres')},
+                'row_spacing': {'value': safe_float(request.form.get('row_spacing_value'), 0), 'unit': request.form.get('row_spacing_unit', 'feet')},
+                'tree_spacing': {'value': safe_float(request.form.get('tree_spacing_value'), 0), 'unit': request.form.get('tree_spacing_unit', 'feet')},
                 'orientation': request.form.get('orientation', '')
             },
             boundary=boundary,
@@ -89,16 +103,16 @@ def add():
             },
             soil_characteristics={
                 'type': request.form.get('soil_type', ''),
-                'ph': float(request.form.get('ph', 0) or 0.0,
+                'ph': safe_float(request.form.get('ph'), 0.0),
                 'organic_matter': request.form.get('organic_matter', ''),
                 'drainage': request.form.get('drainage', '')
             },
             statistics={
-                'total_rows': int(request.form.get('total_rows', 0) or 0,
-                'total_trees': int(request.form.get('total_trees', 0) or 0,
-                'trees_per_acre': int(request.form.get('trees_per_acre', 0) or 0,
-                'active_trees': int(request.form.get('active_trees', 0) or 0,
-                'dead_trees': int(request.form.get('dead_trees', 0) or 0,
+                'total_rows': safe_int(request.form.get('total_rows'), 0),
+                'total_trees': safe_int(request.form.get('total_trees'), 0),
+                'trees_per_acre': safe_int(request.form.get('trees_per_acre'), 0),
+                'active_trees': safe_int(request.form.get('active_trees'), 0),
+                'dead_trees': safe_int(request.form.get('dead_trees'), 0),
                 'replacement_rate': request.form.get('replacement_rate', '')
             },
             maintenance={
