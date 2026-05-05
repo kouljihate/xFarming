@@ -8,80 +8,56 @@
 <div class="row mb-3">
     <div class="col-lg-2 col-md-6 mb-3">
         <div class="card text-white bg-primary border-0 shadow">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <span><i class="bi-geo-alt me-1"></i> TOTAL LANDS</span>
+                <a href="{{ url_for('lands.index') }}" class="btn btn-sm btn-light" title="Add Land">+</a>
+            </div>
             <div class="card-body">
-                <div class="d-flex justify-content-between align-items-center">
-                    <div>
-                        <h6 class="card-title text-uppercase mb-0">{{ t('total_lands', session.get('lang', 'en')) }}
-                        </h6>
-                        <p class="card-text display-4 mb-0">{{ stats.lands }}</p>
-                    </div>
-                    <div class="fs-1 opacity-50">
-                        🌾
-                    </div>
-                </div>
+                <p class="card-text display-4 mb-0">{{ stats.lands }}</p>
             </div>
         </div>
     </div>
     <div class="col-lg-2 col-md-6 mb-3">
         <div class="card text-white bg-success border-0 shadow">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <span><i class="bi-grid me-1"></i> TOTAL SECTORS</span>
+                <a href="{{ url_for('sectors.index') }}" class="btn btn-sm btn-light" title="Add Sector">+</a>
+            </div>
             <div class="card-body">
-                <div class="d-flex justify-content-between align-items-center">
-                    <div>
-                        <h6 class="card-title text-uppercase mb-0">{{ t('total_sectors', session.get('lang', 'en')) }}
-                        </h6>
-                        <p class="card-text display-4 mb-0">{{ stats.sectors }}</p>
-                    </div>
-                    <div class="fs-1 opacity-50">
-                        📐
-                    </div>
-                </div>
+                <p class="card-text display-4 mb-0">{{ stats.sectors }}</p>
             </div>
         </div>
     </div>
     <div class="col-lg-2 col-md-6 mb-3">
         <div class="card text-white bg-info border-0 shadow">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <span><i class="bi-map me-1"></i> TOTAL ZONES</span>
+                <a href="{{ url_for('zones.index') }}" class="btn btn-sm btn-light" title="Add Zone">+</a>
+            </div>
             <div class="card-body">
-                <div class="d-flex justify-content-between align-items-center">
-                    <div>
-                        <h6 class="card-title text-uppercase mb-0">{{ t('total_zones', session.get('lang', 'en')) }}
-                        </h6>
-                        <p class="card-text display-4 mb-0">{{ stats.zones }}</p>
-                    </div>
-                    <div class="fs-1 opacity-50">
-                        🗺️
-                    </div>
-                </div>
+                <p class="card-text display-4 mb-0">{{ stats.zones }}</p>
             </div>
         </div>
     </div>
     <div class="col-lg-2 col-md-6 mb-3">
         <div class="card text-white bg-warning border-0 shadow">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <span><i class="bi-layout-three-columns me-1"></i> TOTAL ROWS</span>
+                <a href="{{ url_for('rows.index') }}" class="btn btn-sm btn-light" title="Add Row">+</a>
+            </div>
             <div class="card-body">
-                <div class="d-flex justify-content-between align-items-center">
-                    <div>
-                        <h6 class="card-title text-uppercase mb-0">{{ t('total_rows', session.get('lang', 'en')) }}</h6>
-                        <p class="card-text display-4 mb-0">{{ stats.rows }}</p>
-                    </div>
-                    <div class="fs-1 opacity-50">
-                        🌱
-                    </div>
-                </div>
+                <p class="card-text display-4 mb-0">{{ stats.rows }}</p>
             </div>
         </div>
     </div>
     <div class="col-lg-2 col-md-6 mb-3">
         <div class="card text-white bg-success border-0 shadow">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <span><i class="bi-tree me-1"></i> TOTAL TREES</span>
+                <a href="{{ url_for('trees.index') }}" class="btn btn-sm btn-light" title="Add Tree">+</a>
+            </div>
             <div class="card-body">
-                <div class="d-flex justify-content-between align-items-center">
-                    <div>
-                        <h6 class="card-title text-uppercase mb-0">{{ t('total_trees', session.get('lang', 'en')) }}
-                        </h6>
-                        <p class="card-text display-4 mb-0">{{ stats.trees }}</p>
-                    </div>
-                    <div class="fs-1 opacity-50">
-                        🌳
-                    </div>
-                </div>
+                <p class="card-text display-4 mb-0">{{ stats.trees }}</p>
             </div>
         </div>
     </div>
