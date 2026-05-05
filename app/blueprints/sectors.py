@@ -211,19 +211,19 @@ def bulk_add():
     land_id = request.form.get('land_id')
     
     # Get bulk parameters
-    start_with = request.form.get('start_with', 'Sector').strip()
-    start_number = request.form.get('start_number', 1)
-    count = request.form.get('count', 5)
+    prefix = request.form.get('prefix', 'Sector').strip()
+    start_from = request.form.get('start_from', 1)
+    end_at = request.form.get('end_at', 5)
     
     try:
-        start_number = int(start_number)
-        count = int(count)
+        start_from = int(start_from)
+        end_at = int(end_at)
     except:
-        start_number = 1
-        count = 5
+        start_from = 1
+        end_at = 5
     
     # Generate names
-    names = [f"{start_with} {i}" for i in range(start_number, start_number + count)]
+    names = [f"{prefix} {i}" for i in range(start_from, end_at + 1)]
     
     # Get other fields
     description = request.form.get('description', '')
@@ -243,7 +243,7 @@ def bulk_add():
                 try:
                     # Validate with SectorModel
                     sector_data = SectorModel(
-                        sector_number=start_number + idx,
+                        sector_number=start_from + idx,
                         name=name,
                         description=description,
                         location={
