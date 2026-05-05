@@ -65,12 +65,6 @@
 {% else %}
 <div class="text-center py-5">
     <h1 class="display-1 text-muted">No Zone Found</h1>
-    <!-- <p class="lead text-muted">No zones found</p> -->
-    {% if session.get('role') == 'admin' %}
-    <button type="button" class="btn btn-primary mt-3" data-bs-toggle="modal" data-bs-target="#addZoneModal">
-        <i class="bi-plus-circle"></i> Add Your First Zone
-    </button>
-    {% endif %}
 </div>
 {% endif %}
 

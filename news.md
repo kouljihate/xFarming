@@ -1,5 +1,11 @@
 # xFarming - Version History
 
+## [0.7.25] - 2026-05-05
+
+### Added
+- Automated version bump for commit
+
+
 ## [0.7.24] - 2026-05-05
 
 ### Added
