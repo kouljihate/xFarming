@@ -84,15 +84,11 @@ def add():
         lands = list(db.lands.find())
         for land in lands:
             if str(land['_id']) == land_id:
-                if 'sectors' not in land:
-                    land['sectors'] = []
-                
                 sector_dict = sector_data.model_dump()
                 sector_dict['_id'] = str(ObjectId())
                 sector_dict['zones'] = []
                 
-                land['sectors'].append(sector_dict)
-                db.lands.update_one({'_id': land['_id']}, {'$set': {'sectors': land.get('sectors', [])}})
+                db.lands.update_one({'_id': land['_id']}, {'$push': {'sectors': sector_dict}})
                 log_message('info', f"Added sector: {sector_data.name}", session.get('user_id'), session.get('username'))
                 flash('Sector added successfully!', 'success')
                 break

@@ -1,18 +1,21 @@
 <div class="modal fade" id="addZoneModal" tabindex="-1">
     <div class="modal-dialog modal-xl">
         <div class="modal-content">
+            <p>{{ url_for('zones.add') }}</p>
             <form method="POST" action="{{ url_for('zones.add') }}">
                 <input type="hidden" name="land_id" id="addZoneLandId">
                 <input type="hidden" name="sector_id" id="addZoneSectorId">
-                <div class="modal-header bg-{{ session.get('theme', 'minty') }} text-white">
-                    <h5 class="modal-title"><i class="bi-plus-circle me-2"></i>{{ t('add', session.get('lang', 'en')) }} {{ t('zone', session.get('lang', 'en')) }}</h5>
+                <div class="modal-header bg-success text-white">
+                    <h5 class="modal-title"><i class="bi-plus-circle me-2"></i>{{ t('add', session.get('lang', 'en')) }}
+                        {{ t('zone', session.get('lang', 'en')) }}</h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
                     <div class="row">
                         <div class="col-md-6 mb-3">
                             <label class="form-label">Zone ID</label>
-                            <input type="text" class="form-control rounded-pill" name="zone_id" placeholder="Auto-generated">
+                            <input type="text" class="form-control rounded-pill" name="zone_id"
+                                placeholder="Auto-generated">
                         </div>
                         <div class="col-md-6 mb-3">
                             <label class="form-label">Zone Number</label>
@@ -32,7 +35,8 @@
                     <div class="row">
                         <div class="col-md-3 mb-3">
                             <label class="form-label">Area</label>
-                            <input type="number" step="0.01" class="form-control rounded-pill" name="area_value" value="0">
+                            <input type="number" step="0.01" class="form-control rounded-pill" name="area_value"
+                                value="0">
                         </div>
                         <div class="col-md-3 mb-3">
                             <label class="form-label">Unit</label>
@@ -43,7 +47,8 @@
                         </div>
                         <div class="col-md-3 mb-3">
                             <label class="form-label">Row Spacing</label>
-                            <input type="number" step="0.01" class="form-control rounded-pill" name="row_spacing_value" value="0">
+                            <input type="number" step="0.01" class="form-control rounded-pill" name="row_spacing_value"
+                                value="0">
                         </div>
                         <div class="col-md-3 mb-3">
                             <label class="form-label">Unit</label>
@@ -56,7 +61,8 @@
                     <div class="row">
                         <div class="col-md-3 mb-3">
                             <label class="form-label">Tree Spacing</label>
-                            <input type="number" step="0.01" class="form-control rounded-pill" name="tree_spacing_value" value="0">
+                            <input type="number" step="0.01" class="form-control rounded-pill" name="tree_spacing_value"
+                                value="0">
                         </div>
                         <div class="col-md-3 mb-3">
                             <label class="form-label">Unit</label>
@@ -72,14 +78,16 @@
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Boundary (JSON)</label>
-                        <textarea class="form-control rounded-pill" name="boundary" rows="2" placeholder='{"type": "Polygon", "coordinates": []}'></textarea>
+                        <textarea class="form-control rounded-pill" name="boundary" rows="2"
+                            placeholder='{"type": "Polygon", "coordinates": []}'></textarea>
                     </div>
                     <hr>
                     <h6 class="mb-3">Crop Info</h6>
                     <div class="row">
                         <div class="col-md-3 mb-3">
                             <label class="form-label">Current Crop</label>
-                            <input type="text" class="form-control rounded-pill" name="current_crop" placeholder="Olives">
+                            <input type="text" class="form-control rounded-pill" name="current_crop"
+                                placeholder="Olives">
                         </div>
                         <div class="col-md-3 mb-3">
                             <label class="form-label">Variety</label>
@@ -91,12 +99,14 @@
                         </div>
                         <div class="col-md-3 mb-3">
                             <label class="form-label">Root Stock</label>
-                            <input type="text" class="form-control rounded-pill" name="root_stock" placeholder="Own roots">
+                            <input type="text" class="form-control rounded-pill" name="root_stock"
+                                placeholder="Own roots">
                         </div>
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Pollinators (comma-separated)</label>
-                        <input type="text" class="form-control rounded-pill" name="pollinators" placeholder="Variety A, Variety B">
+                        <input type="text" class="form-control rounded-pill" name="pollinators"
+                            placeholder="Variety A, Variety B">
                     </div>
                     <hr>
                     <h6 class="mb-3">Soil Characteristics</h6>
@@ -115,7 +125,8 @@
                         </div>
                         <div class="col-md-3 mb-3">
                             <label class="form-label">Drainage</label>
-                            <input type="text" class="form-control rounded-pill" name="drainage" placeholder="Well-drained">
+                            <input type="text" class="form-control rounded-pill" name="drainage"
+                                placeholder="Well-drained">
                         </div>
                     </div>
                     <hr>
@@ -143,7 +154,8 @@
                         </div>
                         <div class="col-md-2 mb-3">
                             <label class="form-label">Replacement Rate</label>
-                            <input type="text" class="form-control rounded-pill" name="replacement_rate" placeholder="5%">
+                            <input type="text" class="form-control rounded-pill" name="replacement_rate"
+                                placeholder="5%">
                         </div>
                     </div>
                     <hr>
@@ -190,7 +202,8 @@
                         </div>
                         <div class="col-md-3 mb-3">
                             <label class="form-label">Zone Manager</label>
-                            <input type="text" class="form-control rounded-pill" name="zone_manager" placeholder="Manager name">
+                            <input type="text" class="form-control rounded-pill" name="zone_manager"
+                                placeholder="Manager name">
                         </div>
                     </div>
                     <div class="mb-3">
@@ -206,5 +219,3 @@
         </div>
     </div>
 </div>
-
-

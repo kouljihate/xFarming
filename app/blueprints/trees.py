@@ -63,24 +63,24 @@ def add():
             metadata={'status': request.form.get('status', 'healthy')}
         )
         
+        # Use $push with array filters to add tree to the correct row
+        tree_dict = tree_data.model_dump()
+        tree_dict['_id'] = str(ObjectId())
+        tree_dict['name'] = request.form.get('name', 'Tree')  # For display purposes
+        
         lands = list(db.lands.find())
         for land in lands:
             for sector in land.get('sectors', []):
                 for zone in sector.get('zones', []):
-                    for row in zone.get('rows', []):
-                        if row['_id'] == row_id:
-                            if 'trees' not in row:
-                                row['trees'] = []
-                            
-                            tree_dict = tree_data.model_dump()
-                            tree_dict['_id'] = str(ObjectId())
-                            tree_dict['name'] = request.form.get('name', 'Tree')  # For display purposes
-                            
-                            row['trees'].append(tree_dict)
-                            db.lands.update_one({'_id': land['_id']}, {'$set': {'sectors': land.get('sectors', [])}})
-                            log_message('info', f"Added tree: {tree_dict['name']}", session.get('user_id'), session.get('username'))
-                            flash('Tree added successfully!', 'success')
-                            break
+                    if str(zone['_id']) == zone_id:
+                        db.lands.update_one(
+                            {'_id': land['_id'], 'sectors.zones._id': zone['_id'], 'sectors.zones.$.rows._id': row_id},
+                            {'$push': {'sectors.$[elem].zones.$[elem2].rows.$[elem3].trees': tree_dict}},
+                            array_filters=[{'elem._id': sector['_id']}, {'elem2._id': zone['_id']}, {'elem3._id': row_id}]
+                        )
+                        log_message('info', f"Added tree: {tree_dict['name']}", session.get('user_id'), session.get('username'))
+                        flash('Tree added successfully!', 'success')
+                        break
     except Exception as e:
         flash(f'Validation error: {str(e)}', 'danger')
     

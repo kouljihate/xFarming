@@ -1,0 +1,64 @@
+<div class="modal fade" id="editTreeModal{{ tree._id }}" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <form method="POST" action="{{ url_for('trees.edit', tree_id=tree._id) }}">
+                <div class="modal-header bg-{{ session.get('theme', 'minty') }} text-white">
+                    <h5 class="modal-title">Edit {{ tree.name }}</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Tree Name (display)</label>
+                                <input type="text" class="form-control rounded-pill" name="name" value="{{ tree.name or '' }}">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Tree Number</label>
+                                <input type="text" class="form-control rounded-pill" name="tree_number" value="{{ tree.tree_number or '' }}">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Species</label>
+                                <input type="text" class="form-control rounded-pill" name="species" value="{{ tree.basic_info.species if tree.basic_info else '' }}">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Variety</label>
+                                <input type="text" class="form-control rounded-pill" name="crop_variety" value="{{ tree.basic_info.variety if tree.basic_info else '' }}">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Planting Date</label>
+                                <input type="date" class="form-control rounded-pill" name="planting_date" value="{{ tree.basic_info.planting_date if tree.basic_info else '' }}">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Age (years)</label>
+                                <input type="number" class="form-control rounded-pill" name="age" value="{{ tree.basic_info.age_years if tree.basic_info else 0 }}">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Status (metadata)</label>
+                                <select class="form-select rounded-pill" name="status">
+                                    <option value="healthy" {% if tree.metadata and tree.metadata.status=='healthy' %}selected{% endif %}>Healthy</option>
+                                    <option value="needs_attention" {% if tree.metadata and tree.metadata.status=='needs_attention' %}selected{% endif %}>Needs Attention</option>
+                                    <option value="critical" {% if tree.metadata and tree.metadata.status=='critical' %}selected{% endif %}>Critical</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Latitude</label>
+                                <input type="number" step="any" class="form-control rounded-pill" name="latitude" value="{{ tree.location_precise.latitude if tree.location_precise else 0.0 }}">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Longitude</label>
+                                <input type="number" step="any" class="form-control rounded-pill" name="longitude" value="{{ tree.location_precise.longitude if tree.location_precise else 0.0 }}">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn rounded-pill btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn rounded-pill btn-primary">Update</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

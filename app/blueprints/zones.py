@@ -131,19 +131,24 @@ def add():
             }
         )
         
+        log_message('info', request.form)
+        print("======================================================")
+        log_message('info', zone_data)
+        
+        # Use $push with array filters to add zone to the correct sector
+        zone_dict = zone_data.model_dump()
+        zone_dict['_id'] = str(ObjectId())
+        zone_dict['rows'] = []
+        
         lands = list(db.lands.find())
         for land in lands:
             for sector in land.get('sectors', []):
                 if sector['_id'] == sector_id:
-                    if 'zones' not in sector:
-                        sector['zones'] = []
-                    
-                    zone_dict = zone_data.model_dump()
-                    zone_dict['_id'] = str(ObjectId())
-                    zone_dict['rows'] = []
-                    
-                    sector['zones'].append(zone_dict)
-                    db.lands.update_one({'_id': land['_id']}, {'$set': {'sectors': land.get('sectors', [])}})
+                    db.lands.update_one(
+                        {'_id': land['_id'], 'sectors._id': sector_id},
+                        {'$push': {'sectors.$[elem].zones': zone_dict}},
+                        array_filters=[{'elem._id': sector_id}]
+                    )
                     log_message('info', f"Added zone: {zone_data.name}", session.get('user_id'), session.get('username'))
                     flash('Zone added successfully!', 'success')
                     return redirect(url_for('sectors.index'))

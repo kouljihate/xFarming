@@ -104,23 +104,22 @@ def add():
             }
         )
         
+        # Use $push with array filters to add row to the correct zone
+        row_dict = row_data.model_dump()
+        row_dict['_id'] = str(ObjectId())
+        row_dict['trees'] = []
+        
         lands = list(db.lands.find())
         for land in lands:
-            for sector in land.get('sectors', []):
-                for zone in sector.get('zones', []):
-                    if zone['_id'] == zone_id:
-                        if 'rows' not in zone:
-                            zone['rows'] = []
-                        
-                        row_dict = row_data.model_dump()
-                        row_dict['_id'] = str(ObjectId())
-                        row_dict['trees'] = []
-                        
-                        zone['rows'].append(row_dict)
-                        db.lands.update_one({'_id': land['_id']}, {'$set': {'sectors': land.get('sectors', [])}})
-                        log_message('info', f"Added row: {row_data.name}", session.get('user_id'), session.get('username'))
-                        flash('Row added successfully!', 'success')
-                        break
+            if str(land['_id']) == land_id:
+                db.lands.update_one(
+                    {'_id': land['_id'], 'sectors.zones._id': zone_id},
+                    {'$push': {'sectors.$[elem].zones.$[elem2].rows': row_dict}},
+                    array_filters=[{'elem.zones._id': zone_id}, {'elem2._id': zone_id}]
+                )
+                log_message('info', f"Added row: {row_data.name}", session.get('user_id'), session.get('username'))
+                flash('Row added successfully!', 'success')
+                break
     except Exception as e:
         flash(f'Validation error: {str(e)}', 'danger')
     
