@@ -57,8 +57,8 @@
                         data-bs-target="#deleteSectorModal{{ sector._id }}">
                         <i class="bi-trash"></i>
                     </button>
-                    <button type="button" class="btn btn-sm btn-success" title="Add Zone"
-                        data-bs-toggle="modal" data-bs-target="#addZoneModal{{ sector._id }}">
+                    <button type="button" class="btn btn-sm btn-success" title="Add Zone" data-bs-toggle="modal"
+                        data-bs-target="#addZoneModal{{ sector._id }}">
                         <i class="bi-plus-circle"></i></button>
                     {% endif %}
                 </td>
@@ -80,100 +80,6 @@
 {% endif %}
 
 {% if session.get('role') == 'admin' %}
-<!-- Add Sector Modal -->
-<div class="modal fade" id="addSectorModal" tabindex="-1">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <form method="POST" action="{{ url_for('sectors.add') }}">
-                <div class="modal-header">
-                    <h5 class="modal-title">{{ t('add', session.get('lang', 'en')) }} {{ t('sectors',
-                        session.get('lang', 'en')) }}</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <label class="form-label">Sector ID</label>
-                            <input type="text" class="form-control" name="sector_id" placeholder="Auto-generated">
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label class="form-label">Sector Number</label>
-                            <input type="number" class="form-control" name="sector_number" value="1" min="1">
-                        </div>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Sector Name</label>
-                        <input type="text" class="form-control" name="name" required>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Description</label>
-                        <textarea class="form-control" name="description" rows="2"></textarea>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <label class="form-label">Area</label>
-                            <input type="number" step="0.01" class="form-control" name="area" value="0">
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label class="form-label">Unit</label>
-                            <select class="form-select" name="area_unit">
-                                <option value="acres">Acres</option>
-                                <option value="hectares">Hectares</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-4 mb-3">
-                            <label class="form-label">Soil Type</label>
-                            <select class="form-select" name="soil_type">
-                                <option value="loam">Loam</option>
-                                <option value="clay">Clay</option>
-                                <option value="sandy">Sandy</option>
-                                <option value="silt">Silt</option>
-                            </select>
-                        </div>
-                        <div class="col-md-4 mb-3">
-                            <label class="form-label">Slope</label>
-                            <input type="text" class="form-control" name="slope">
-                        </div>
-                        <div class="col-md-4 mb-3">
-                            <label class="form-label">Irrigation Type</label>
-                            <input type="text" class="form-control" name="irrigation_type">
-                        </div>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Boundary (JSON)</label>
-                        <textarea class="form-control" name="boundary" rows="2" placeholder='{"type": "Polygon", "coordinates": []}'></textarea>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Status</label>
-                        <select class="form-select" name="status">
-                            <option value="active">Active</option>
-                            <option value="inactive">Inactive</option>
-                        </select>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Notes</label>
-                        <textarea class="form-control" name="notes" rows="2"></textarea>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Land</label>
-                        <select class="form-select" name="land_id" required>
-                            {% for land in lands %}
-                            <option value="{{ land._id }}">{{ land.name }}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="submit" class="btn btn-primary">Add</button>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
-
 <!-- Bulk Add Sector Modal -->
 <div class="modal fade" id="bulkAddSectorModal" tabindex="-1">
     <div class="modal-dialog modal-lg">
@@ -208,75 +114,8 @@
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Description (Optional)</label>
-                        <textarea class="form-control" name="description" rows="2" placeholder="Auto-generated description"></textarea>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <label class="form-label">Area (per sector)</label>
-                            <input type="number" step="0.01" class="form-control" name="area" value="0">
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label class="form-label">Unit</label>
-                            <select class="form-select" name="area_unit">
-                                <option value="acres">Acres</option>
-                                <option value="hectares">Hectares</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-4 mb-3">
-                            <label class="form-label">Soil Type</label>
-                            <select class="form-select" name="soil_type">
-                                <option value="loam">Loam</option>
-                                <option value="clay">Clay</option>
-                                <option value="sandy">Sandy</option>
-                                <option value="silt">Silt</option>
-                            </select>
-                        </div>
-                        <div class="col-md-4 mb-3">
-                            <label class="form-label">Slope</label>
-                            <input type="text" class="form-control" name="slope" placeholder="Flat">
-                        </div>
-                        <div class="col-md-4 mb-3">
-                            <label class="form-label">Irrigation Type</label>
-                            <input type="text" class="form-control" name="irrigation_type" placeholder="Drip">
-                        </div>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="submit" class="btn btn-primary">Add Sectors</button>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
-                <div class="modal-body">
-                    <div class="mb-3">
-                        <label class="form-label">Land</label>
-                        <select class="form-select" name="land_id" required>
-                            {% for land in lands %}
-                            <option value="{{ land._id }}">{{ land.name }}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-4 mb-3">
-                            <label class="form-label">Start With (Prefix)</label>
-                            <input type="text" class="form-control" name="start_with" value="Sector" placeholder="Sector">
-                        </div>
-                        <div class="col-md-4 mb-3">
-                            <label class="form-label">Start Number</label>
-                            <input type="number" class="form-control" name="start_number" value="1" min="1">
-                        </div>
-                        <div class="col-md-4 mb-3">
-                            <label class="form-label">Count</label>
-                            <input type="number" class="form-control" name="count" value="5" min="1" max="50">
-                        </div>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Description (Optional)</label>
-                        <textarea class="form-control" name="description" rows="2" placeholder="Auto-generated description"></textarea>
+                        <textarea class="form-control" name="description" rows="2"
+                            placeholder="Auto-generated description"></textarea>
                     </div>
                     <div class="row">
                         <div class="col-md-6 mb-3">
@@ -320,54 +159,8 @@
     </div>
 </div>
 
-<!-- Edit and Delete Modals for each sector -->
+<!-- Add Zone Modals for each sector -->
 {% for sector in sectors %}
-<!-- Edit Sector Modal -->
-<div class="modal fade" id="editSectorModal{{ sector._id }}" tabindex="-1">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <form method="POST" action="{{ url_for('sectors.edit', sector_id=sector._id) }}">
-                <div class="modal-header">
-                    <h5 class="modal-title">Edit {{ sector.name }}</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                    <div class="mb-3">
-                        <label class="form-label">Sector Name</label>
-                        <input type="text" class="form-control" name="name" value="{{ sector.name }}" required>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="submit" class="btn btn-primary">Update</button>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
-
-<!-- Delete Sector Modal -->
-<div class="modal fade" id="deleteSectorModal{{ sector._id }}" tabindex="-1">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <form method="POST"
-                action="{{ url_for('lands.delete_sector', land_id=sector.land_id, sector_id=sector._id) }}">
-                <div class="modal-header">
-                    <h5 class="modal-title">Delete {{ sector.name }}</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                    <p>Are you sure you want to delete sector "{{ sector.name }}"?</p>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="submit" class="btn btn-danger">Delete</button>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
-
 <!-- Add Zone Modal for {{ sector.name }} -->
 <div class="modal fade" id="addZoneModal{{ sector._id }}" tabindex="-1">
     <div class="modal-dialog modal-xl">
@@ -443,7 +236,8 @@
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Boundary (JSON)</label>
-                        <textarea class="form-control" name="boundary" rows="2" placeholder='{"type": "Polygon", "coordinates": []}'></textarea>
+                        <textarea class="form-control" name="boundary" rows="2"
+                            placeholder='{"type": "Polygon", "coordinates": []}'></textarea>
                     </div>
                     <hr>
                     <h6 class="mb-3">Crop Info</h6>
@@ -577,7 +371,43 @@
         </div>
     </div>
 </div>
+{% include "modals/sectors/edit.html" %}
+{% include "modals/sectors/delete.html" %}
 {% endfor %}
 {% endif %}
 
+{% include "modals/sectors/add.html" %}
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function openEditSectorModal(sector) {
+    const modal = new bootstrap.Modal(document.getElementById('editSectorModal'));
+    document.getElementById('editSectorForm').action = "{{ url_for('sectors.edit', sector_id='') }}" + sector._id;
+    document.getElementById('editSectorId').value = sector._id;
+    document.getElementById('editSectorModalTitle').textContent = 'Edit ' + sector.name;
+    document.getElementById('editSectorIdDisplay').value = sector.sector_id || '';
+    document.getElementById('editSectorNumber').value = sector.sector_number || 1;
+    document.getElementById('editSectorName').value = sector.name || '';
+    document.getElementById('editSectorDescription').value = sector.description || '';
+    document.getElementById('editSectorArea').value = (sector.location && sector.location.area) ? sector.location.area.value : 0;
+    document.getElementById('editSectorAreaUnit').value = (sector.location && sector.location.area) ? sector.location.area.unit : 'acres';
+    document.getElementById('editSectorSoilType').value = (sector.location && sector.location.soil_type) ? sector.location.soil_type : 'loam';
+    document.getElementById('editSectorSlope').value = (sector.location && sector.location.slope) ? sector.location.slope : '';
+    document.getElementById('editSectorIrrigationType').value = (sector.location && sector.location.irrigation_type) ? sector.location.irrigation_type : '';
+    document.getElementById('editSectorBoundary').value = sector.boundary || '';
+    document.getElementById('editSectorStatus').value = (sector.metadata && sector.metadata.status) ? sector.metadata.status : 'active';
+    document.getElementById('editSectorNotes').value = (sector.metadata && sector.metadata.notes) ? sector.metadata.notes : '';
+    modal.show();
+}
+
+function openDeleteSectorModal(sector) {
+    const modal = new bootstrap.Modal(document.getElementById('deleteSectorModal'));
+    document.getElementById('deleteSectorForm').action = "{{ url_for('sectors.delete', sector_id='') }}" + sector._id;
+    document.getElementById('deleteSectorModalTitle').textContent = 'Delete ' + sector.name;
+    document.getElementById('deleteSectorMessage').textContent = 'Are you sure you want to delete sector "' + sector.name + '"?';
+    modal.show();
+}
+</script>
 {% endblock %}

@@ -1,10 +1,10 @@
 <div class="modal fade" id="editSectorModal{{ sector._id }}" tabindex="-1">
-    <div class="modal-dialog">
+    <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <form method="POST" action="{{ url_for('sectors.edit', sector_id=sector._id) }}">
                 <div class="modal-header bg-{{ session.get('theme', 'minty') }} text-white">
                     <h5 class="modal-title">Edit {{ sector.name }}</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
                     <div class="row">
@@ -61,95 +61,16 @@
                         <label class="form-label">Boundary (JSON)</label>
                         <textarea class="form-control" name="boundary" rows="2">{{ sector.get('boundary', '') }}</textarea>
                     </div>
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <label class="form-label">Status</label>
-                            <select class="form-select" name="status">
-                                <option value="active" {% if sector.get('metadata', {}).get('status', 'active') == 'active' %}selected{% endif %}>Active</option>
-                                <option value="inactive" {% if sector.get('metadata', {}).get('status', '') == 'inactive' %}selected{% endif %}>Inactive</option>
-                            </select>
-                        </div>
+                    <div class="mb-3">
+                        <label class="form-label">Status</label>
+                        <select class="form-select" name="status">
+                            <option value="active" {% if sector.get('metadata', {}).get('status', 'active') == 'active' %}selected{% endif %}>Active</option>
+                            <option value="inactive" {% if sector.get('metadata', {}).get('status', '') == 'inactive' %}selected{% endif %}>Inactive</option>
+                        </select>
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Notes</label>
                         <textarea class="form-control" name="notes" rows="2">{{ sector.get('metadata', {}).get('notes', '') }}</textarea>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="submit" class="btn btn-primary">Update</button>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
-                <div class="modal-body">
-                    <div class="mb-3">
-                        <label class="form-label">Sector Name</label>
-                        <input type="text" class="form-control" name="name" value="{{ sector.name }}" required>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Description</label>
-                        <textarea class="form-control" name="description" rows="2">{{ sector.get('description', '') }}</textarea>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <label class="form-label">Area</label>
-                            <input type="number" step="0.01" class="form-control" name="area" value="{{ sector.get('location', {}).get('area', {}).get('value', '') }}">
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label class="form-label">Unit</label>
-                            <select class="form-select" name="area_unit">
-                                <option value="acres" {% if sector.get('location', {}).get('area', {}).get('unit', 'acres') == 'acres' %}selected{% endif %}>Acres</option>
-                                <option value="hectares" {% if sector.get('location', {}).get('area', {}).get('unit', '') == 'hectares' %}selected{% endif %}>Hectares</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-4 mb-3">
-                            <label class="form-label">Soil Type</label>
-                            <select class="form-select" name="soil_type">
-                                <option value="loam" {% if sector.get('location', {}).get('soil_type', 'loam') == 'loam' %}selected{% endif %}>Loam</option>
-                                <option value="clay" {% if sector.get('location', {}).get('soil_type', '') == 'clay' %}selected{% endif %}>Clay</option>
-                                <option value="sandy" {% if sector.get('location', {}).get('soil_type', '') == 'sandy' %}selected{% endif %}>Sandy</option>
-                                <option value="silt" {% if sector.get('location', {}).get('soil_type', '') == 'silt' %}selected{% endif %}>Silt</option>
-                            </select>
-                        </div>
-                        <div class="col-md-4 mb-3">
-                            <label class="form-label">Slope</label>
-                            <input type="text" class="form-control" name="slope" value="{{ sector.get('location', {}).get('slope', '') }}">
-                        </div>
-                        <div class="col-md-4 mb-3">
-                            <label class="form-label">Irrigation Type</label>
-                            <input type="text" class="form-control" name="irrigation_type" value="{{ sector.get('location', {}).get('irrigation_type', '') }}">
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <label class="form-label">Status</label>
-                            <select class="form-select" name="status">
-                                <option value="active" {% if sector.get('metadata', {}).get('status', 'active') == 'active' %}selected{% endif %}>Active</option>
-                                <option value="inactive" {% if sector.get('metadata', {}).get('status', '') == 'inactive' %}selected{% endif %}>Inactive</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Notes</label>
-                        <textarea class="form-control" name="notes" rows="2">{{ sector.get('metadata', {}).get('notes', '') }}</textarea>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Boundary (JSON)</label>
-                        <textarea class="form-control" name="boundary" rows="2">{{ sector.get('boundary', '') }}</textarea>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <label class="form-label">Sector ID</label>
-                            <input type="text" class="form-control" name="sector_id" value="{{ sector.get('sector_id', '') }}">
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label class="form-label">Sector Number</label>
-                            <input type="number" class="form-control" name="sector_number" value="{{ sector.get('sector_number', 1) }}" min="1">
-                        </div>
                     </div>
                 </div>
                 <div class="modal-footer">
