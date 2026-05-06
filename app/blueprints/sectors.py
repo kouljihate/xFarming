@@ -194,7 +194,30 @@ def edit(sector_id):
                         flash('Sector updated successfully!', 'success')
                     except Exception as e:
                         flash(f'Validation error: {str(e)}', 'danger')
-                    return redirect(url_for('sectors.index'))
+    return redirect(url_for('sectors.index'))
+
+@sectors_bp.route('/<sector_id>/delete', methods=['POST'])
+def delete(sector_id):
+    if 'user_id' not in session or session.get('role') != 'admin':
+        flash('Admin access required', 'danger')
+        return redirect(url_for('lands.index'))
+    
+    db = get_db()
+    lands = list(db.lands.find())
+    
+    for land in lands:
+        sectors = land.get('sectors', [])
+        for i, sector in enumerate(sectors):
+            if sector['_id'] == sector_id:
+                sector_name = sector['name']
+                sectors.pop(i)
+                db.lands.update_one({'_id': land['_id']}, {'$set': {'sectors': sectors}})
+                log_message('info', f"Deleted sector: {sector_name}", session.get('user_id'), session.get('username'))
+                flash('Sector deleted successfully!', 'success')
+                return redirect(url_for('sectors.index'))
+    
+    flash('Sector not found', 'danger')
+    return redirect(url_for('sectors.index'))
                 else:
                     # GET request - render edit form
                     return render_template('sectors/edit.html', sector=sector, land=land)
