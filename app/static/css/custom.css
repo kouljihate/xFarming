@@ -21,16 +21,3 @@ body {
     background-color: #e7f1ff;
     color: #0d6efd;
 }
-
-.rounded-custom,
-.btn.rounded-custom,
-.form-control.rounded-custom,
-.form-select.rounded-custom {
-    border-radius: 50px;
-}
-
-.btn,
-.form-control,
-.form-select {
-    border-radius: 8px;
-}
