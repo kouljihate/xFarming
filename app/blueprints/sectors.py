@@ -194,7 +194,12 @@ def edit(sector_id):
                         flash('Sector updated successfully!', 'success')
                     except Exception as e:
                         flash(f'Validation error: {str(e)}', 'danger')
-    return redirect(url_for('sectors.index'))
+                    return redirect(url_for('sectors.index'))
+                else:
+                    # GET request - render edit form
+                    return render_template('sectors/edit.html', sector=sector, land=land)
+    
+    abort(404)
 
 @sectors_bp.route('/<sector_id>/delete', methods=['POST'])
 def delete(sector_id):
@@ -218,11 +223,6 @@ def delete(sector_id):
     
     flash('Sector not found', 'danger')
     return redirect(url_for('sectors.index'))
-                else:
-                    # GET request - render edit form
-                    return render_template('sectors/edit.html', sector=sector, land=land)
-    
-    abort(404)
 
 @sectors_bp.route('/bulk_add', methods=['POST'])
 def bulk_add():
