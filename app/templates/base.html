@@ -93,7 +93,7 @@
                         <div>
                             <!-- <small class="text-white-50">{{ t('more_themes', session.get('lang', 'en')) }}:</small><br> -->
                             <select onchange="window.location.href='/dashboard/set-theme/' + this.value"
-                                class="form-select form-select-sm bg-primary text-white border-light">
+                                class="form-select rounded-pill form-select-sm bg-primary text-white border-light">
                                 <option value="minty" {% if session.get('theme', 'minty' )=='minty' %}selected{% endif
                                     %}>Minty (Light)</option>
                                 <option value="darkly" {% if session.get('theme')=='darkly' %}selected{% endif %}>Darkly

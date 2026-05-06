@@ -20,7 +20,7 @@
             <td>{{ t(user.role, session.get('lang', 'en')) }}</td>
             <td>
                 <form method="POST" action="{{ url_for('users.change_role', user_id=user._id) }}" class="d-inline">
-                    <select name="role" class="form-select form-select-sm d-inline w-auto" onchange="this.form.submit()">
+                    <select name="role" class="form-select rounded-pill form-select-sm d-inline w-auto" onchange="this.form.submit()">
                         <option value="guest" {% if user.role == 'guest' %}selected{% endif %}>{{ t('guest', session.get('lang', 'en')) }}</option>
                         <option value="worker" {% if user.role == 'worker' %}selected{% endif %}>{{ t('worker', session.get('lang', 'en')) }}</option>
                         <option value="admin" {% if user.role == 'admin' %}selected{% endif %}>{{ t('admin', session.get('lang', 'en')) }}</option>
