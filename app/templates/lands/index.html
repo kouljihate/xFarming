@@ -3,11 +3,12 @@
 {% block title %}{{ t('lands', session.get('lang', 'en')) }} - xFarming{% endblock %}
 
 {% block content %}
-<a href="{{ url_for('lands.index') }}" class="btn btn-secondary mb-3">{{ t('back', session.get('lang', 'en')) }}</a>
+<a href="{{ url_for('lands.index') }}" class="btn rounded-pill btn-secondary mb-3 rounded-pill">{{ t('back', session.get('lang',
+    'en')) }}</a>
 <h2>{{ t('lands', session.get('lang', 'en')) }}</h2>
 
 {% if session.get('role') in ['admin', 'worker'] %}
-<button type="button" class="btn btn-success mb-3" data-bs-toggle="modal" data-bs-target="#addLandModal">
+<button type="button" class="btn rounded-pill btn-success mb-3 rounded-pill" data-bs-toggle="modal" data-bs-target="#addLandModal">
     <i class="bi-plus-circle"></i> {{ t('add_land', session.get('lang', 'en')) }}
 </button>
 {% endif %}
@@ -15,9 +16,10 @@
 <form method="GET" class="mb-3">
     <div class="input-group">
         <input type="text" class="form-control" name="search" placeholder="Search lands..." value="{{ search }}">
-        <button class="btn btn-primary" type="submit"><i class="bi-search"></i> Search</button>
+        <button class="btn rounded-pill btn-primary rounded-pill" type="submit"><i class="bi-search"></i> Search</button>
         {% if search %}
-        <a href="{{ url_for('lands.index') }}" class="btn btn-secondary"><i class="bi-x-circle"></i> Clear</a>
+        <a href="{{ url_for('lands.index') }}" class="btn rounded-pill btn-secondary rounded-pill"><i class="bi-x-circle"></i>
+            Clear</a>
         {% endif %}
     </div>
 </form>
@@ -40,18 +42,18 @@
                 <td>{{ land.farm_id or '-' }}</td>
                 <td>{{ land.owner.name if land.owner else '-' }}</td>
                 <td>
-                    <a href="{{ url_for('lands.detail', land_id=land._id) }}" class="btn btn-sm btn-primary"><i
-                            class="bi-eye"></i></a>
+                    <a href="{{ url_for('lands.detail', land_id=land._id) }}"
+                        class="btn rounded-pill btn-sm btn-primary rounded-pill"><i class="bi-eye"></i></a>
                     {% if session.get('role') == 'admin' %}
-                    <button type="button" class="btn btn-sm btn-warning" data-bs-toggle="modal"
+                    <button type="button" class="btn rounded-pill btn-sm btn-warning rounded-pill" data-bs-toggle="modal"
                         data-bs-target="#editLandModal{{ land._id }}">
                         <i class="bi-pencil"></i>
                     </button>
-                    <button type="button" class="btn btn-sm btn-danger" data-bs-toggle="modal"
+                    <button type="button" class="btn rounded-pill btn-sm btn-danger rounded-pill" data-bs-toggle="modal"
                         data-bs-target="#deleteLandModal{{ land._id }}">
                         <i class="bi-trash"></i>
                     </button>
-                    <button type="button" class="btn btn-sm btn-info" data-bs-toggle="modal"
+                    <button type="button" class="btn rounded-pill btn-sm btn-info rounded-pill" data-bs-toggle="modal"
                         data-bs-target="#addSectorModal{{ land._id }}">
                         <i class="bi-plus-circle"></i>
                     </button>
@@ -66,7 +68,8 @@
 <div class="text-center py-5">
     <h1 class="display-1 text-muted">No Land Found</h1>
     {% if session.get('role') in ['admin', 'worker'] %}
-    <button type="button" class="btn btn-success mt-3" data-bs-toggle="modal" data-bs-target="#addLandModal">
+    <button type="button" class="btn rounded-pill btn-success mt-3 rounded-pill" data-bs-toggle="modal"
+        data-bs-target="#addLandModal">
         <i class="bi-plus-circle"></i> Add Your First Land
     </button>
     {% endif %}

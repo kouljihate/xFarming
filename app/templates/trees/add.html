@@ -3,7 +3,7 @@
 {% block title %}Add Tree - xFarming{% endblock %}
 
 {% block content %}
-<a href="{{ url_for('trees.index') }}" class="btn btn-secondary mb-3">{{ t('back', session.get('lang', 'en')) }}</a>
+<a href="{{ url_for('trees.index') }}" class="btn rounded-pill btn-secondary mb-3">{{ t('back', session.get('lang', 'en')) }}</a>
 <h2>Add Tree</h2>
 
 <div class="card">
@@ -21,7 +21,7 @@
                     {% endfor %}
                 </select>
             </div>
-            <button type="submit" class="btn btn-primary">Add Tree</button>
+            <button type="submit" class="btn rounded-pill btn-primary">Add Tree</button>
         </form>
     </div>
 </div>

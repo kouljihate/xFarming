@@ -3,14 +3,14 @@
 {% block title %}System Logs - xFarming{% endblock %}
 
 {% block content %}
-<a href="{{ url_for('users.index') }}" class="btn btn-secondary mb-3">{{ t('back', session.get('lang', 'en')) }}</a>
+<a href="{{ url_for('users.index') }}" class="btn rounded-pill btn-secondary mb-3">{{ t('back', session.get('lang', 'en')) }}</a>
 <h2>System Logs</h2>
 
 <div class="mb-3">
-    <a href="{{ url_for('users.view_logs', level='info') }}" class="btn btn-sm btn-success">Info</a>
-    <a href="{{ url_for('users.view_logs', level='warning') }}" class="btn btn-sm btn-warning">Warning</a>
-    <a href="{{ url_for('users.view_logs', level='error') }}" class="btn btn-sm btn-danger">Error</a>
-    <a href="{{ url_for('users.view_logs') }}" class="btn btn-sm btn-secondary">All</a>
+    <a href="{{ url_for('users.view_logs', level='info') }}" class="btn rounded-pill btn-sm btn-success">Info</a>
+    <a href="{{ url_for('users.view_logs', level='warning') }}" class="btn rounded-pill btn-sm btn-warning">Warning</a>
+    <a href="{{ url_for('users.view_logs', level='error') }}" class="btn rounded-pill btn-sm btn-danger">Error</a>
+    <a href="{{ url_for('users.view_logs') }}" class="btn rounded-pill btn-sm btn-secondary">All</a>
 </div>
 
 <table class="table table-striped">

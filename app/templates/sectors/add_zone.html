@@ -3,7 +3,7 @@
 {% block title %}Add Zone - xFarming{% endblock %}
 
 {% block content %}
-<a href="{{ url_for('sectors.detail', sector_id=sector_id) }}" class="btn btn-secondary mb-3">{{ t('back', session.get('lang', 'en')) }}</a>
+<a href="{{ url_for('sectors.detail', sector_id=sector_id) }}" class="btn rounded-pill btn-secondary mb-3">{{ t('back', session.get('lang', 'en')) }}</a>
 <h2>Add Zone</h2>
 
 <div class="card">
@@ -13,7 +13,7 @@
                 <label class="form-label">Zone Name</label>
                 <input type="text" class="form-control" name="name" required>
             </div>
-            <button type="submit" class="btn btn-primary">Add Zone</button>
+            <button type="submit" class="btn rounded-pill btn-primary">Add Zone</button>
         </form>
     </div>
 </div>

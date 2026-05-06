@@ -17,7 +17,7 @@
                         <p class="card-text display-4 mb-0">{{ stats.lands }}</p>
                     </div>
                     <div class="col-2 text-end">
-                        <a href="{{ url_for('lands.index') }}" class="btn btn-sm btn-light rounded-circle" title="Add Land"><i class="bi-plus-lg"></i></a>
+                        <a href="{{ url_for('lands.index') }}" class="btn rounded-pill btn-sm btn-light rounded-circle" title="Add Land"><i class="bi-plus-lg"></i></a>
                     </div>
                 </div>
             </div>
@@ -34,7 +34,7 @@
                         <p class="card-text display-4 mb-0">{{ stats.sectors }}</p>
                     </div>
                     <div class="col-2 text-end">
-                        <a href="{{ url_for('sectors.index') }}" class="btn btn-sm btn-light rounded-circle" title="Add Sector"><i class="bi-plus-lg"></i></a>
+                        <a href="{{ url_for('sectors.index') }}" class="btn rounded-pill btn-sm btn-light rounded-circle" title="Add Sector"><i class="bi-plus-lg"></i></a>
                     </div>
                 </div>
             </div>
@@ -51,7 +51,7 @@
                         <p class="card-text display-4 mb-0">{{ stats.zones }}</p>
                     </div>
                     <div class="col-2 text-end">
-                        <a href="{{ url_for('zones.index') }}" class="btn btn-sm btn-light rounded-circle" title="Add Zone"><i class="bi-plus-lg"></i></a>
+                        <a href="{{ url_for('zones.index') }}" class="btn rounded-pill btn-sm btn-light rounded-circle" title="Add Zone"><i class="bi-plus-lg"></i></a>
                     </div>
                 </div>
             </div>
@@ -68,7 +68,7 @@
                         <p class="card-text display-4 mb-0">{{ stats.rows }}</p>
                     </div>
                     <div class="col-2 text-end">
-                        <a href="{{ url_for('rows.index') }}" class="btn btn-sm btn-light rounded-circle" title="Add Row"><i class="bi-plus-lg"></i></a>
+                        <a href="{{ url_for('rows.index') }}" class="btn rounded-pill btn-sm btn-light rounded-circle" title="Add Row"><i class="bi-plus-lg"></i></a>
                     </div>
                 </div>
             </div>
@@ -85,7 +85,7 @@
                         <p class="card-text display-4 mb-0">{{ stats.trees }}</p>
                     </div>
                     <div class="col-2 text-end">
-                        <a href="{{ url_for('trees.index') }}" class="btn btn-sm btn-light rounded-circle" title="Add Tree"><i class="bi-plus-lg"></i></a>
+                        <a href="{{ url_for('trees.index') }}" class="btn rounded-pill btn-sm btn-light rounded-circle" title="Add Tree"><i class="bi-plus-lg"></i></a>
                     </div>
                 </div>
             </div>
@@ -98,8 +98,8 @@
         <div class="card-header d-flex justify-content-between align-items-center">
             <h5 class="mb-0">{{ t('recent_activities', session.get('lang', 'en')) }}</h5>
             <div>
-                <a href="{{ url_for('activities.add') }}" class="btn btn-sm btn-success me-2" title="Add Activity"><i class="bi-plus-lg"></i></a>
-                <a href="{{ url_for('activities.index') }}" class="btn btn-sm btn-primary">View All</a>
+                <a href="{{ url_for('activities.add') }}" class="btn rounded-pill btn-sm btn-success me-2" title="Add Activity"><i class="bi-plus-lg"></i></a>
+                <a href="{{ url_for('activities.index') }}" class="btn rounded-pill btn-sm btn-primary">View All</a>
             </div>
         </div>
         <div class="card-body">

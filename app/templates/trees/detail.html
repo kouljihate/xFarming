@@ -3,14 +3,14 @@
 {% block title %}{{ tree.name }} - xFarming{% endblock %}
 
 {% block content %}
-<a href="{{ url_for('rows.detail', row_id=row._id) }}" class="btn btn-secondary mb-3">{{ t('back', session.get('lang', 'en')) }}</a>
+<a href="{{ url_for('rows.detail', row_id=row._id) }}" class="btn rounded-pill btn-secondary mb-3">{{ t('back', session.get('lang', 'en')) }}</a>
 <div class="d-flex justify-content-between align-items-center mb-3">
     <h2>{{ tree.name }}</h2>
     {% if session.get('role') == 'admin' %}
     <div>
-        <a href="{{ url_for('trees.edit', tree_id=tree._id) }}" class="btn btn-warning">Edit</a>
+        <a href="{{ url_for('trees.edit', tree_id=tree._id) }}" class="btn rounded-pill btn-warning">Edit</a>
         <form method="POST" action="{{ url_for('lands.delete_tree', land_id=land._id, sector_id=sector._id, zone_id=zone._id, row_id=row._id, tree_id=tree._id) }}" class="d-inline">
-            <button type="submit" class="btn btn-danger" onclick="return confirm('Delete this tree?')">Delete</button>
+            <button type="submit" class="btn rounded-pill btn-danger" onclick="return confirm('Delete this tree?')">Delete</button>
         </form>
     </div>
     {% endif %}

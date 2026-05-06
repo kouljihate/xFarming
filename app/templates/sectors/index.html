@@ -3,15 +3,15 @@
 {% block title %}{{ t('sectors', session.get('lang', 'en')) }} - xFarming{% endblock %}
 
 {% block content %}
-<a href="{{ url_for('lands.index') }}" class="btn btn-secondary mb-3">{{ t('back', session.get('lang', 'en')) }}</a>
+<a href="{{ url_for('lands.index') }}" class="btn rounded-pill btn-secondary mb-3">{{ t('back', session.get('lang', 'en')) }}</a>
 <h2>{{ t('sectors', session.get('lang', 'en')) }}</h2>
 
 {% if session.get('role') == 'admin' %}
-<button type="button" class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#addSectorModal">
+<button type="button" class="btn rounded-pill btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#addSectorModal">
     <i class="bi-plus-circle"></i> {{ t('add', session.get('lang', 'en')) }} {{ t('sector', session.get('lang', 'en'))
     }}
 </button>
-<button type="button" class="btn btn-outline-primary mb-3 ms-2" data-bs-toggle="modal"
+<button type="button" class="btn rounded-pill btn-outline-primary mb-3 ms-2" data-bs-toggle="modal"
     data-bs-target="#bulkAddSectorModal">
     <i class="bi-stack"></i> {{ t('bulk_add', session.get('lang', 'en')) }} {{ t('sectors', session.get('lang', 'en'))
     }}
@@ -21,9 +21,9 @@
 <form method="GET" class="mb-3">
     <div class="input-group">
         <input type="text" class="form-control" name="search" placeholder="Search sectors..." value="{{ search }}">
-        <button class="btn btn-primary" type="submit"><i class="bi-search"></i> Search</button>
+        <button class="btn rounded-pill btn-primary" type="submit"><i class="bi-search"></i> Search</button>
         {% if search %}
-        <a href="{{ url_for('sectors.index') }}" class="btn btn-secondary"><i class="bi-x-circle"></i> Clear</a>
+        <a href="{{ url_for('sectors.index') }}" class="btn rounded-pill btn-secondary"><i class="bi-x-circle"></i> Clear</a>
         {% endif %}
     </div>
 </form>
@@ -46,18 +46,18 @@
                 <td>{{ sector.land.name if sector.land else '' }}</td>
                 <td>{{ sector.zone_count }}</td>
                 <td>
-                    <a href="{{ url_for('sectors.detail', sector_id=sector._id) }}" class="btn btn-sm btn-primary"><i
+                    <a href="{{ url_for('sectors.detail', sector_id=sector._id) }}" class="btn rounded-pill btn-sm btn-primary"><i
                             class="bi-eye"></i></a>
                     {% if session.get('role') == 'admin' %}
-                    <button type="button" class="btn btn-sm btn-warning" data-bs-toggle="modal"
+                    <button type="button" class="btn rounded-pill btn-sm btn-warning" data-bs-toggle="modal"
                         data-bs-target="#editSectorModal{{ sector._id }}">
                         <i class="bi-pencil"></i>
                     </button>
-                    <button type="button" class="btn btn-sm btn-danger" data-bs-toggle="modal"
+                    <button type="button" class="btn rounded-pill btn-sm btn-danger" data-bs-toggle="modal"
                         data-bs-target="#deleteSectorModal{{ sector._id }}">
                         <i class="bi-trash"></i>
                     </button>
-                    <button type="button" class="btn btn-sm btn-success" title="Add Zone" data-bs-toggle="modal"
+                    <button type="button" class="btn rounded-pill btn-sm btn-success" title="Add Zone" data-bs-toggle="modal"
                         data-bs-target="#addZoneModal{{ sector._id }}">
                         <i class="bi-plus-circle"></i></button>
                     {% endif %}
@@ -72,7 +72,7 @@
     <h1 class="display-1 text-muted">No Sector Found</h1>
     <!-- <p class="lead text-muted">No sectors found</p> -->
     {% if session.get('role') == 'admin' %}
-    <button type="button" class="btn btn-primary mt-3" data-bs-toggle="modal" data-bs-target="#addSectorModal">
+    <button type="button" class="btn rounded-pill btn-primary mt-3" data-bs-toggle="modal" data-bs-target="#addSectorModal">
         <i class="bi-plus-circle"></i> Add Your First Sector
     </button>
     {% endif %}
@@ -83,9 +83,9 @@
 <!-- Bulk Add Sector Modal -->
 <div class="modal fade" id="bulkAddSectorModal" tabindex="-1">
     <div class="modal-dialog modal-lg">
-        <div class="modal-content">
+        <div class="modal-content border-success">
             <form method="POST" action="{{ url_for('sectors.bulk_add') }}">
-                <div class="modal-header bg-{{ session.get('theme', 'minty') }} text-white">
+                <div class="modal-header bg-success text-white">
                     <h5 class="modal-title"><i class="bi-stack me-2"></i>Bulk Add Sectors</h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                 </div>
@@ -151,8 +151,8 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="submit" class="btn btn-primary">Add Sectors</button>
+                    <button type="button" class="btn rounded-pill btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn rounded-pill btn-primary">Add Sectors</button>
                 </div>
             </form>
         </div>
@@ -364,8 +364,8 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="submit" class="btn btn-primary">Add Zone</button>
+                    <button type="button" class="btn rounded-pill btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn rounded-pill btn-primary">Add Zone</button>
                 </div>
             </form>
         </div>

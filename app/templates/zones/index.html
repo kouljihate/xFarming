@@ -3,14 +3,14 @@
 {% block title %}{{ t('zones', session.get('lang', 'en')) }} - xFarming{% endblock %}
 
 {% block content %}
-<a href="{{ url_for('lands.index') }}" class="btn btn-secondary mb-3">{{ t('back', session.get('lang', 'en')) }}</a>
+<a href="{{ url_for('lands.index') }}" class="btn rounded-pill btn-secondary mb-3">{{ t('back', session.get('lang', 'en')) }}</a>
 <h2>{{ t('zones', session.get('lang', 'en')) }}</h2>
 
 {% if session.get('role') == 'admin' %}
-<button type="button" class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#addZoneModal">
+<button type="button" class="btn rounded-pill btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#addZoneModal">
     <i class="bi-plus-circle"></i> {{ t('add', session.get('lang', 'en')) }} {{ t('zones', session.get('lang', 'en')) }}
 </button>
-<button type="button" class="btn btn-outline-primary mb-3 ms-2" data-bs-toggle="modal"
+<button type="button" class="btn rounded-pill btn-outline-primary mb-3 ms-2" data-bs-toggle="modal"
     data-bs-target="#bulkAddZoneModal">
     <i class="bi-stack"></i> {{ t('bulk_add', session.get('lang', 'en')) }} {{ t('zones', session.get('lang', 'en')) }}
 </button>
@@ -19,9 +19,9 @@
 <form method="GET" class="mb-3">
     <div class="input-group">
         <input type="text" class="form-control" name="search" placeholder="Search zones..." value="{{ search }}">
-        <button class="btn btn-primary" type="submit"><i class="bi-search"></i> Search</button>
+        <button class="btn rounded-pill btn-primary" type="submit"><i class="bi-search"></i> Search</button>
         {% if search %}
-        <a href="{{ url_for('zones.index') }}" class="btn btn-secondary"><i class="bi-x-circle"></i> Clear</a>
+        <a href="{{ url_for('zones.index') }}" class="btn rounded-pill btn-secondary"><i class="bi-x-circle"></i> Clear</a>
         {% endif %}
     </div>
 </form>
@@ -44,14 +44,14 @@
                 <td>{{ zone.sector.name if zone.sector else '' }}</td>
                 <td>{{ zone.row_count }}</td>
                 <td>
-                    <a href="{{ url_for('zones.detail', zone_id=zone._id) }}" class="btn btn-sm btn-primary"><i
+                    <a href="{{ url_for('zones.detail', zone_id=zone._id) }}" class="btn rounded-pill btn-sm btn-primary"><i
                             class="bi-eye"></i></a>
                     {% if session.get('role') == 'admin' %}
-                    <button type="button" class="btn btn-sm btn-warning" data-bs-toggle="modal"
+                    <button type="button" class="btn rounded-pill btn-sm btn-warning" data-bs-toggle="modal"
                         data-bs-target="#editZoneModal{{ zone._id }}">
                         <i class="bi-pencil"></i>
                     </button>
-                    <button type="button" class="btn btn-sm btn-danger" data-bs-toggle="modal"
+                    <button type="button" class="btn rounded-pill btn-sm btn-danger" data-bs-toggle="modal"
                         data-bs-target="#deleteZoneModal{{ zone._id }}">
                         <i class="bi-trash"></i>
                     </button>
@@ -95,8 +95,8 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="submit" class="btn btn-primary">Add</button>
+                    <button type="button" class="btn rounded-pill btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn rounded-pill btn-primary">Add</button>
                 </div>
             </form>
         </div>
@@ -121,8 +121,8 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="submit" class="btn btn-primary">Update</button>
+                    <button type="button" class="btn rounded-pill btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn rounded-pill btn-primary">Update</button>
                 </div>
             </form>
         </div>
@@ -143,8 +143,8 @@
                     <p>Are you sure you want to delete zone "{{ zone.name }}"?</p>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="submit" class="btn btn-danger">Delete</button>
+                    <button type="button" class="btn rounded-pill btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn rounded-pill btn-danger">Delete</button>
                 </div>
             </form>
         </div>

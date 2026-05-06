@@ -28,7 +28,7 @@
                     </select>
                 </form>
                 <form method="POST" action="{{ url_for('users.delete', user_id=user._id) }}" class="d-inline">
-                    <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Delete user?')">{{ t('delete', session.get('lang', 'en')) }}</button>
+                    <button type="submit" class="btn rounded-pill btn-sm btn-danger" onclick="return confirm('Delete user?')">{{ t('delete', session.get('lang', 'en')) }}</button>
                 </form>
             </td>
         </tr>
