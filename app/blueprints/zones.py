@@ -306,25 +306,116 @@ def bulk_add():
     
     db = get_db()
     sector_id = request.form.get('sector_id')
-    names = request.form.get('names', '').strip().split('\n')
     
-    lands = list(db.lands.find())
-    for land in lands:
-        for sector in land.get('sectors', []):
-            if sector['_id'] == sector_id:
-                if 'zones' not in sector:
-                    sector['zones'] = []
-                for name in names:
-                    name = name.strip()
-                    if name:
-                        sector['zones'].append({
-                            '_id': str(ObjectId()),
-                            'name': name,
-                            'rows': []
-                        })
-                db.lands.update_one({'_id': land['_id']}, {'$set': {'sectors': land.get('sectors', [])}})
-                log_message('info', f'Bulk added {len([n for n in names if n.strip()])} zones', session.get('user_id'), session.get('username'))
-                flash('Zones added successfully!', 'success')
-                break
+    try:
+        import json
+        
+        # Safe float conversion
+        def safe_float(value, default=0.0):
+            try:
+                val = float(value or default)
+                return val
+            except (ValueError, TypeError):
+                return default
+        
+        # Safe int conversion
+        def safe_int(value, default=0):
+            try:
+                val = int(value or default)
+                return val
+            except (ValueError, TypeError):
+                return default
+        
+        # Parse names
+        names = request.form.get('names', '').strip().split('\n')
+        
+        # Parse pollinators (comma-separated)
+        pollinators_str = request.form.get('pollinators', '')
+        pollinators = [p.strip() for p in pollinators_str.split(',') if p.strip()] if pollinators_str else []
+        
+        # Parse boundary if provided
+        boundary = {'type': 'Polygon', 'coordinates': []}
+        boundary_str = request.form.get('boundary', '').strip()
+        if boundary_str:
+            try:
+                boundary = json.loads(boundary_str)
+            except:
+                pass
+        
+        # Get zone_id prefix and zone_number start
+        zone_id_prefix = request.form.get('zone_id_prefix', '').strip()
+        zone_number_start = request.form.get('zone_number_start', '')
+        
+        lands = list(db.lands.find())
+        for land in lands:
+            for sector in land.get('sectors', []):
+                if sector['_id'] == sector_id:
+                    if 'zones' not in sector:
+                        sector['zones'] = []
+                    
+                    for idx, name in enumerate(names):
+                        name = name.strip()
+                        if name:
+                            zone_data = ZoneModel(
+                                zone_id=f"{zone_id_prefix}{idx+1}" if zone_id_prefix else '',
+                                zone_number=f"Z{idx+1:02d}" if not zone_number_start else zone_number_start,
+                                name=name,
+                                description=request.form.get('description', ''),
+                                location={
+                                    'area': {'value': safe_float(request.form.get('area_value')), 'unit': request.form.get('area_unit', 'acres')},
+                                    'row_spacing': {'value': safe_float(request.form.get('row_spacing_value')), 'unit': request.form.get('row_spacing_unit', 'feet')},
+                                    'tree_spacing': {'value': safe_float(request.form.get('tree_spacing_value')), 'unit': request.form.get('tree_spacing_unit', 'feet')},
+                                    'orientation': request.form.get('orientation', '')
+                                },
+                                boundary=boundary,
+                                crop_info={
+                                    'current_crop': request.form.get('current_crop', ''),
+                                    'variety': request.form.get('variety', ''),
+                                    'planting_date': request.form.get('planting_date', ''),
+                                    'root_stock': request.form.get('root_stock', ''),
+                                    'pollinators': pollinators
+                                },
+                                soil_characteristics={
+                                    'type': request.form.get('soil_type', ''),
+                                    'ph': safe_float(request.form.get('ph'), 0.0),
+                                    'organic_matter': request.form.get('organic_matter', ''),
+                                    'drainage': request.form.get('drainage', '')
+                                },
+                                statistics={
+                                    'total_rows': safe_int(request.form.get('total_rows')),
+                                    'total_trees': safe_int(request.form.get('total_trees')),
+                                    'trees_per_acre': safe_int(request.form.get('trees_per_acre')),
+                                    'active_trees': safe_int(request.form.get('active_trees')),
+                                    'dead_trees': safe_int(request.form.get('dead_trees')),
+                                    'replacement_rate': request.form.get('replacement_rate', '')
+                                },
+                                maintenance={
+                                    'last_pruned': request.form.get('last_pruned', ''),
+                                    'last_fertilized': request.form.get('last_fertilized', ''),
+                                    'last_irrigated': request.form.get('last_irrigated', ''),
+                                    'next_maintenance': request.form.get('next_maintenance', ''),
+                                    'maintenance_notes': request.form.get('maintenance_notes', '')
+                                },
+                                metadata={
+                                    'created_date': request.form.get('created_date', ''),
+                                    'last_updated': request.form.get('last_updated', ''),
+                                    'status': request.form.get('status', 'active'),
+                                    'notes': request.form.get('notes', ''),
+                                    'zone_manager': request.form.get('zone_manager', '')
+                                }
+                            )
+                            
+                            zone_dict = zone_data.model_dump()
+                            zone_dict['_id'] = str(ObjectId())
+                            zone_dict['rows'] = []
+                            
+                            sector['zones'].append(zone_dict)
+                    
+                    db.lands.update_one({'_id': land['_id']}, {'$set': {'sectors': land.get('sectors', [])}})
+                    log_message('info', f'Bulk added {len([n for n in names if n.strip()])} zones', session.get('user_id'), session.get('username'))
+                    flash('Zones added successfully!', 'success')
+                    break
+    except Exception as e:
+        flash(f'Validation error: {str(e)}', 'danger')
     
     return redirect(url_for('zones.index'))
