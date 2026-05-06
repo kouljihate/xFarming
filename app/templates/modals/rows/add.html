@@ -1,23 +1,130 @@
 <div class="modal fade" id="addRowModal" tabindex="-1">
-    <div class="modal-dialog">
+    <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <form method="POST" action="{{ url_for('rows.add') }}">
-                <div class="modal-header bg-{{ session.get('theme', 'minty') }} text-white">
-                    <h5 class="modal-title">{{ t('add', session.get('lang', 'en')) }} {{ t('rows', session.get('lang', 'en')) }}</h5>
+                <input type="hidden" name="zone_id" id="addRowZoneId">
+                <div class="modal-header bg-success text-white">
+                    <h5 class="modal-title"><i class="bi-plus-circle me-2"></i>{{ t('add', session.get('lang', 'en')) }} {{ t('row', session.get('lang', 'en')) }}</h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
-                    <div class="mb-3">
-                        <label class="form-label">Row Name</label>
-                        <input type="text" class="form-control rounded-pill" name="name" required>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Row Number</label>
+                            <input type="number" class="form-control rounded-pill" name="row_number" value="1" min="1">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Row Name</label>
+                            <input type="text" class="form-control rounded-pill" name="name" required>
+                        </div>
                     </div>
                     <div class="mb-3">
-                        <label class="form-label">Zone</label>
-                        <select class="form-select rounded-pill" name="zone_id" required>
-                            {% for zone in zones %}
-                            <option value="{{ zone._id }}">{{ zone.name }} ({{ zone.sector.name if zone.sector else 'Unknown' }})</option>
-                            {% endfor %}
-                        </select>
+                        <label class="form-label">Description</label>
+                        <textarea class="form-control rounded-pill" name="description" rows="2"></textarea>
+                    </div>
+                    <hr>
+                    <h6 class="mb-3">Position</h6>
+                    <div class="row">
+                        <div class="col-md-3 mb-3">
+                            <label class="form-label">Start Latitude</label>
+                            <input type="number" step="any" class="form-control rounded-pill" name="start_latitude" value="0.0">
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <label class="form-label">Start Longitude</label>
+                            <input type="number" step="any" class="form-control rounded-pill" name="start_longitude" value="0.0">
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <label class="form-label">End Latitude</label>
+                            <input type="number" step="any" class="form-control rounded-pill" name="end_latitude" value="0.0">
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <label class="form-label">End Longitude</label>
+                            <input type="number" step="any" class="form-control rounded-pill" name="end_longitude" value="0.0">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Length</label>
+                            <input type="number" step="0.01" class="form-control rounded-pill" name="length_value" value="0">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Unit</label>
+                            <select class="form-select rounded-pill" name="length_unit">
+                                <option value="feet">Feet</option>
+                                <option value="meters">Meters</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Orientation</label>
+                        <input type="text" class="form-control rounded-pill" name="orientation" placeholder="N-S">
+                    </div>
+                    <hr>
+                    <h6 class="mb-3">Tree Count</h6>
+                    <div class="row">
+                        <div class="col-md-3 mb-3">
+                            <label class="form-label">Total Positions</label>
+                            <input type="number" class="form-control rounded-pill" name="total_positions" value="0">
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <label class="form-label">Active Trees</label>
+                            <input type="number" class="form-control rounded-pill" name="active_trees" value="0">
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <label class="form-label">Empty Positions</label>
+                            <input type="number" class="form-control rounded-pill" name="empty_positions" value="0">
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <label class="form-label">Dead Trees</label>
+                            <input type="number" class="form-control rounded-pill" name="dead_trees" value="0">
+                        </div>
+                    </div>
+                    <hr>
+                    <h6 class="mb-3">Maintenance</h6>
+                    <div class="row">
+                        <div class="col-md-2 mb-3">
+                            <label class="form-label">Last Pruned</label>
+                            <input type="date" class="form-control rounded-pill" name="last_pruned">
+                        </div>
+                        <div class="col-md-2 mb-3">
+                            <label class="form-label">Last Fertilized</label>
+                            <input type="date" class="form-control rounded-pill" name="last_fertilized">
+                        </div>
+                        <div class="col-md-2 mb-3">
+                            <label class="form-label">Last Irrigated</label>
+                            <input type="date" class="form-control rounded-pill" name="last_irrigated">
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <label class="form-label">Next Maintenance</label>
+                            <input type="date" class="form-control rounded-pill" name="next_maintenance">
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <label class="form-label">Maintenance Notes</label>
+                            <textarea class="form-control rounded-pill" name="maintenance_notes" rows="1"></textarea>
+                        </div>
+                    </div>
+                    <hr>
+                    <h6 class="mb-3">Metadata</h6>
+                    <div class="row">
+                        <div class="col-md-3 mb-3">
+                            <label class="form-label">Created Date</label>
+                            <input type="date" class="form-control rounded-pill" name="created_date">
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <label class="form-label">Last Updated</label>
+                            <input type="date" class="form-control rounded-pill" name="last_updated">
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <label class="form-label">Status</label>
+                            <select class="form-select rounded-pill" name="status">
+                                <option value="active">Active</option>
+                                <option value="inactive">Inactive</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Notes</label>
+                        <textarea class="form-control rounded-pill" name="notes" rows="2"></textarea>
                     </div>
                 </div>
                 <div class="modal-footer">
