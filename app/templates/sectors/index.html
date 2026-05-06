@@ -379,35 +379,3 @@
 {% include "modals/sectors/add.html" %}
 
 {% endblock %}
-
-{% block extra_js %}
-<script>
-function openEditSectorModal(sector) {
-    const modal = new bootstrap.Modal(document.getElementById('editSectorModal'));
-    document.getElementById('editSectorForm').action = "{{ url_for('sectors.edit', sector_id='') }}" + sector._id;
-    document.getElementById('editSectorId').value = sector._id;
-    document.getElementById('editSectorModalTitle').textContent = 'Edit ' + sector.name;
-    document.getElementById('editSectorIdDisplay').value = sector.sector_id || '';
-    document.getElementById('editSectorNumber').value = sector.sector_number || 1;
-    document.getElementById('editSectorName').value = sector.name || '';
-    document.getElementById('editSectorDescription').value = sector.description || '';
-    document.getElementById('editSectorArea').value = (sector.location && sector.location.area) ? sector.location.area.value : 0;
-    document.getElementById('editSectorAreaUnit').value = (sector.location && sector.location.area) ? sector.location.area.unit : 'acres';
-    document.getElementById('editSectorSoilType').value = (sector.location && sector.location.soil_type) ? sector.location.soil_type : 'loam';
-    document.getElementById('editSectorSlope').value = (sector.location && sector.location.slope) ? sector.location.slope : '';
-    document.getElementById('editSectorIrrigationType').value = (sector.location && sector.location.irrigation_type) ? sector.location.irrigation_type : '';
-    document.getElementById('editSectorBoundary').value = sector.boundary || '';
-    document.getElementById('editSectorStatus').value = (sector.metadata && sector.metadata.status) ? sector.metadata.status : 'active';
-    document.getElementById('editSectorNotes').value = (sector.metadata && sector.metadata.notes) ? sector.metadata.notes : '';
-    modal.show();
-}
-
-function openDeleteSectorModal(sector) {
-    const modal = new bootstrap.Modal(document.getElementById('deleteSectorModal'));
-    document.getElementById('deleteSectorForm').action = "{{ url_for('sectors.delete', sector_id='') }}" + sector._id;
-    document.getElementById('deleteSectorModalTitle').textContent = 'Delete ' + sector.name;
-    document.getElementById('deleteSectorMessage').textContent = 'Are you sure you want to delete sector "' + sector.name + '"?';
-    modal.show();
-}
-</script>
-{% endblock %}
