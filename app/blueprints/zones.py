@@ -184,20 +184,119 @@ def edit(zone_id):
         return redirect(url_for('lands.index'))
     
     db = get_db()
-    lands = list(db.lands.find())
     
-    for land in lands:
-        for sector in land.get('sectors', []):
-            for zone in sector.get('zones', []):
-                if zone['_id'] == zone_id:
-                    new_name = request.form.get('name')
-                    zone['name'] = new_name
-                    db.lands.update_one({'_id': land['_id']}, {'$set': {'sectors': land.get('sectors', [])}})
-                    log_message('info', f"Updated zone: {new_name}", session.get('user_id'), session.get('username'))
-                    flash('Zone updated successfully!', 'success')
-                    return redirect(url_for('zones.index'))
+    try:
+        import json
+        
+        # Safe float conversion
+        def safe_float(value, default=0.0):
+            try:
+                val = float(value or default)
+                return val
+            except (ValueError, TypeError):
+                return default
+        
+        # Safe int conversion
+        def safe_int(value, default=0):
+            try:
+                val = int(value or default)
+                return val
+            except (ValueError, TypeError):
+                return default
+        
+        # Parse pollinators (comma-separated)
+        pollinators_str = request.form.get('pollinators', '')
+        pollinators = [p.strip() for p in pollinators_str.split(',') if p.strip()] if pollinators_str else []
+        
+        # Parse boundary if provided
+        boundary = zone.get('boundary', {'type': 'Polygon', 'coordinates': []})
+        boundary_str = request.form.get('boundary', '').strip()
+        if boundary_str:
+            try:
+                boundary = json.loads(boundary_str)
+            except:
+                pass
+        
+        # Get zone_id and zone_number
+        zone_id_val = request.form.get('zone_id', '').strip()
+        zone_number = request.form.get('zone_number', '')
+        
+        # Validate with ZoneModel
+        zone_data = ZoneModel(
+            zone_id=zone_id_val,
+            zone_number=zone_number,
+            name=request.form.get('name', ''),
+            description=request.form.get('description', ''),
+            location={
+                'area': {'value': safe_float(request.form.get('area_value')), 'unit': request.form.get('area_unit', 'acres')},
+                'row_spacing': {'value': safe_float(request.form.get('row_spacing_value')), 'unit': request.form.get('row_spacing_unit', 'feet')},
+                'tree_spacing': {'value': safe_float(request.form.get('tree_spacing_value')), 'unit': request.form.get('tree_spacing_unit', 'feet')},
+                'orientation': request.form.get('orientation', '')
+            },
+            boundary=boundary,
+            crop_info={
+                'current_crop': request.form.get('current_crop', ''),
+                'variety': request.form.get('variety', ''),
+                'planting_date': request.form.get('planting_date', ''),
+                'root_stock': request.form.get('root_stock', ''),
+                'pollinators': pollinators
+            },
+            soil_characteristics={
+                'type': request.form.get('soil_type', ''),
+                'ph': safe_float(request.form.get('ph'), 0.0),
+                'organic_matter': request.form.get('organic_matter', ''),
+                'drainage': request.form.get('drainage', '')
+            },
+            statistics={
+                'total_rows': safe_int(request.form.get('total_rows')),
+                'total_trees': safe_int(request.form.get('total_trees')),
+                'trees_per_acre': safe_int(request.form.get('trees_per_acre')),
+                'active_trees': safe_int(request.form.get('active_trees')),
+                'dead_trees': safe_int(request.form.get('dead_trees')),
+                'replacement_rate': request.form.get('replacement_rate', '')
+            },
+            maintenance={
+                'last_pruned': request.form.get('last_pruned', ''),
+                'last_fertilized': request.form.get('last_fertilized', ''),
+                'last_irrigated': request.form.get('last_irrigated', ''),
+                'next_maintenance': request.form.get('next_maintenance', ''),
+                'maintenance_notes': request.form.get('maintenance_notes', '')
+            },
+            metadata={
+                'created_date': request.form.get('created_date', ''),
+                'last_updated': request.form.get('last_updated', ''),
+                'status': request.form.get('status', 'active'),
+                'notes': request.form.get('notes', ''),
+                'zone_manager': request.form.get('zone_manager', '')
+            }
+        )
+        
+        lands = list(db.lands.find())
+        for land in lands:
+            for sector in land.get('sectors', []):
+                for zone in sector.get('zones', []):
+                    if zone['_id'] == zone_id:
+                        # Update zone with validated data
+                        zone['zone_id'] = zone_data.zone_id
+                        zone['zone_number'] = zone_data.zone_number
+                        zone['name'] = zone_data.name
+                        zone['description'] = zone_data.description
+                        zone['location'] = zone_data.location
+                        zone['boundary'] = zone_data.boundary
+                        zone['crop_info'] = zone_data.crop_info
+                        zone['soil_characteristics'] = zone_data.soil_characteristics
+                        zone['statistics'] = zone_data.statistics
+                        zone['maintenance'] = zone_data.maintenance
+                        zone['metadata'] = zone_data.metadata
+                        
+                        db.lands.update_one({'_id': land['_id']}, {'$set': {'sectors': land.get('sectors', [])}})
+                        log_message('info', f"Updated zone: {zone_data.name}", session.get('user_id'), session.get('username'))
+                        flash('Zone updated successfully!', 'success')
+                        return redirect(url_for('zones.index'))
+    except Exception as e:
+        flash(f'Validation error: {str(e)}', 'danger')
     
-    abort(404)
+    return redirect(url_for('zones.index'))
 
 @zones_bp.route('/bulk_add', methods=['POST'])
 def bulk_add():
