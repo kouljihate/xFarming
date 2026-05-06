@@ -2,20 +2,22 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <form method="POST" action="{{ url_for('zones.add') }}">
-                <div class="modal-header bg-{{ session.get('theme', 'minty') }} text-white">
-                    <h5 class="modal-title">{{ t('add', session.get('lang', 'en')) }} {{ t('zones', session.get('lang', 'en')) }}</h5>
+                <div class="modal-header bg-success text-white">
+                    <h5 class="modal-title">{{ t('add', session.get('lang', 'en')) }} {{ t('zones', session.get('lang',
+                        'en')) }}</h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
                     <div class="mb-3">
                         <label class="form-label">Zone Name</label>
-                        <input type="text" class="form-control" name="name" required>
+                        <input type="text" class="form-control rounded-pill" name="name" required>
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Sector</label>
-                        <select class="form-select" name="sector_id" required>
+                        <select class="form-select rounded-pill" name="sector_id" required>
                             {% for sector in sectors %}
-                            <option value="{{ sector._id }}">{{ sector.name }} ({{ sector.land.name if sector.land else 'Unknown' }})</option>
+                            <option value="{{ sector._id }}">{{ sector.name }} ({{ sector.land.name if sector.land else
+                                'Unknown' }})</option>
                             {% endfor %}
                         </select>
                     </div>
@@ -28,3 +30,4 @@
         </div>
     </div>
 </div>
+

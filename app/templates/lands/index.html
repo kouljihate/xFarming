@@ -15,7 +15,7 @@
 
 <form method="GET" class="mb-3">
     <div class="input-group">
-        <input type="text" class="form-control" name="search" placeholder="Search lands..." value="{{ search }}">
+        <input type="text" class="form-control rounded-pill" name="search" placeholder="Search lands..." value="{{ search }}">
         <button class="btn rounded-pill btn-primary rounded-pill" type="submit"><i class="bi-search"></i> Search</button>
         {% if search %}
         <a href="{{ url_for('lands.index') }}" class="btn rounded-pill btn-secondary rounded-pill"><i class="bi-x-circle"></i>
@@ -91,3 +91,5 @@
 {% endif %}
 
 {% endblock %}
+
+

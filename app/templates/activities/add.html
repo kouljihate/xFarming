@@ -13,7 +13,7 @@
                 <form method="POST">
                     <div class="mb-3">
                         <label for="type" class="form-label">Activity Type</label>
-                        <select class="form-select" id="type" name="type" required>
+                        <select class="form-select rounded-pill" id="type" name="type" required>
                             <option value="">Select type...</option>
                             <option value="land_created">Land Created</option>
                             <option value="land_updated">Land Updated</option>
@@ -26,7 +26,7 @@
                     </div>
                     <div class="mb-3">
                         <label for="notes" class="form-label">Notes</label>
-                        <textarea class="form-control" id="notes" name="notes" rows="3" placeholder="Enter activity notes..."></textarea>
+                        <textarea class="form-control rounded-pill" id="notes" name="notes" rows="3" placeholder="Enter activity notes..."></textarea>
                     </div>
                     <div class="d-grid gap-2">
                         <button type="submit" class="btn rounded-pill btn-primary">Add Activity</button>
@@ -38,3 +38,5 @@
     </div>
 </div>
 {% endblock %}
+
+

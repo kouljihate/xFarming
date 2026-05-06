@@ -20,7 +20,7 @@
 
 <form method="GET" class="mb-3">
     <div class="input-group">
-        <input type="text" class="form-control" name="search" placeholder="Search sectors..." value="{{ search }}">
+        <input type="text" class="form-control rounded-pill" name="search" placeholder="Search sectors..." value="{{ search }}">
         <button class="btn rounded-pill btn-primary" type="submit"><i class="bi-search"></i> Search</button>
         {% if search %}
         <a href="{{ url_for('sectors.index') }}" class="btn rounded-pill btn-secondary"><i class="bi-x-circle"></i> Clear</a>
@@ -92,7 +92,7 @@
                 <div class="modal-body">
                     <div class="mb-3">
                         <label class="form-label">Land</label>
-                        <select class="form-select" name="land_id" required>
+                        <select class="form-select rounded-pill" name="land_id" required>
                             {% for land in lands %}
                             <option value="{{ land._id }}">{{ land.name }}</option>
                             {% endfor %}
@@ -101,30 +101,30 @@
                     <div class="row">
                         <div class="col-md-4 mb-3">
                             <label class="form-label">Prefix</label>
-                            <input type="text" class="form-control" name="prefix" value="Sector" required>
+                            <input type="text" class="form-control rounded-pill" name="prefix" value="Sector" required>
                         </div>
                         <div class="col-md-4 mb-3">
                             <label class="form-label">Start From</label>
-                            <input type="number" class="form-control" name="start_from" value="1" min="1" required>
+                            <input type="number" class="form-control rounded-pill" name="start_from" value="1" min="1" required>
                         </div>
                         <div class="col-md-4 mb-3">
                             <label class="form-label">End at</label>
-                            <input type="number" class="form-control" name="end_at" value="5" min="1" required>
+                            <input type="number" class="form-control rounded-pill" name="end_at" value="5" min="1" required>
                         </div>
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Description (Optional)</label>
-                        <textarea class="form-control" name="description" rows="2"
+                        <textarea class="form-control rounded-pill" name="description" rows="2"
                             placeholder="Auto-generated description"></textarea>
                     </div>
                     <div class="row">
                         <div class="col-md-6 mb-3">
                             <label class="form-label">Area (per sector)</label>
-                            <input type="number" step="0.01" class="form-control" name="area" value="0">
+                            <input type="number" step="0.01" class="form-control rounded-pill" name="area" value="0">
                         </div>
                         <div class="col-md-6 mb-3">
                             <label class="form-label">Unit</label>
-                            <select class="form-select" name="area_unit">
+                            <select class="form-select rounded-pill" name="area_unit">
                                 <option value="acres">Acres</option>
                                 <option value="hectares">Hectares</option>
                             </select>
@@ -133,7 +133,7 @@
                     <div class="row">
                         <div class="col-md-4 mb-3">
                             <label class="form-label">Soil Type</label>
-                            <select class="form-select" name="soil_type">
+                            <select class="form-select rounded-pill" name="soil_type">
                                 <option value="loam">Loam</option>
                                 <option value="clay">Clay</option>
                                 <option value="sandy">Sandy</option>
@@ -142,11 +142,11 @@
                         </div>
                         <div class="col-md-4 mb-3">
                             <label class="form-label">Slope</label>
-                            <input type="text" class="form-control" name="slope" placeholder="Flat">
+                            <input type="text" class="form-control rounded-pill" name="slope" placeholder="Flat">
                         </div>
                         <div class="col-md-4 mb-3">
                             <label class="form-label">Irrigation Type</label>
-                            <input type="text" class="form-control" name="irrigation_type" placeholder="Drip">
+                            <input type="text" class="form-control rounded-pill" name="irrigation_type" placeholder="Drip">
                         </div>
                     </div>
                 </div>
@@ -176,42 +176,42 @@
                     <div class="row">
                         <div class="col-md-6 mb-3">
                             <label class="form-label">Zone ID</label>
-                            <input type="text" class="form-control" name="zone_id" placeholder="Auto-generated">
+                            <input type="text" class="form-control rounded-pill" name="zone_id" placeholder="Auto-generated">
                         </div>
                         <div class="col-md-6 mb-3">
                             <label class="form-label">Zone Number</label>
-                            <input type="text" class="form-control" name="zone_number" placeholder="Z01">
+                            <input type="text" class="form-control rounded-pill" name="zone_number" placeholder="Z01">
                         </div>
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Zone Name</label>
-                        <input type="text" class="form-control" name="name" required>
+                        <input type="text" class="form-control rounded-pill" name="name" required>
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Description</label>
-                        <textarea class="form-control" name="description" rows="2"></textarea>
+                        <textarea class="form-control rounded-pill" name="description" rows="2"></textarea>
                     </div>
                     <hr>
                     <h6 class="mb-3">Location</h6>
                     <div class="row">
                         <div class="col-md-3 mb-3">
                             <label class="form-label">Area</label>
-                            <input type="number" step="0.01" class="form-control" name="area_value" value="0">
+                            <input type="number" step="0.01" class="form-control rounded-pill" name="area_value" value="0">
                         </div>
                         <div class="col-md-3 mb-3">
                             <label class="form-label">Unit</label>
-                            <select class="form-select" name="area_unit">
+                            <select class="form-select rounded-pill" name="area_unit">
                                 <option value="acres">Acres</option>
                                 <option value="hectares">Hectares</option>
                             </select>
                         </div>
                         <div class="col-md-3 mb-3">
                             <label class="form-label">Row Spacing</label>
-                            <input type="number" step="0.01" class="form-control" name="row_spacing_value" value="0">
+                            <input type="number" step="0.01" class="form-control rounded-pill" name="row_spacing_value" value="0">
                         </div>
                         <div class="col-md-3 mb-3">
                             <label class="form-label">Unit</label>
-                            <select class="form-select" name="row_spacing_unit">
+                            <select class="form-select rounded-pill" name="row_spacing_unit">
                                 <option value="feet">Feet</option>
                                 <option value="meters">Meters</option>
                             </select>
@@ -220,23 +220,23 @@
                     <div class="row">
                         <div class="col-md-3 mb-3">
                             <label class="form-label">Tree Spacing</label>
-                            <input type="number" step="0.01" class="form-control" name="tree_spacing_value" value="0">
+                            <input type="number" step="0.01" class="form-control rounded-pill" name="tree_spacing_value" value="0">
                         </div>
                         <div class="col-md-3 mb-3">
                             <label class="form-label">Unit</label>
-                            <select class="form-select" name="tree_spacing_unit">
+                            <select class="form-select rounded-pill" name="tree_spacing_unit">
                                 <option value="feet">Feet</option>
                                 <option value="meters">Meters</option>
                             </select>
                         </div>
                         <div class="col-md-6 mb-3">
                             <label class="form-label">Orientation</label>
-                            <input type="text" class="form-control" name="orientation" placeholder="N-S">
+                            <input type="text" class="form-control rounded-pill" name="orientation" placeholder="N-S">
                         </div>
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Boundary (JSON)</label>
-                        <textarea class="form-control" name="boundary" rows="2"
+                        <textarea class="form-control rounded-pill" name="boundary" rows="2"
                             placeholder='{"type": "Polygon", "coordinates": []}'></textarea>
                     </div>
                     <hr>
@@ -244,43 +244,43 @@
                     <div class="row">
                         <div class="col-md-3 mb-3">
                             <label class="form-label">Current Crop</label>
-                            <input type="text" class="form-control" name="current_crop" placeholder="Olives">
+                            <input type="text" class="form-control rounded-pill" name="current_crop" placeholder="Olives">
                         </div>
                         <div class="col-md-3 mb-3">
                             <label class="form-label">Variety</label>
-                            <input type="text" class="form-control" name="variety" placeholder="Arbequina">
+                            <input type="text" class="form-control rounded-pill" name="variety" placeholder="Arbequina">
                         </div>
                         <div class="col-md-3 mb-3">
                             <label class="form-label">Planting Date</label>
-                            <input type="date" class="form-control" name="planting_date">
+                            <input type="date" class="form-control rounded-pill" name="planting_date">
                         </div>
                         <div class="col-md-3 mb-3">
                             <label class="form-label">Root Stock</label>
-                            <input type="text" class="form-control" name="root_stock" placeholder="Own roots">
+                            <input type="text" class="form-control rounded-pill" name="root_stock" placeholder="Own roots">
                         </div>
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Pollinators (comma-separated)</label>
-                        <input type="text" class="form-control" name="pollinators" placeholder="Variety A, Variety B">
+                        <input type="text" class="form-control rounded-pill" name="pollinators" placeholder="Variety A, Variety B">
                     </div>
                     <hr>
                     <h6 class="mb-3">Soil Characteristics</h6>
                     <div class="row">
                         <div class="col-md-3 mb-3">
                             <label class="form-label">Soil Type</label>
-                            <input type="text" class="form-control" name="soil_type" placeholder="Loam">
+                            <input type="text" class="form-control rounded-pill" name="soil_type" placeholder="Loam">
                         </div>
                         <div class="col-md-3 mb-3">
                             <label class="form-label">pH</label>
-                            <input type="number" step="0.1" class="form-control" name="ph" value="0.0">
+                            <input type="number" step="0.1" class="form-control rounded-pill" name="ph" value="0.0">
                         </div>
                         <div class="col-md-3 mb-3">
                             <label class="form-label">Organic Matter</label>
-                            <input type="text" class="form-control" name="organic_matter" placeholder="2%">
+                            <input type="text" class="form-control rounded-pill" name="organic_matter" placeholder="2%">
                         </div>
                         <div class="col-md-3 mb-3">
                             <label class="form-label">Drainage</label>
-                            <input type="text" class="form-control" name="drainage" placeholder="Well-drained">
+                            <input type="text" class="form-control rounded-pill" name="drainage" placeholder="Well-drained">
                         </div>
                     </div>
                     <hr>
@@ -288,27 +288,27 @@
                     <div class="row">
                         <div class="col-md-2 mb-3">
                             <label class="form-label">Total Rows</label>
-                            <input type="number" class="form-control" name="total_rows" value="0">
+                            <input type="number" class="form-control rounded-pill" name="total_rows" value="0">
                         </div>
                         <div class="col-md-2 mb-3">
                             <label class="form-label">Total Trees</label>
-                            <input type="number" class="form-control" name="total_trees" value="0">
+                            <input type="number" class="form-control rounded-pill" name="total_trees" value="0">
                         </div>
                         <div class="col-md-2 mb-3">
                             <label class="form-label">Trees/Acre</label>
-                            <input type="number" class="form-control" name="trees_per_acre" value="0">
+                            <input type="number" class="form-control rounded-pill" name="trees_per_acre" value="0">
                         </div>
                         <div class="col-md-2 mb-3">
                             <label class="form-label">Active Trees</label>
-                            <input type="number" class="form-control" name="active_trees" value="0">
+                            <input type="number" class="form-control rounded-pill" name="active_trees" value="0">
                         </div>
                         <div class="col-md-2 mb-3">
                             <label class="form-label">Dead Trees</label>
-                            <input type="number" class="form-control" name="dead_trees" value="0">
+                            <input type="number" class="form-control rounded-pill" name="dead_trees" value="0">
                         </div>
                         <div class="col-md-2 mb-3">
                             <label class="form-label">Replacement Rate</label>
-                            <input type="text" class="form-control" name="replacement_rate" placeholder="5%">
+                            <input type="text" class="form-control rounded-pill" name="replacement_rate" placeholder="5%">
                         </div>
                     </div>
                     <hr>
@@ -316,23 +316,23 @@
                     <div class="row">
                         <div class="col-md-2 mb-3">
                             <label class="form-label">Last Pruned</label>
-                            <input type="date" class="form-control" name="last_pruned">
+                            <input type="date" class="form-control rounded-pill" name="last_pruned">
                         </div>
                         <div class="col-md-2 mb-3">
                             <label class="form-label">Last Fertilized</label>
-                            <input type="date" class="form-control" name="last_fertilized">
+                            <input type="date" class="form-control rounded-pill" name="last_fertilized">
                         </div>
                         <div class="col-md-2 mb-3">
                             <label class="form-label">Last Irrigated</label>
-                            <input type="date" class="form-control" name="last_irrigated">
+                            <input type="date" class="form-control rounded-pill" name="last_irrigated">
                         </div>
                         <div class="col-md-3 mb-3">
                             <label class="form-label">Next Maintenance</label>
-                            <input type="date" class="form-control" name="next_maintenance">
+                            <input type="date" class="form-control rounded-pill" name="next_maintenance">
                         </div>
                         <div class="col-md-3 mb-3">
                             <label class="form-label">Maintenance Notes</label>
-                            <textarea class="form-control" name="maintenance_notes" rows="1"></textarea>
+                            <textarea class="form-control rounded-pill" name="maintenance_notes" rows="1"></textarea>
                         </div>
                     </div>
                     <hr>
@@ -340,27 +340,27 @@
                     <div class="row">
                         <div class="col-md-3 mb-3">
                             <label class="form-label">Created Date</label>
-                            <input type="date" class="form-control" name="created_date">
+                            <input type="date" class="form-control rounded-pill" name="created_date">
                         </div>
                         <div class="col-md-3 mb-3">
                             <label class="form-label">Last Updated</label>
-                            <input type="date" class="form-control" name="last_updated">
+                            <input type="date" class="form-control rounded-pill" name="last_updated">
                         </div>
                         <div class="col-md-3 mb-3">
                             <label class="form-label">Status</label>
-                            <select class="form-select" name="status">
+                            <select class="form-select rounded-pill" name="status">
                                 <option value="active">Active</option>
                                 <option value="inactive">Inactive</option>
                             </select>
                         </div>
                         <div class="col-md-3 mb-3">
                             <label class="form-label">Zone Manager</label>
-                            <input type="text" class="form-control" name="zone_manager" placeholder="Manager name">
+                            <input type="text" class="form-control rounded-pill" name="zone_manager" placeholder="Manager name">
                         </div>
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Notes</label>
-                        <textarea class="form-control" name="notes" rows="2"></textarea>
+                        <textarea class="form-control rounded-pill" name="notes" rows="2"></textarea>
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -379,3 +379,5 @@
 {% include "modals/sectors/add.html" %}
 
 {% endblock %}
+
+

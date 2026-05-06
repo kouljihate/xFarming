@@ -9,11 +9,11 @@
                 <div class="modal-body">
                     <div class="mb-3">
                         <label class="form-label">Row Name</label>
-                        <input type="text" class="form-control" name="name" required>
+                        <input type="text" class="form-control rounded-pill" name="name" required>
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Zone</label>
-                        <select class="form-select" name="zone_id" required>
+                        <select class="form-select rounded-pill" name="zone_id" required>
                             {% for zone in zones %}
                             <option value="{{ zone._id }}">{{ zone.name }} ({{ zone.sector.name if zone.sector else 'Unknown' }})</option>
                             {% endfor %}
@@ -28,3 +28,5 @@
         </div>
     </div>
 </div>
+
+

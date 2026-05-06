@@ -14,7 +14,7 @@
 
 <form method="GET" class="mb-3">
     <div class="input-group">
-        <input type="text" class="form-control" name="search" placeholder="Search trees..." value="{{ search }}">
+        <input type="text" class="form-control rounded-pill" name="search" placeholder="Search trees..." value="{{ search }}">
         <button class="btn rounded-pill btn-primary" type="submit"><i class="bi-search"></i> Search</button>
         {% if search %}
         <a href="{{ url_for('trees.index') }}" class="btn rounded-pill btn-secondary"><i class="bi-x-circle"></i> Clear</a>
@@ -93,35 +93,35 @@
                         <div class="col-md-6">
                             <div class="mb-3">
                                 <label class="form-label">Tree Name (for display)</label>
-                                <input type="text" class="form-control" name="name" value="Tree">
+                                <input type="text" class="form-control rounded-pill" name="name" value="Tree">
                             </div>
                             <div class="mb-3">
                                 <label class="form-label">Tree Number</label>
-                                <input type="text" class="form-control" name="tree_number" placeholder="001, 002, etc.">
+                                <input type="text" class="form-control rounded-pill" name="tree_number" placeholder="001, 002, etc.">
                             </div>
                             <div class="mb-3">
                                 <label class="form-label">Species</label>
-                                <input type="text" class="form-control" name="species"
+                                <input type="text" class="form-control rounded-pill" name="species"
                                     placeholder="e.g., Persea americana">
                             </div>
                             <div class="mb-3">
                                 <label class="form-label">Variety</label>
-                                <input type="text" class="form-control" name="crop_variety"
+                                <input type="text" class="form-control rounded-pill" name="crop_variety"
                                     placeholder="e.g., Hass, Fuerte">
                             </div>
                             <div class="mb-3">
                                 <label class="form-label">Planting Date</label>
-                                <input type="date" class="form-control" name="planting_date">
+                                <input type="date" class="form-control rounded-pill" name="planting_date">
                             </div>
                             <div class="mb-3">
                                 <label class="form-label">Age (years)</label>
-                                <input type="number" class="form-control" name="age" value="0" min="0">
+                                <input type="number" class="form-control rounded-pill" name="age" value="0" min="0">
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="mb-3">
                                 <label class="form-label">Status (metadata)</label>
-                                <select class="form-select" name="status">
+                                <select class="form-select rounded-pill" name="status">
                                     <option value="healthy">Healthy</option>
                                     <option value="needs_attention">Needs Attention</option>
                                     <option value="critical">Critical</option>
@@ -129,15 +129,15 @@
                             </div>
                             <div class="mb-3">
                                 <label class="form-label">Latitude</label>
-                                <input type="number" step="any" class="form-control" name="latitude" value="0.0">
+                                <input type="number" step="any" class="form-control rounded-pill" name="latitude" value="0.0">
                             </div>
                             <div class="mb-3">
                                 <label class="form-label">Longitude</label>
-                                <input type="number" step="any" class="form-control" name="longitude" value="0.0">
+                                <input type="number" step="any" class="form-control rounded-pill" name="longitude" value="0.0">
                             </div>
                             <div class="mb-3">
                                 <label class="form-label">Row</label>
-                                <select class="form-select" name="row_id" required>
+                                <select class="form-select rounded-pill" name="row_id" required>
                                     {% for row in rows %}
                                     <option value="{{ row._id }}">{{ row.name }} ({{ row.zone.name if row.zone else
                                         'Unknown' }})</option>
@@ -168,7 +168,7 @@
                 <div class="modal-body">
                     <div class="mb-3">
                         <label class="form-label">Row</label>
-                        <select class="form-select" name="row_id" required>
+                        <select class="form-select rounded-pill" name="row_id" required>
                             {% for row in rows %}
                             <option value="{{ row._id }}">{{ row.name }} ({{ row.zone.name if row.zone else 'Unknown'
                                 }})</option>
@@ -177,7 +177,7 @@
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Number of Trees</label>
-                        <input type="number" class="form-control" name="count" value="10" min="1" max="100">
+                        <input type="number" class="form-control rounded-pill" name="count" value="10" min="1" max="100">
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -205,38 +205,38 @@
                         <div class="col-md-6">
                             <div class="mb-3">
                                 <label class="form-label">Tree Name (display)</label>
-                                <input type="text" class="form-control" name="name" value="{{ tree.name or '' }}">
+                                <input type="text" class="form-control rounded-pill" name="name" value="{{ tree.name or '' }}">
                             </div>
                             <div class="mb-3">
                                 <label class="form-label">Tree Number</label>
-                                <input type="text" class="form-control" name="tree_number"
+                                <input type="text" class="form-control rounded-pill" name="tree_number"
                                     value="{{ tree.tree_number or '' }}">
                             </div>
                             <div class="mb-3">
                                 <label class="form-label">Species</label>
-                                <input type="text" class="form-control" name="species"
+                                <input type="text" class="form-control rounded-pill" name="species"
                                     value="{{ tree.basic_info.species if tree.basic_info else '' }}">
                             </div>
                             <div class="mb-3">
                                 <label class="form-label">Variety</label>
-                                <input type="text" class="form-control" name="crop_variety"
+                                <input type="text" class="form-control rounded-pill" name="crop_variety"
                                     value="{{ tree.basic_info.variety if tree.basic_info else '' }}">
                             </div>
                             <div class="mb-3">
                                 <label class="form-label">Planting Date</label>
-                                <input type="date" class="form-control" name="planting_date"
+                                <input type="date" class="form-control rounded-pill" name="planting_date"
                                     value="{{ tree.basic_info.planting_date if tree.basic_info else '' }}">
                             </div>
                             <div class="mb-3">
                                 <label class="form-label">Age (years)</label>
-                                <input type="number" class="form-control" name="age"
+                                <input type="number" class="form-control rounded-pill" name="age"
                                     value="{{ tree.basic_info.age_years if tree.basic_info else 0 }}">
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="mb-3">
                                 <label class="form-label">Status (metadata)</label>
-                                <select class="form-select" name="status">
+                                <select class="form-select rounded-pill" name="status">
                                     <option value="healthy" {% if tree.metadata and tree.metadata.status=='healthy'
                                         %}selected{% endif %}>Healthy</option>
                                     <option value="needs_attention" {% if tree.metadata and
@@ -248,12 +248,12 @@
                             </div>
                             <div class="mb-3">
                                 <label class="form-label">Latitude</label>
-                                <input type="number" step="any" class="form-control" name="latitude"
+                                <input type="number" step="any" class="form-control rounded-pill" name="latitude"
                                     value="{{ tree.location_precise.latitude if tree.location_precise else 0.0 }}">
                             </div>
                             <div class="mb-3">
                                 <label class="form-label">Longitude</label>
-                                <input type="number" step="any" class="form-control" name="longitude"
+                                <input type="number" step="any" class="form-control rounded-pill" name="longitude"
                                     value="{{ tree.location_precise.longitude if tree.location_precise else 0.0 }}">
                             </div>
                         </div>
@@ -283,7 +283,7 @@
                         <div class="col-md-6">
                             <div class="mb-3">
                                 <label class="form-label">Tree Name (for display)</label>
-                                <input type="text" class="form-control" name="name" value="Tree">
+                                <input type="text" class="form-control rounded-pill" name="name" value="Tree">
                             </div>
                 <div class="modal-body">
                     <p>Are you sure you want to delete tree "{{ tree.name }}"?</p>
@@ -300,3 +300,5 @@
 {% endif %}
 
 {% endblock %}
+
+

@@ -12,11 +12,11 @@
                             <h6>Basic Info</h6>
                             <div class="mb-3">
                                 <label class="form-label">Farm ID</label>
-                                <input type="text" class="form-control" name="farm_id" value="{{ land.farm_id or '' }}">
+                                <input type="text" class="form-control rounded-pill" name="farm_id" value="{{ land.farm_id or '' }}">
                             </div>
                             <div class="mb-3">
                                 <label class="form-label">{{ t('land_name', session.get('lang', 'en')) }}</label>
-                                <input type="text" class="form-control" name="name" value="{{ land.name }}" required>
+                                <input type="text" class="form-control rounded-pill" name="name" value="{{ land.name }}" required>
                             </div>
                             
                             <!-- Owner Information Group -->
@@ -24,19 +24,19 @@
                                 <h6 class="mb-3"><i class="bi-person-badge me-2"></i>Owner Information</h6>
                                 <div class="mb-3">
                                     <label class="form-label">Party ID</label>
-                                    <input type="text" class="form-control" name="owner_party_id" value="{{ land.owner.party_id if land.owner else 'P001' }}">
+                                    <input type="text" class="form-control rounded-pill" name="owner_party_id" value="{{ land.owner.party_id if land.owner else 'P001' }}">
                                 </div>
                                 <div class="mb-3">
                                     <label class="form-label">Owner Name</label>
-                                    <input type="text" class="form-control" name="owner_name" value="{{ land.owner.name if land.owner else '' }}">
+                                    <input type="text" class="form-control rounded-pill" name="owner_name" value="{{ land.owner.name if land.owner else '' }}">
                                 </div>
                                 <div class="mb-3">
                                     <label class="form-label">Owner Email</label>
-                                    <input type="email" class="form-control" name="owner_email" value="{{ land.owner.contact.email if land.owner and land.owner.contact else '' }}">
+                                    <input type="email" class="form-control rounded-pill" name="owner_email" value="{{ land.owner.contact.email if land.owner and land.owner.contact else '' }}">
                                 </div>
                                 <div class="mb-3">
                                     <label class="form-label">Owner Phone</label>
-                                    <input type="tel" class="form-control" name="owner_phone" value="{{ land.owner.contact.phone if land.owner and land.owner.contact else '' }}">
+                                    <input type="tel" class="form-control rounded-pill" name="owner_phone" value="{{ land.owner.contact.phone if land.owner and land.owner.contact else '' }}">
                                 </div>
                             </div>
                         </div>
@@ -44,35 +44,35 @@
                             <h6>Location</h6>
                             <div class="mb-3">
                                 <label class="form-label">Street</label>
-                                <input type="text" class="form-control" name="street" value="{{ land.location.address.street if land.location and land.location.address else '' }}">
+                                <input type="text" class="form-control rounded-pill" name="street" value="{{ land.location.address.street if land.location and land.location.address else '' }}">
                             </div>
                             <div class="mb-3">
                                 <label class="form-label">City</label>
-                                <input type="text" class="form-control" name="city" value="{{ land.location.address.city if land.location and land.location.address else '' }}">
+                                <input type="text" class="form-control rounded-pill" name="city" value="{{ land.location.address.city if land.location and land.location.address else '' }}">
                             </div>
                             <div class="mb-3">
                                 <label class="form-label">State</label>
-                                <input type="text" class="form-control" name="state" value="{{ land.location.address.state if land.location and land.location.address else '' }}">
+                                <input type="text" class="form-control rounded-pill" name="state" value="{{ land.location.address.state if land.location and land.location.address else '' }}">
                             </div>
                             <div class="mb-3">
                                 <label class="form-label">Postal Code</label>
-                                <input type="text" class="form-control" name="postal_code" value="{{ land.location.address.postal_code if land.location and land.location.address else '' }}">
+                                <input type="text" class="form-control rounded-pill" name="postal_code" value="{{ land.location.address.postal_code if land.location and land.location.address else '' }}">
                             </div>
                             <div class="mb-3">
                                 <label class="form-label">Country</label>
-                                <input type="text" class="form-control" name="country" value="{{ land.location.address.country if land.location and land.location.address else '' }}">
+                                <input type="text" class="form-control rounded-pill" name="country" value="{{ land.location.address.country if land.location and land.location.address else '' }}">
                             </div>
                             <div class="mb-3">
                                 <label class="form-label">Latitude</label>
-                                <input type="number" step="any" class="form-control" name="latitude" value="{{ land.location.coordinates.latitude if land.location and land.location.coordinates else 0.0 }}">
+                                <input type="number" step="any" class="form-control rounded-pill" name="latitude" value="{{ land.location.coordinates.latitude if land.location and land.location.coordinates else 0.0 }}">
                             </div>
                             <div class="mb-3">
                                 <label class="form-label">Longitude</label>
-                                <input type="number" step="any" class="form-control" name="longitude" value="{{ land.location.coordinates.longitude if land.location and land.location.coordinates else 0.0 }}">
+                                <input type="number" step="any" class="form-control rounded-pill" name="longitude" value="{{ land.location.coordinates.longitude if land.location and land.location.coordinates else 0.0 }}">
                             </div>
                             <div class="mb-3">
                                 <label class="form-label">Total Area (acres)</label>
-                                <input type="number" step="any" class="form-control" name="area" value="{{ land.location.total_area.value if land.location and land.location.total_area else 0.0 }}">
+                                <input type="number" step="any" class="form-control rounded-pill" name="area" value="{{ land.location.total_area.value if land.location and land.location.total_area else 0.0 }}">
                             </div>
                         </div>
                     </div>
@@ -85,3 +85,5 @@
         </div>
     </div>
 </div>
+
+

@@ -147,12 +147,12 @@
                 <div class="modal-body">
                     <div class="mb-3">
                         <label class="form-label"><i class="bi-images me-1"></i>Select Photos</label>
-                        <input type="file" class="form-control" name="photos" multiple accept="image/*" required>
+                        <input type="file" class="form-control rounded-pill" name="photos" multiple accept="image/*" required>
                         <small class="text-muted">Hold Ctrl (or Cmd) to select multiple files</small>
                     </div>
                     <div class="mb-3">
                         <label class="form-label"><i class="bi-card-text me-1"></i>Photo Descriptions (Optional)</label>
-                        <textarea class="form-control" name="photo_descriptions" rows="3" placeholder="Enter descriptions for each photo (one per line)"></textarea>
+                        <textarea class="form-control rounded-pill" name="photo_descriptions" rows="3" placeholder="Enter descriptions for each photo (one per line)"></textarea>
                         <small class="text-muted">Enter one description per line, matching the order of selected photos</small>
                     </div>
                 </div>
@@ -197,3 +197,5 @@
     {% endfor %}
 </div>
 {% endblock %}
+
+

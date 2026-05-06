@@ -42,12 +42,12 @@
                                     <div class="row">
                                         <div class="col-md-4">
                                             <label class="form-label"><i class="bi-tag me-1"></i>Farm ID</label>
-                                            <input type="text" class="form-control" name="farm_id" placeholder="FARM001"
+                                            <input type="text" class="form-control rounded-pill" name="farm_id" placeholder="FARM001"
                                                 required>
                                         </div>
                                         <div class="col-md-8">
                                             <label class="form-label"><i class="bi-tag me-1"></i>Farm Name</label>
-                                            <input type="text" class="form-control" name="name" placeholder="FARM001"
+                                            <input type="text" class="form-control rounded-pill" name="name" placeholder="FARM001"
                                                 required>
                                         </div>
                                     </div>
@@ -55,7 +55,7 @@
                                 <div class="mb-3">
                                     <label class="form-label"><i class="bi-geo-alt me-1"></i>{{ t('land_name',
                                         session.get('lang', 'en')) }}</label>
-                                    <input type="text" class="form-control" name="name" placeholder="Green Valley Farm"
+                                    <input type="text" class="form-control rounded-pill" name="name" placeholder="Green Valley Farm"
                                         required>
                                 </div>
                             </div>
@@ -67,13 +67,13 @@
                                     <div class="row">
                                         <div class="col-md-4">
                                             <label class="form-label"><i class="bi-123 me-1"></i>Party ID</label>
-                                            <input type="text" class="form-control" name="owner_party_id"
+                                            <input type="text" class="form-control rounded-pill" name="owner_party_id"
                                                 placeholder="P001" value="P001">
                                             <small class="text-muted">Unique identifier for the owner party</small>
                                         </div>
                                         <div class="col-md-8">
                                             <label class="form-label"><i class="bi-person me-1"></i>Owner Name</label>
-                                            <input type="text" class="form-control" name="owner_name"
+                                            <input type="text" class="form-control rounded-pill" name="owner_name"
                                                 placeholder="John Smith">
                                         </div>
                                     </div>
@@ -81,12 +81,12 @@
                                 <div class="row">
                                     <div class="col-md-6 mb-3">
                                         <label class="form-label"><i class="bi-envelope me-1"></i>Owner Email</label>
-                                        <input type="email" class="form-control" name="owner_email"
+                                        <input type="email" class="form-control rounded-pill" name="owner_email"
                                             placeholder="john@example.com">
                                     </div>
                                     <div class="col-md-6 mb-3">
                                         <label class="form-label"><i class="bi-phone me-1"></i>Owner Phone</label>
-                                        <input type="tel" class="form-control" name="owner_phone"
+                                        <input type="tel" class="form-control rounded-pill" name="owner_phone"
                                             placeholder="+1-555-123-4567">
                                     </div>
                                 </div>
@@ -97,32 +97,32 @@
                         <div class="tab-pane fade" id="location" role="tabpanel">
                             <div class="mb-3">
                                 <label class="form-label"><i class="bi-house me-1"></i>Street</label>
-                                <input type="text" class="form-control" name="street" placeholder="1234 Rural Route 5">
+                                <input type="text" class="form-control rounded-pill" name="street" placeholder="1234 Rural Route 5">
                             </div>
                             <div class="mb-3">
                                 <label class="form-label"><i class="bi-building me-1"></i>City</label>
-                                <input type="text" class="form-control" name="city" placeholder="Springfield">
+                                <input type="text" class="form-control rounded-pill" name="city" placeholder="Springfield">
                             </div>
 
                             <div class="row">
                                 <div class="col-md-4">
                                     <div class="mb-3">
                                         <label class="form-label">Latitude</label>
-                                        <input type="number" step="any" class="form-control" name="latitude"
+                                        <input type="number" step="any" class="form-control rounded-pill" name="latitude"
                                             placeholder="39.7817">
                                     </div>
                                 </div>
                                 <div class="col-md-4">
                                     <div class="mb-3">
                                         <label class="form-label">Longitude</label>
-                                        <input type="number" step="any" class="form-control" name="longitude"
+                                        <input type="number" step="any" class="form-control rounded-pill" name="longitude"
                                             placeholder="-89.6501">
                                     </div>
                                 </div>
                                 <div class="col-md-4">
                                     <div class="mb-3">
                                         <label class="form-label">Area (Hectares)</label>
-                                        <input type="number" step="any" class="form-control" name="area"
+                                        <input type="number" step="any" class="form-control rounded-pill" name="area"
                                             placeholder="500">
                                     </div>
                                 </div>
@@ -134,13 +134,13 @@
                             <div class="mb-3">
                                 <label class="form-label"><i class="bi-file-text me-1"></i>Legal Document Types
                                     (comma-separated)</label>
-                                <input type="text" class="form-control" name="legal_types"
+                                <input type="text" class="form-control rounded-pill" name="legal_types"
                                     placeholder="Document Administratif, Malkiya, Titre">
                                 <small class="text-muted">Enter document types separated by commas</small>
                             </div>
                             <div class="mb-3">
                                 <label class="form-label"><i class="bi-check-circle me-1"></i>Delivered Status</label>
-                                <select class="form-select" name="legal_delivered">
+                                <select class="form-select rounded-pill" name="legal_delivered">
                                     <option value="">Not Specified</option>
                                     <option value="delivered">Delivered</option>
                                     <option value="pending">Pending</option>
@@ -148,7 +148,7 @@
                             </div>
                             <div class="mb-3">
                                 <label class="form-label"><i class="bi-calendar me-1"></i>Legal Date</label>
-                                <input type="date" class="form-control" name="legal_date">
+                                <input type="date" class="form-control rounded-pill" name="legal_date">
                             </div>
                         </div>
 
@@ -156,13 +156,13 @@
                         <div class="tab-pane fade" id="photos" role="tabpanel">
                             <div class="mb-3">
                                 <label class="form-label"><i class="bi-images me-1"></i>Upload Multiple Photos</label>
-                                <input type="file" class="form-control" name="photos" multiple accept="image/*">
+                                <input type="file" class="form-control rounded-pill" name="photos" multiple accept="image/*">
                                 <small class="text-muted">Hold Ctrl (or Cmd) to select multiple files</small>
                             </div>
                             <div class="mb-3">
                                 <label class="form-label"><i class="bi-card-text me-1"></i>Photo Descriptions
                                     (Optional)</label>
-                                <textarea class="form-control" name="photo_descriptions" rows="4"
+                                <textarea class="form-control rounded-pill" name="photo_descriptions" rows="4"
                                     placeholder="Enter descriptions for each photo (one per line)"></textarea>
                                 <small class="text-muted">Enter one description per line, matching the order of selected
                                     photos</small>
@@ -183,3 +183,5 @@
         </div>
     </div>
 </div>
+
+
