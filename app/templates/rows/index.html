@@ -79,88 +79,44 @@
 {% endif %}
 
 {% if session.get('role') == 'admin' %}
-<!-- Add Row Modal -->
-<div class="modal fade" id="addRowModal" tabindex="-1">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <form method="POST" action="{{ url_for('rows.add') }}">
-                <div class="modal-header">
-                    <h5 class="modal-title">{{ t('add', session.get('lang', 'en')) }} {{ t('rows', session.get('lang',
-                        'en')) }}</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                    <div class="mb-3">
-                        <label class="form-label">Row Name</label>
-                        <input type="text" class="form-control rounded-pill" name="name" required>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Zone</label>
-                        <select class="form-select rounded-pill" name="zone_id" required>
-                            {% for zone in zones %}
-                            <option value="{{ zone._id }}">{{ zone.name }} ({{ zone.sector.name if zone.sector else
-                                'Unknown' }})</option>
-                            {% endfor %}
-                        </select>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn rounded-pill btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="submit" class="btn rounded-pill btn-primary">Add</button>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
+    {% include "modals/rows/add.html" %}
 
-<!-- Edit and Delete Modals for each row -->
-{% for row in rows %}
-<!-- Edit Row Modal -->
-<div class="modal fade" id="editRowModal{{ row._id }}" tabindex="-1">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <form method="POST" action="{{ url_for('rows.edit', row_id=row._id) }}">
-                <div class="modal-header">
-                    <h5 class="modal-title">Edit {{ row.name }}</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                    <div class="mb-3">
-                        <label class="form-label">Row Name</label>
-                        <input type="text" class="form-control rounded-pill" name="name" value="{{ row.name }}" required>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn rounded-pill btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="submit" class="btn rounded-pill btn-primary">Update</button>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
+    {% for row in rows %}
+        {% include "modals/rows/edit.html" %}
+        {% include "modals/rows/delete.html" %}
+    {% endfor %}
 
-<!-- Delete Row Modal -->
-<div class="modal fade" id="deleteRowModal{{ row._id }}" tabindex="-1">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <form method="POST"
-                action="{{ url_for('lands.delete_row', land_id=row.zone.sector.land._id if row.zone and row.zone.sector and row.zone.sector.land else '', sector_id=row.zone.sector._id if row.zone and row.zone.sector else '', zone_id=row.zone._id if row.zone else '', row_id=row._id) }}">
-                <div class="modal-header">
-                    <h5 class="modal-title">Delete {{ row.name }}</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                    <p>Are you sure you want to delete row "{{ row.name }}"?</p>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn rounded-pill btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="submit" class="btn rounded-pill btn-danger">Delete</button>
-                </div>
-            </form>
+    <!-- Bulk Add Row Modal (inline) -->
+    <div class="modal fade" id="bulkAddRowModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form method="POST" action="{{ url_for('rows.bulk_add') }}">
+                    <div class="modal-header bg-{{ session.get('theme', 'minty') }} text-white">
+                        <h5 class="modal-title"><i class="bi-stack me-2"></i>Bulk Add Rows</h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label class="form-label">Zone</label>
+                            <select class="form-select rounded-pill" name="zone_id" required>
+                                {% for zone in zones %}
+                                <option value="{{ zone._id }}">{{ zone.name }} ({{ zone.sector.name if zone.sector else 'Unknown' }})</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Row Names (one per line)</label>
+                            <textarea class="form-control rounded-pill" name="names" rows="5" placeholder="Row A&#10;Row B&#10;Row C" required></textarea>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn rounded-pill btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn rounded-pill btn-primary">Add Rows</button>
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
-</div>
-{% endfor %}
 {% endif %}
 
 {% endblock %}

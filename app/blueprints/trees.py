@@ -149,7 +149,32 @@ def edit(tree_id):
                             db.lands.update_one({'_id': land['_id']}, {'$set': {'sectors': land.get('sectors', [])}})
                             log_message('info', f'Updated tree: {tree.get("name")}', session.get('user_id'), session.get('username'))
                             flash('Tree updated successfully!', 'success')
+    return redirect(url_for('trees.index'))
+
+@trees_bp.route('/<tree_id>/delete', methods=['POST'])
+def delete(tree_id):
+    if 'user_id' not in session or session.get('role') != 'admin':
+        flash('Admin access required', 'danger')
+        return redirect(url_for('lands.index'))
+    
+    db = get_db()
+    lands = list(db.lands.find())
+    for land in lands:
+        for sector in land.get('sectors', []):
+            for zone in sector.get('zones', []):
+                for row in zone.get('rows', []):
+                    trees = row.get('trees', [])
+                    for i, tree in enumerate(trees):
+                        if tree['_id'] == tree_id:
+                            tree_name = tree.get('name', 'Unknown')
+                            trees.pop(i)
+                            row['trees'] = trees
+                            db.lands.update_one({'_id': land['_id']}, {'$set': {'sectors': land.get('sectors', [])}})
+                            log_message('info', f"Deleted tree: {tree_name}", session.get('user_id'), session.get('username'))
+                            flash('Tree deleted successfully!', 'success')
                             return redirect(url_for('trees.index'))
+    flash('Tree not found', 'danger')
+    return redirect(url_for('trees.index'))
     
     abort(404)
 

@@ -69,88 +69,44 @@
 {% endif %}
 
 {% if session.get('role') == 'admin' %}
-<!-- Add Zone Modal -->
-<div class="modal fade" id="addZoneModal" tabindex="-1">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <form method="POST" action="{{ url_for('zones.add') }}">
-                <div class="modal-header">
-                    <h5 class="modal-title">{{ t('add', session.get('lang', 'en')) }} {{ t('zones', session.get('lang',
-                        'en')) }}</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                    <div class="mb-3">
-                        <label class="form-label">Zone Name</label>
-                        <input type="text" class="form-control rounded-pill" name="name" required>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Sector</label>
-                        <select class="form-select rounded-pill" name="sector_id" required>
-                            {% for sector in sectors %}
-                            <option value="{{ sector._id }}">{{ sector.name }} ({{ sector.land.name if sector.land else
-                                'Unknown' }})</option>
-                            {% endfor %}
-                        </select>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn rounded-pill btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="submit" class="btn rounded-pill btn-primary">Add</button>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
+    {% include "modals/zones/add.html" %}
 
-<!-- Edit and Delete Modals for each zone -->
-{% for zone in zones %}
-<!-- Edit Zone Modal -->
-<div class="modal fade" id="editZoneModal{{ zone._id }}" tabindex="-1">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <form method="POST" action="{{ url_for('zones.edit', zone_id=zone._id) }}">
-                <div class="modal-header">
-                    <h5 class="modal-title">Edit {{ zone.name }}</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                    <div class="mb-3">
-                        <label class="form-label">Zone Name</label>
-                        <input type="text" class="form-control rounded-pill" name="name" value="{{ zone.name }}" required>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn rounded-pill btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="submit" class="btn rounded-pill btn-primary">Update</button>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
+    {% for zone in zones %}
+        {% include "modals/zones/edit.html" %}
+        {% include "modals/zones/delete.html" %}
+    {% endfor %}
 
-<!-- Delete Zone Modal -->
-<div class="modal fade" id="deleteZoneModal{{ zone._id }}" tabindex="-1">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <form method="POST"
-                action="{{ url_for('lands.delete_zone', land_id=zone.sector.land._id if zone.sector and zone.sector.land else '', sector_id=zone.sector._id if zone.sector else '', zone_id=zone._id) }}">
-                <div class="modal-header">
-                    <h5 class="modal-title">Delete {{ zone.name }}</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                    <p>Are you sure you want to delete zone "{{ zone.name }}"?</p>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn rounded-pill btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="submit" class="btn rounded-pill btn-danger">Delete</button>
-                </div>
-            </form>
+    <!-- Bulk Add Zone Modal (inline) -->
+    <div class="modal fade" id="bulkAddZoneModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form method="POST" action="{{ url_for('zones.bulk_add') }}">
+                    <div class="modal-header bg-{{ session.get('theme', 'minty') }} text-white">
+                        <h5 class="modal-title"><i class="bi-stack me-2"></i>Bulk Add Zones</h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label class="form-label">Sector</label>
+                            <select class="form-select rounded-pill" name="sector_id" required>
+                                {% for sector in sectors %}
+                                <option value="{{ sector._id }}">{{ sector.name }} ({{ sector.land.name if sector.land else 'Unknown' }})</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Zone Names (one per line)</label>
+                            <textarea class="form-control rounded-pill" name="names" rows="5" placeholder="Zone A&#10;Zone B&#10;Zone C" required></textarea>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn rounded-pill btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn rounded-pill btn-primary">Add Zones</button>
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
-</div>
-{% endfor %}
 {% endif %}
 
 {% endblock %}
