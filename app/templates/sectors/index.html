@@ -33,10 +33,10 @@
     <table class="table table-striped">
         <thead>
             <tr>
-                <th>Name</th>
-                <th>Land</th>
-                <th>Zones</th>
-                <th>Actions</th>
+                <th><i class="bi-grid-fill me-1"></i> Name</th>
+                <th><i class="bi-geo-alt-fill me-1"></i> Land</th>
+                <th><i class="bi-map-fill me-1"></i> Zones</th>
+                <th><i class="bi-gear me-1"></i> Actions</th>
             </tr>
         </thead>
         <tbody>
@@ -57,8 +57,8 @@
                         data-bs-target="#deleteSectorModal{{ sector._id }}">
                         <i class="bi-trash"></i>
                     </button>
-                    <button type="button" class="btn rounded-pill btn-sm btn-success" title="Add Zone" data-bs-toggle="modal"
-                        data-bs-target="#addZoneModal{{ sector._id }}">
+                    <button type="button" class="btn rounded-pill btn-sm btn-success" title="Add Zone"
+                        onclick="document.getElementById('addZoneLandId').value='{{ sector.land._id }}'; document.getElementById('addZoneSectorId').value='{{ sector._id }}'; new bootstrap.Modal(document.getElementById('addZoneModal')).show();">
                         <i class="bi-plus-circle"></i></button>
                     {% endif %}
                 </td>
