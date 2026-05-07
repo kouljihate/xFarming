@@ -1,3 +1,7 @@
+* {
+    font-family: 'Comfortaa', sans-serif !important;
+}
+
 body {
     min-height: 100vh;
     display: flex;

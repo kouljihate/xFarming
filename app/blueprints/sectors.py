@@ -22,6 +22,7 @@ def index():
         land['_id'] = str(land['_id'])
         lands_for_select.append(land)
         for sector in land.get('sectors', []):
+            sector['_id'] = str(sector.get('_id', ''))
             if search and search.lower() not in sector['name'].lower():
                 continue
             sector['land'] = land
@@ -38,7 +39,7 @@ def add():
         # toast('Admin access required', 'error')
         return redirect(url_for('lands.index'))
     
-    app.logger.info(f"Add sector:{request.form.get('land_id')}")   
+    print(f"Add sector:{request.form.get('land_id')}")   
 
     db = get_db()
     land_id = request.form.get('land_id')
