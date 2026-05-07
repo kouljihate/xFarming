@@ -2,10 +2,13 @@ from flask import Flask, render_template, redirect, url_for
 from flask_bootstrap import Bootstrap
 from dotenv import load_dotenv
 import os
+import logging
+from logging.handlers import RotatingFileHandler
+import sys
 from app.config import Config
 from app.translations import t as t_func
 
-__version__ = '0.7.60'
+__version__ = '0.7.62'
 
 bootstrap = Bootstrap()
 
@@ -14,6 +17,35 @@ def create_app():
     app.config.from_object(Config)
     
     bootstrap.init_app(app)
+    
+    # Logging Configuration
+    if not app.debug:
+        # Ensure log directory exists
+        log_dir = os.path.join(os.path.dirname(__file__), '..', 'logs')
+        os.makedirs(log_dir, exist_ok=True)
+        
+        # File Handler with rotation
+        file_handler = RotatingFileHandler(
+            os.path.join(log_dir, 'xfarming.log'),
+            maxBytes=10240,  # 10MB
+            backupCount=10
+        )
+        file_handler.setFormatter(logging.Formatter(
+            '%(asctime)s %(levelname)s: %(message)s [in %(pathname)s:%(lineno)d]'
+        ))
+        file_handler.setLevel(logging.INFO)
+        app.logger.addHandler(file_handler)
+        
+        # Console Handler with colors
+        console_handler = logging.StreamHandler(sys.stdout)
+        console_handler.setFormatter(ColorFormatter(
+            '%(asctime)s %(levelname)s: %(message)s'
+        ))
+        console_handler.setLevel(logging.DEBUG)
+        app.logger.addHandler(console_handler)
+        
+        app.logger.setLevel(logging.DEBUG)
+        app.logger.info('xFarming startup')
     
     app.jinja_env.globals['t'] = t_func
     app.jinja_env.globals['app_version'] = __version__
@@ -38,7 +70,7 @@ def create_app():
     from app.blueprints.zones import zones_bp
     from app.blueprints.rows import rows_bp
     from app.blueprints.trees import trees_bp
-
+    
     app.register_blueprint(auth_bp)
     app.register_blueprint(dashboard_bp)
     app.register_blueprint(lands_bp)
@@ -50,3 +82,23 @@ def create_app():
     app.register_blueprint(trees_bp)
     
     return app
+
+class ColorFormatter(logging.Formatter):
+    grey = "\x1b[38;20m"
+    yellow = "\x1b[33;20m"
+    red = "\x1b[31;20m"
+    bold_red = "\x1b[31;1m"
+    reset = "\x1b[0m"
+    
+    FORMATS = {
+        logging.DEBUG: grey + '%(levelname)s: %(message)s' + reset,
+        logging.INFO: '\x1b[32m' + '%(levelname)s: %(message)s' + reset,
+        logging.WARNING: yellow + '%(levelname)s: %(message)s' + reset,
+        logging.ERROR: red + '%(levelname)s: %(message)s' + reset,
+        logging.CRITICAL: bold_red + '%(levelname)s: %(message)s' + reset
+    }
+    
+    def format(self, record):
+        log_fmt = self.FORMATS.get(record.levelno)
+        formatter = logging.Formatter(log_fmt)
+        return formatter.format(record)
