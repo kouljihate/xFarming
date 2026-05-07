@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""End-to-end test for xFarming application"""
+"""End-to-end test for SFarming application"""
 from app import create_app
 from app.database import get_db
 from bson import ObjectId
@@ -8,7 +8,7 @@ def test_full_flow():
     app = create_app()
     
     with app.test_client() as client:
-        print("Testing xFarming full flow...")
+        print("Testing SFarming full flow...")
         
         # Test 1: Root redirects to login
         resp = client.get('/')

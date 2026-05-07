@@ -31,7 +31,7 @@ def test_app_creation():
         return False
 
 if __name__ == '__main__':
-    print("Testing xFarming application...")
+    print("Testing SFarming application...")
     test_imports()
     test_app_creation()
     print("Testing complete.")

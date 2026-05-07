@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Initialize xFarming with sample data"""
+"""Initialize SFarming with sample data"""
 from app import create_app
 from app.database import get_db
 from datetime import datetime

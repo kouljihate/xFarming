@@ -8,7 +8,7 @@ from logging.handlers import RotatingFileHandler
 from app.config import Config
 from app.translations import t as t_func
 
-__version__ = '0.7.64'
+__version__ = '0.7.66'
 
 bootstrap = Bootstrap()
 
@@ -46,7 +46,7 @@ def create_app():
         
         # File Handler with rotation
         file_handler = RotatingFileHandler(
-            os.path.join(log_dir, 'xfarming.log'),
+            os.path.join(log_dir, 'SFarming.log'),
             maxBytes=10240,  # 10MB
             backupCount=10
         )
@@ -65,7 +65,7 @@ def create_app():
         app.logger.addHandler(console_handler)
         
         app.logger.setLevel(logging.DEBUG)
-        app.logger.info('xFarming startup')
+        app.logger.info('SFarming startup')
     
     app.jinja_env.globals['t'] = t_func
     app.jinja_env.globals['app_version'] = __version__

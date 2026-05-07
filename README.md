@@ -1,4 +1,4 @@
-# xFarming - Smart Farm Management System
+# SFarming - Smart Farm Management System
 
 A Flask-based web application for managing agricultural lands with hierarchical structure: Lands → Sectors → Zones → Rows → Trees.
 
@@ -22,7 +22,7 @@ A Flask-based web application for managing agricultural lands with hierarchical 
 ```bash
 # Clone the repository
 git clone <repository-url>
-cd xFarming
+cd SFarming
 
 # Create virtual environment
 python -m venv venv
@@ -45,7 +45,7 @@ python run.py
 ## Project Structure
 
 ```
-xFarming/
+SFarming/
 ├── app/
 │   ├── blueprints/          # Flask blueprints for each module
 │   │   ├── auth.py

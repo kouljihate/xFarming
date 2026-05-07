@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}Edit {{ sector.name }} - xFarming{% endblock %}
+{% block title %}Edit {{ sector.name }} - SFarming{% endblock %}
 
 {% block content %}
 <a href="{{ url_for('sectors.detail', sector_id=sector._id) }}" class="btn rounded-pill btn-secondary mb-3">{{ t('back', session.get('lang', 'en')) }}</a>

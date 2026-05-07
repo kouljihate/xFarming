@@ -35,8 +35,11 @@ def index():
 def add():
     if 'user_id' not in session or session.get('role') != 'admin':
         flash('Admin access required', 'danger')
+        # toast('Admin access required', 'error')
         return redirect(url_for('lands.index'))
     
+    app.logger.info(f"Add sector:{request.form.get('land_id')}")   
+
     db = get_db()
     land_id = request.form.get('land_id')
     
