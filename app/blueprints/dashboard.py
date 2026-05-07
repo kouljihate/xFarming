@@ -19,13 +19,24 @@ def index():
     
     db = get_db()
     
+    # Count embedded documents from lands collection
+    lands = list(db.lands.find())
     stats = {
-        'lands': db.lands.count_documents({}),
-        'sectors': db.sectors.count_documents({}),
-        'zones': db.zones.count_documents({}),
-        'rows': db.rows.count_documents({}),
-        'trees': db.trees.count_documents({})
+        'lands': len(lands),
+        'sectors': 0,
+        'zones': 0,
+        'rows': 0,
+        'trees': 0
     }
+    
+    for land in lands:
+        stats['sectors'] += len(land.get('sectors', []))
+        for sector in land.get('sectors', []):
+            stats['zones'] += len(sector.get('zones', []))
+            for zone in sector.get('zones', []):
+                stats['rows'] += len(zone.get('rows', []))
+                for row in zone.get('rows', []):
+                    stats['trees'] += len(row.get('trees', []))
     
     recent_activities = list(db.activities.find().sort('date', -1).limit(10))
     
