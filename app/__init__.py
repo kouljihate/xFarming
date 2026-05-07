@@ -2,15 +2,35 @@ from flask import Flask, render_template, redirect, url_for
 from flask_bootstrap import Bootstrap
 from dotenv import load_dotenv
 import os
+import sys
 import logging
 from logging.handlers import RotatingFileHandler
-import sys
 from app.config import Config
 from app.translations import t as t_func
 
-__version__ = '0.7.62'
+__version__ = '0.7.64'
 
 bootstrap = Bootstrap()
+
+class ColorFormatter(logging.Formatter):
+    grey = "\x1b[38;20m"
+    yellow = "\x1b[33;20m"
+    red = "\x1b[31;20m"
+    bold_red = "\x1b[31;1m"
+    reset = "\x1b[0m"
+    
+    FORMATS = {
+        logging.DEBUG: grey + '%(levelname)s: %(message)s' + reset,
+        logging.INFO: '\x1b[32m' + '%(levelname)s: %(message)s' + reset,
+        logging.WARNING: yellow + '%(levelname)s: %(message)s' + reset,
+        logging.ERROR: red + '%(levelname)s: %(message)s' + reset,
+        logging.CRITICAL: bold_red + '%(levelname)s: %(message)s' + reset
+    }
+    
+    def format(self, record):
+        log_fmt = self.FORMATS.get(record.levelno)
+        formatter = logging.Formatter(log_fmt)
+        return formatter.format(record)
 
 def create_app():
     app = Flask(__name__)
@@ -82,23 +102,3 @@ def create_app():
     app.register_blueprint(trees_bp)
     
     return app
-
-class ColorFormatter(logging.Formatter):
-    grey = "\x1b[38;20m"
-    yellow = "\x1b[33;20m"
-    red = "\x1b[31;20m"
-    bold_red = "\x1b[31;1m"
-    reset = "\x1b[0m"
-    
-    FORMATS = {
-        logging.DEBUG: grey + '%(levelname)s: %(message)s' + reset,
-        logging.INFO: '\x1b[32m' + '%(levelname)s: %(message)s' + reset,
-        logging.WARNING: yellow + '%(levelname)s: %(message)s' + reset,
-        logging.ERROR: red + '%(levelname)s: %(message)s' + reset,
-        logging.CRITICAL: bold_red + '%(levelname)s: %(message)s' + reset
-    }
-    
-    def format(self, record):
-        log_fmt = self.FORMATS.get(record.levelno)
-        formatter = logging.Formatter(log_fmt)
-        return formatter.format(record)
