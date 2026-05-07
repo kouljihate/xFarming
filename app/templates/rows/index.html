@@ -55,8 +55,8 @@
                         data-bs-target="#deleteRowModal{{ row._id }}">
                         <i class="bi-trash"></i>
                     </button>
-                    <button type="button" class="btn rounded-pill btn-sm btn-info" data-bs-toggle="modal"
-                        data-bs-target="#addTreeModal{{ row._id }}">
+                    <button type="button" class="btn rounded-pill btn-sm btn-info" title="Add Tree"
+                        onclick="document.getElementById('addTreeRowId').value='{{ row._id }}'; new bootstrap.Modal(document.getElementById('addTreeModal')).show();">
                         <i class="bi-plus"></i>
                     </button>
                     {% endif %}
