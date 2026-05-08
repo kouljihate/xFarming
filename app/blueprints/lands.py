@@ -1,26 +1,75 @@
 from flask import Blueprint, render_template, session, redirect, url_for, request, flash, abort
 from app.database import get_db
 from app.utils.logging import log_message
+from app.utils.calculation import convert_and_calculate
 from app.models.validation import LandModel, SectorModel, ZoneModel, RowModel, TreeModel
 from bson import ObjectId
 from datetime import datetime
 import folium
 import os
 from werkzeug.utils import secure_filename
+import pyautogui
 
 lands_bp = Blueprint('lands', __name__, url_prefix='/lands')
 lands_bp.strict_slashes = False
 
-# Ensure upload directory exists
 UPLOAD_FOLDER = 'static/uploads/lands'
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
-@lands_bp.route('/add', methods=['POST'])
+
+@lands_bp.route('/add', methods=['GET', 'POST'])
 def add():
+    # print(f"lands.add() called - Method: {request.method}, Form: {dict(request.form)}")
+    action = request.form.get('action')
+
+
+    if request.method == 'GET':
+        return render_template('lands/index.html',
+                               lands=list(get_db().lands.find()),
+                               calc_area=0,
+                               calc_perimeter=0,
+                               calc_geojson='',
+                               calc_coords='')
+
     if 'user_id' not in session or session.get('role') not in ['admin', 'worker']:
         flash('Permission denied', 'danger')
         return redirect(url_for('lands.index'))
+
+    if action == 'calculate':
+        coords = request.form.get('coordinates', '').strip()
+        
+        if not coords:
+            flash('Please enter coordinates', 'warning')
+            return render_template('lands/index.html',
+                                   lands=list(get_db().lands.find()),
+                                   show_add_modal=True,
+                                   calc_area=0,
+                                   calc_perimeter=0,
+                                   calc_geojson='',
+                                   calc_coords='')
+        
+        result = convert_and_calculate(coords)
+        
+        if 'error' in result:
+            flash(result['error'], 'danger')
+            return render_template('lands/index.html',
+                                   lands=list(get_db().lands.find()),
+                                   show_add_modal=True,
+                                   calc_area=0,
+                                   calc_perimeter=0,
+                                   calc_geojson='',
+                                   calc_coords='')
+        
+        flash('Calculation complete', 'success')
+        return render_template('lands/index.html',
+                               lands=list(get_db().lands.find()),
+                               calc_area=result.get('area', 0),
+                               calc_perimeter=result.get('perimeter', 0),
+                               calc_geojson=result.get('geojson', ''),
+                               calc_coords=coords,
+                               show_add_modal=True)
     
+    # Save AAdd Land
     db = get_db()
     
     try:
@@ -77,6 +126,7 @@ def add():
 
 @lands_bp.route('/<land_id>/edit', methods=['POST'])
 def edit(land_id):
+    pyautogui.alert(f'/edit \n Method: {str(request.method)} \n Form: {str(request.form)}', 'Success', 'OK')
     if 'user_id' not in session or session.get('role') != 'admin':
         flash('Admin access required', 'danger')
         return redirect(url_for('lands.index'))
@@ -142,6 +192,7 @@ def edit(land_id):
 
 @lands_bp.route('/<land_id>/add-sector', methods=['GET', 'POST'])
 def add_sector(land_id):
+    pyautogui.alert(f'/add-sector \n Method: {str(request.method)} \n Form: {str(request.form)}', 'Success', 'OK')
     if 'user_id' not in session or session.get('role') != 'admin':
         flash('Admin access required', 'danger')
         return redirect(url_for('lands.index'))
@@ -211,6 +262,7 @@ def add_sector(land_id):
 
 @lands_bp.route('/', methods=['GET'])
 def index():
+    pyautogui.alert(f'/index \n Method: {str(request.method)} \n Form: {str(request.form)}', 'Success', 'OK')
     if 'user_id' not in session:
         return redirect(url_for('auth.login'))
     
@@ -234,6 +286,7 @@ def index():
 
 @lands_bp.route('/<land_id>', methods=['GET', 'POST'])
 def detail(land_id):
+    pyautogui.alert(f'/detail \n Method: {str(request.method)} \n Form: {str(request.form)}', 'Success', 'OK')
     if 'user_id' not in session:
         return redirect(url_for('auth.login'))
     
@@ -334,6 +387,7 @@ def detail(land_id):
 
 @lands_bp.route('/<land_id>/delete', methods=['POST'])
 def delete(land_id):
+    pyautogui.alert(f'/delete \n Method: {str(request.method)} \n Form: {str(request.form)}', 'Success', 'OK')
     if 'user_id' not in session or session.get('role') != 'admin':
         flash('Admin access required', 'danger')
         return redirect(url_for('lands.index'))
@@ -347,90 +401,9 @@ def delete(land_id):
     
     return redirect(url_for('lands.index'))
 
-@lands_bp.route('/<land_id>/sectors/<sector_id>/delete', methods=['POST'])
-def delete_sector(land_id, sector_id):
-    if 'user_id' not in session or session.get('role') != 'admin':
-        flash('Admin access required', 'danger')
-        return redirect(url_for('lands.index'))
-    
-    db = get_db()
-    land = db.lands.find_one({'_id': ObjectId(land_id)})
-    if land:
-        land['sectors'] = [s for s in land.get('sectors', []) if s['_id'] != sector_id]
-        db.lands.update_one({'_id': ObjectId(land_id)}, {'$set': {'sectors': land['sectors']}})
-        log_message('warning', f'Deleted sector', session.get('user_id'), session.get('username'))
-        flash('Sector deleted successfully!', 'success')
-    
-    return redirect(url_for('lands.detail', land_id=land_id))
-
-@lands_bp.route('/<land_id>/sectors/<sector_id>/zones/<zone_id>/delete', methods=['POST'])
-def delete_zone(land_id, sector_id, zone_id):
-    if 'user_id' not in session or session.get('role') != 'admin':
-        flash('Admin access required', 'danger')
-        return redirect(url_for('lands.index'))
-    
-    db = get_db()
-    land = db.lands.find_one({'_id': ObjectId(land_id)})
-    if land:
-        for sector in land.get('sectors', []):
-            if sector['_id'] == sector_id:
-                sector['zones'] = [z for z in sector.get('zones', []) if z['_id'] != zone_id]
-                break
-        db.lands.update_one({'_id': ObjectId(land_id)}, {'$set': {'sectors': land['sectors']}})
-        log_message('warning', f'Deleted zone', session.get('user_id'), session.get('username'))
-        flash('Zone deleted successfully!', 'success')
-    
-    return redirect(url_for('lands.detail', land_id=land_id))
-
-@lands_bp.route('/<land_id>/sectors/<sector_id>/zones/<zone_id>/rows/<row_id>/delete', methods=['POST'])
-def delete_row(land_id, sector_id, zone_id, row_id):
-    if 'user_id' not in session or session.get('role') != 'admin':
-        flash('Admin access required', 'danger')
-        return redirect(url_for('lands.index'))
-    
-    db = get_db()
-    land = db.lands.find_one({'_id': ObjectId(land_id)})
-    if land:
-        for sector in land.get('sectors', []):
-            if sector['_id'] == sector_id:
-                for zone in sector.get('zones', []):
-                    if zone['_id'] == zone_id:
-                        zone['rows'] = [r for r in zone.get('rows', []) if r['_id'] != row_id]
-                        break
-                break
-        db.lands.update_one({'_id': ObjectId(land_id)}, {'$set': {'sectors': land['sectors']}})
-        log_message('warning', f'Deleted row', session.get('user_id'), session.get('username'))
-        flash('Row deleted successfully!', 'success')
-    
-    return redirect(url_for('lands.detail', land_id=land_id))
-
-@lands_bp.route('/<land_id>/sectors/<sector_id>/zones/<zone_id>/rows/<row_id>/trees/<tree_id>/delete', methods=['POST'])
-def delete_tree(land_id, sector_id, zone_id, row_id, tree_id):
-    if 'user_id' not in session or session.get('role') != 'admin':
-        flash('Admin access required', 'danger')
-        return redirect(url_for('lands.index'))
-    
-    db = get_db()
-    land = db.lands.find_one({'_id': ObjectId(land_id)})
-    if land:
-        for sector in land.get('sectors', []):
-            if sector['_id'] == sector_id:
-                for zone in sector.get('zones', []):
-                    if zone['_id'] == zone_id:
-                        for row in zone.get('rows', []):
-                            if row['_id'] == row_id:
-                                row['trees'] = [t for t in row.get('trees', []) if t['_id'] != tree_id]
-                                break
-                        break
-                break
-        db.lands.update_one({'_id': ObjectId(land_id)}, {'$set': {'sectors': land['sectors']}})
-        log_message('warning', f'Deleted tree', session.get('user_id'), session.get('username'))
-        flash('Tree deleted successfully!', 'success')
-    
-    return redirect(url_for('lands.detail', land_id=land_id))
-
 @lands_bp.route('/<land_id>/upload_photo', methods=['POST'])
 def upload_photo(land_id):
+    pyautogui.alert(f'/upload_photo \n Method: {str(request.method)} \n Form: {str(request.form)}', 'Success', 'OK')
     if 'user_id' not in session or session.get('role') not in ['admin', 'worker']:
         abort(403)
     
@@ -472,6 +445,7 @@ def upload_photo(land_id):
 
 @lands_bp.route('/<land_id>/delete_photo/<filename>', methods=['POST'])
 def delete_photo(land_id, filename):
+    pyautogui.alert(f'/delete_photo \n Method: {str(request.method)} \n Form: {str(request.form)}', 'Success', 'OK')
     if 'user_id' not in session or session.get('role') not in ['admin', 'worker']:
         abort(403)
     

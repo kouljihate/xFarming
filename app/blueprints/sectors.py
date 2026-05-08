@@ -1,6 +1,7 @@
-from flask import Blueprint, render_template, session, redirect, url_for, request, flash, abort
+from flask import Blueprint, render_template, session, redirect, url_for, request, flash, abort, jsonify
 from app.database import get_db
 from app.utils.logging import log_message
+from app.utils.calculation import convert_and_calculate
 from app.models.validation import SectorModel
 from bson import ObjectId
 
@@ -32,12 +33,54 @@ def index():
     
     return render_template('sectors/index.html', sectors=sectors, lands=lands_for_select, search=search)
 
+
+@sectors_bp.route('/calculate', methods=['POST'])
+def calculate():
+    if 'user_id' not in session:
+        return jsonify({'error': 'Unauthorized'}), 401
+    
+    coords = request.form.get('coordinates', '').strip()
+    result = convert_and_calculate(coords)
+    
+    if 'error' in result:
+        flash(result['error'], 'danger')
+        return redirect(url_for('sectors.index'))
+    
+    return render_template('sectors/index.html', 
+                           lands=list(get_db().lands.find()),
+                           calc_area=result['area'],
+                           calc_perimeter=result['perimeter'],
+                           calc_geojson=result['geojson'],
+                           calc_coords=coords)
+
+
 @sectors_bp.route('/add', methods=['POST'])
 def add():
     if 'user_id' not in session or session.get('role') != 'admin':
         flash('Admin access required', 'danger')
         # toast('Admin access required', 'error')
         return redirect(url_for('lands.index'))
+    
+    if request.form.get('calculate'):
+        coords = request.form.get('coordinates', '').strip()
+        result = convert_and_calculate(coords)
+        
+        db = get_db()
+        lands = list(db.lands.find())
+        for land in lands:
+            land['_id'] = str(land['_id'])
+        
+        if 'error' in result:
+            flash(result['error'], 'danger')
+            return render_template('sectors/index.html', sectors=[], lands=lands)
+        
+        return render_template('sectors/index.html', 
+                               sectors=[],
+                               lands=lands,
+                               calc_area=result['area'],
+                               calc_perimeter=result['perimeter'],
+                               calc_geojson=result['geojson'],
+                               calc_coords=coords)
     
     print(f"Add sector:{request.form.get('land_id')}")   
 

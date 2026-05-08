@@ -1,5 +1,27 @@
 # SFarming - Version History
 
+## [0.7.76] - 2026-05-08
+
+### Added
+- Automated version bump for commit
+
+
+## [0.7.75] - 2026-05-08
+
+### Added
+- New calculation utility module (app/utils/calculation.py) for polygon area and perimeter calculations
+- Added coordinate parsing to support format: [(x, y), (x, y), ...] with negative and decimal numbers
+- Calculate button in Add Land modal (Address & Location tab) to compute Area and Perimeter from coordinates
+- Calculate button in Add Sector modal with same functionality
+
+### Changed
+- Updated parse_simple_coordinates() to support negative and decimal coordinates
+- Auto-open modal after calculation using CSS classes instead of JavaScript
+
+### Fixed
+- Fixed pyautogui import error in lands.py
+
+
 ## [0.7.74] - 2026-05-07
 
 ### Added

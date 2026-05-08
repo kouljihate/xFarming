@@ -5,7 +5,7 @@ from app.config import Config
 from app.translations import t as t_func
 from app.utils.logging import setup_logging
 
-__version__ = '0.7.74'
+__version__ = '0.7.76'
 
 bootstrap = Bootstrap()
 
