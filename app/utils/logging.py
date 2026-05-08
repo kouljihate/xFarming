@@ -66,7 +66,7 @@ def setup_logging(app):
         # File Handler with rotation
         from logging.handlers import RotatingFileHandler
         file_handler = RotatingFileHandler(
-            os.path.join(log_dir, 'SFarming.log'),
+            os.path.join(log_dir, 'SmartFarmerFlow.log'),
             maxBytes=10240,  # 10MB
             backupCount=10
         )
@@ -85,4 +85,4 @@ def setup_logging(app):
         app.logger.addHandler(console_handler)
         
         app.logger.setLevel(logging.DEBUG)
-        app.logger.info('SFarming startup')
+        app.logger.info('SmartFarmerFlow startup')

@@ -1,4 +1,4 @@
-# SFarming - Smart Farm Management System
+# SmartFarmerFlow - Smart Farm Management System
 
 A Flask-based web application for managing agricultural lands with hierarchical structure: Lands → Sectors → Zones → Rows → Trees.
 
@@ -22,7 +22,7 @@ A Flask-based web application for managing agricultural lands with hierarchical 
 ```bash
 # Clone the repository
 git clone <repository-url>
-cd SFarming
+cd SmartFarmerFlow
 
 # Create virtual environment
 python -m venv venv

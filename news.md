@@ -1,4 +1,10 @@
-# SFarming - Version History
+# SmartFarmerFlow - Version History
+
+## [0.7.79] - 2026-05-08
+
+### Added
+- Automated version bump for commit
+
 
 ## [0.7.78] - 2026-05-08
 

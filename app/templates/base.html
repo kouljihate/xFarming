@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}SFarming{% endblock %}</title>
+    <title>{% block title %}SmartFarmerFlow{% endblock %}</title>
     <link
         href="https://cdn.jsdelivr.net/npm/bootswatch@5.3.3/dist/{{ session.get('theme', 'minty') }}/bootstrap.min.css"
         rel="stylesheet">
@@ -27,7 +27,7 @@
                     <a class="d-flex align-items-center mb-3 text-white text-decoration-none"
                         href="{{ url_for('dashboard.index') }}">
                         <span style="font-size: 1.5rem;">🌾</span>
-                        <span class="ms-2 fs-4 fw-bold">SFarming</span>
+                        <span class="ms-2 fs-4 fw-bold">SmartFarmerFlow</span>
                     </a>
                     <ul class="nav flex-column">
                         <li><a class="nav-link text-white" href="{{ url_for('dashboard.index') }}"><i
