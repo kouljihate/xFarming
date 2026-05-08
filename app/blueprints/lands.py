@@ -1,3 +1,4 @@
+
 from flask import Blueprint, render_template, session, redirect, url_for, request, flash, abort
 from app.database import get_db
 from app.utils.logging import log_message
@@ -8,7 +9,7 @@ from datetime import datetime
 import folium
 import os
 from werkzeug.utils import secure_filename
-import pyautogui
+
 
 lands_bp = Blueprint('lands', __name__, url_prefix='/lands')
 lands_bp.strict_slashes = False
@@ -19,10 +20,6 @@ os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
 @lands_bp.route('/add', methods=['GET', 'POST'])
 def add():
-    # print(f"lands.add() called - Method: {request.method}, Form: {dict(request.form)}")
-    action = request.form.get('action')
-
-
     if request.method == 'GET':
         return render_template('lands/index.html',
                                lands=list(get_db().lands.find()),
@@ -35,7 +32,7 @@ def add():
         flash('Permission denied', 'danger')
         return redirect(url_for('lands.index'))
 
-    if action == 'calculate':
+    if request.form.get('calculate'):
         coords = request.form.get('coordinates', '').strip()
         
         if not coords:
@@ -49,7 +46,7 @@ def add():
                                    calc_coords='')
         
         result = convert_and_calculate(coords)
-        
+
         if 'error' in result:
             flash(result['error'], 'danger')
             return render_template('lands/index.html',
@@ -126,7 +123,7 @@ def add():
 
 @lands_bp.route('/<land_id>/edit', methods=['POST'])
 def edit(land_id):
-    pyautogui.alert(f'/edit \n Method: {str(request.method)} \n Form: {str(request.form)}', 'Success', 'OK')
+    
     if 'user_id' not in session or session.get('role') != 'admin':
         flash('Admin access required', 'danger')
         return redirect(url_for('lands.index'))
@@ -192,7 +189,7 @@ def edit(land_id):
 
 @lands_bp.route('/<land_id>/add-sector', methods=['GET', 'POST'])
 def add_sector(land_id):
-    pyautogui.alert(f'/add-sector \n Method: {str(request.method)} \n Form: {str(request.form)}', 'Success', 'OK')
+    
     if 'user_id' not in session or session.get('role') != 'admin':
         flash('Admin access required', 'danger')
         return redirect(url_for('lands.index'))
@@ -262,7 +259,7 @@ def add_sector(land_id):
 
 @lands_bp.route('/', methods=['GET'])
 def index():
-    pyautogui.alert(f'/index \n Method: {str(request.method)} \n Form: {str(request.form)}', 'Success', 'OK')
+    
     if 'user_id' not in session:
         return redirect(url_for('auth.login'))
     
@@ -286,7 +283,7 @@ def index():
 
 @lands_bp.route('/<land_id>', methods=['GET', 'POST'])
 def detail(land_id):
-    pyautogui.alert(f'/detail \n Method: {str(request.method)} \n Form: {str(request.form)}', 'Success', 'OK')
+    
     if 'user_id' not in session:
         return redirect(url_for('auth.login'))
     
@@ -387,7 +384,7 @@ def detail(land_id):
 
 @lands_bp.route('/<land_id>/delete', methods=['POST'])
 def delete(land_id):
-    pyautogui.alert(f'/delete \n Method: {str(request.method)} \n Form: {str(request.form)}', 'Success', 'OK')
+    
     if 'user_id' not in session or session.get('role') != 'admin':
         flash('Admin access required', 'danger')
         return redirect(url_for('lands.index'))
@@ -403,7 +400,7 @@ def delete(land_id):
 
 @lands_bp.route('/<land_id>/upload_photo', methods=['POST'])
 def upload_photo(land_id):
-    pyautogui.alert(f'/upload_photo \n Method: {str(request.method)} \n Form: {str(request.form)}', 'Success', 'OK')
+    
     if 'user_id' not in session or session.get('role') not in ['admin', 'worker']:
         abort(403)
     
@@ -445,7 +442,7 @@ def upload_photo(land_id):
 
 @lands_bp.route('/<land_id>/delete_photo/<filename>', methods=['POST'])
 def delete_photo(land_id, filename):
-    pyautogui.alert(f'/delete_photo \n Method: {str(request.method)} \n Form: {str(request.form)}', 'Success', 'OK')
+    
     if 'user_id' not in session or session.get('role') not in ['admin', 'worker']:
         abort(403)
     

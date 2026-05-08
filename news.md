@@ -1,9 +1,27 @@
 # SFarming - Version History
 
-## [0.7.76] - 2026-05-08
+## [0.7.78] - 2026-05-08
 
 ### Added
 - Automated version bump for commit
+
+
+## [0.7.77] - 2026-05-08
+
+### Fixed
+- Fixed Add Land modal freeze issue when clicking Calculate button
+- Simplified calculation.py to remove external dependencies (pyproj/shapely)
+- Fixed route to use `request.form.get('calculate')` directly
+- Updated template button to use `name="calculate" value="1"`
+
+
+## [0.7.76] - 2026-05-08
+
+### Added
+- Added coordinate calculation utility for Area/Perimeter
+
+### Changed
+- Updated parse_simple_coordinates() to support negative and decimal coordinates
 
 
 ## [0.7.75] - 2026-05-08
