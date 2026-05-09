@@ -1,5 +1,11 @@
 # SmartFarmerFlow - Version History
 
+## [0.7.81] - 2026-05-09
+
+### Added
+- Automated version bump for commit
+
+
 ## [0.7.80] - 2026-05-09
 
 ### Added
