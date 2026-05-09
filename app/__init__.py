@@ -5,7 +5,7 @@ from app.config import Config
 from app.translations import t as t_func
 from app.utils.logging import setup_logging
 
-__version__ = '0.7.79'
+__version__ = '0.7.80'
 
 bootstrap = Bootstrap()
 
@@ -35,21 +35,25 @@ def create_app():
     from app.blueprints.auth import auth_bp
     from app.blueprints.dashboard import dashboard_bp
     from app.blueprints.lands import lands_bp
+    from app.blueprints.farms import farms_bp
     from app.blueprints.activities import activities_bp
     from app.blueprints.users import users_bp
     from app.blueprints.sectors import sectors_bp
     from app.blueprints.zones import zones_bp
     from app.blueprints.rows import rows_bp
     from app.blueprints.trees import trees_bp
+    from app.blueprints.visits import visits_bp
     
     app.register_blueprint(auth_bp)
     app.register_blueprint(dashboard_bp)
     app.register_blueprint(lands_bp)
+    app.register_blueprint(farms_bp)
     app.register_blueprint(activities_bp)
     app.register_blueprint(users_bp)
     app.register_blueprint(sectors_bp)
     app.register_blueprint(zones_bp)
     app.register_blueprint(rows_bp)
     app.register_blueprint(trees_bp)
+    app.register_blueprint(visits_bp)
     
     return app

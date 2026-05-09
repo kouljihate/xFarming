@@ -1,6 +1,6 @@
 # SmartFarmerFlow - Smart Farm Management System
 
-A Flask-based web application for managing agricultural lands with hierarchical structure: Lands → Sectors → Zones → Rows → Trees.
+A Flask-based web application for managing agricultural lands with hierarchical structure: Lands → Farms → Sectors → Zones → Rows → Trees.
 
 ## Development Rules
 
@@ -50,10 +50,12 @@ SFarming/
 │   ├── blueprints/          # Flask blueprints for each module
 │   │   ├── auth.py
 │   │   ├── lands.py        # Land management (uses LandModel)
+│   │   ├── farms.py       # Farm management (uses FarmModel)
 │   │   ├── sectors.py      # Sector management (uses SectorModel)
 │   │   ├── zones.py        # Zone management (uses ZoneModel)
 │   │   ├── rows.py         # Row management (uses RowModel)
 │   │   ├── trees.py        # Tree management (uses TreeModel)
+│   │   ├── visits.py       # Tree visits/inspections (uses VisitModel)
 │   │   ├── dashboard.py
 │   │   ├── activities.py
 │   │   └── users.py
@@ -89,7 +91,13 @@ The application uses Pydantic models for strict validation:
 
 ### LandModel
 - `farm_id`, `name`, `location` (coordinates, total_area, boundary)
-- `legal`, `owner`, `metadata`, `sectors` (list of SectorModel)
+- `legal`, `owner`, `metadata`, `farms` (list of FarmModel)
+
+### FarmModel
+- `farm_id`, `farm_number`, `name`, `description`
+- `location` (area, soil_type, topography, climate_zone)
+- `boundary`, `irrigation_system`, `metadata`, `statistics`
+- `sectors` (list of SectorModel)
 
 ### SectorModel
 - `sector_id`, `sector_number`, `name`, `description`
@@ -118,11 +126,13 @@ The application uses Pydantic models for strict validation:
 
 1. **Login** with admin credentials (default: admin/admin123)
 2. **Add Lands** with coordinates and soil type
-3. **Create Sectors** within lands
-4. **Add Zones** within sectors
-5. **Create Rows** within zones
-6. **Plant Trees** within rows
-7. Use **Bulk Add** features for multiple entries
+3. **Create Farms** within lands
+4. **Create Sectors** within farms
+5. **Add Zones** within sectors
+6. **Create Rows** within zones
+7. **Plant Trees** within rows
+8. **Log Visits/Inspections** for trees
+9. Use **Bulk Add** features for multiple entries
 
 ## Optimal and Detailed Prompt for AI-Assisted Development
 

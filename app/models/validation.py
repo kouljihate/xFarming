@@ -129,7 +129,7 @@ class LandModel(BaseModel):
     metadata: Optional[dict] = Field(default_factory=lambda: {
         'established_date': '', 'last_updated': '', 'status': 'active'
     })
-    sectors: List[SectorModel] = Field(default_factory=list)
+    farms: List[FarmModel] = Field(default_factory=list)
     created_at: Optional[datetime] = None
     _id: Optional[str] = None
     
@@ -154,6 +154,47 @@ class ActivityModel(BaseModel):
     type: str = Field(..., pattern='^(irrigating|fertilizing|harvesting|planting|pruning)$')
     notes: Optional[str] = None
     date: Optional[datetime] = None
+
+class FarmModel(BaseModel):
+    farm_id: str = Field(default='')
+    farm_number: int = Field(default=1)
+    name: str = Field(..., min_length=1, max_length=100)
+    description: Optional[str] = None
+    location: Optional[dict] = Field(default_factory=lambda: {
+        'area': {'value': 0, 'unit': 'acres'},
+        'soil_type': 'loam', 'topography': '', 'climate_zone': ''
+    })
+    boundary: Optional[dict] = Field(default_factory=lambda: {'type': 'Polygon', 'coordinates': []})
+    irrigation_system: Optional[dict] = Field(default_factory=lambda: {
+        'type': '', 'source': '', 'capacity_lph': 0, 'notes': ''
+    })
+    metadata: Optional[dict] = Field(default_factory=lambda: {
+        'created_date': '', 'last_updated': '', 'status': 'active', 'notes': '', 'version': 1
+    })
+    statistics: Optional[dict] = Field(default_factory=lambda: {
+        'total_sectors': 0, 'total_zones': 0, 'total_rows': 0, 'total_trees': 0, 'cultivated_area': 0
+    })
+    sectors: List['SectorModel'] = Field(default_factory=list)
+    _id: Optional[str] = None
+
+
+class VisitModel(BaseModel):
+    visit_id: str = Field(default='')
+    tree_id: Optional[str] = None
+    visit_date: str = Field(default='')
+    visit_type: str = Field(default='inspection')
+    inspector: Optional[str] = None
+    status: str = Field(default='pending')
+    findings: Optional[dict] = Field(default_factory=lambda: {
+        'health_status': '', 'pests': '', 'diseases': '', 'notes': ''
+    })
+    actions_taken: Optional[List[dict]] = Field(default_factory=list)
+    next_visit: Optional[str] = None
+    metadata: Optional[dict] = Field(default_factory=lambda: {
+        'created_date': '', 'last_updated': '', 'version': 1
+    })
+    _id: Optional[str] = None
+
 
 class UserModel(BaseModel):
     username: str = Field(..., min_length=3, max_length=50)

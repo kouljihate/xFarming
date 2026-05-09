@@ -1,5 +1,29 @@
 # SmartFarmerFlow - Version History
 
+## [0.7.80] - 2026-05-09
+
+### Added
+- Automated version bump for commit
+
+
+## [0.8.0] - 2026-05-09
+
+### Added
+- Added FarmModel in validation.py with fields: farm_id, farm_number, name, description, location, boundary, irrigation_system, metadata, statistics, sectors
+- Added farms blueprint (`app/blueprints/farms.py`) with full CRUD operations
+- Added farms to data hierarchy: Lands → Farms → Sectors → Zones → Rows → Trees
+- Added VisitModel in validation.py with fields: visit_id, tree_id, visit_date, visit_type, inspector, status, findings, actions_taken, next_visit, metadata
+- Added visits blueprint (`app/blueprints/visits.py`) for tree visit/inspection logging
+- Added coordinate calculation (area/perimeter) support for farms
+
+### Changed
+- Updated LandModel to include farms array between land and sectors
+- Data structure now properly follows PROMPT.md specification with farms as a hierarchy level
+
+### Fixed
+- Registered missing farms_bp and visits_bp blueprints in app/__init__.py
+
+
 ## [0.7.79] - 2026-05-08
 
 ### Added

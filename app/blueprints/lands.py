@@ -20,6 +20,10 @@ os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
 @lands_bp.route('/add', methods=['GET', 'POST'])
 def add():
+    print(f"[DEBUG] lands.add() - Method: {request.method}")
+    print(f"[DEBUG] Form keys: {list(request.form.keys())}")
+    print(f"[DEBUG] calculate value: {request.form.get('calculate')}")
+    
     if request.method == 'GET':
         return render_template('lands/index.html',
                                lands=list(get_db().lands.find()),
@@ -34,6 +38,7 @@ def add():
 
     if request.form.get('calculate'):
         coords = request.form.get('coordinates', '').strip()
+        print(f"[DEBUG] coordinates: {coords}")
         
         if not coords:
             flash('Please enter coordinates', 'warning')
@@ -57,14 +62,15 @@ def add():
                                    calc_geojson='',
                                    calc_coords='')
         
-        flash('Calculation complete', 'success')
+flash('Calculation complete', 'success')
         return render_template('lands/index.html',
                                lands=list(get_db().lands.find()),
                                calc_area=result.get('area', 0),
                                calc_perimeter=result.get('perimeter', 0),
                                calc_geojson=result.get('geojson', ''),
                                calc_coords=coords,
-                               show_add_modal=True)
+                               show_add_modal=True,
+                               active_tab='location')
     
     # Save AAdd Land
     db = get_db()
