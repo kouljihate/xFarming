@@ -6,6 +6,7 @@ from app.models.validation import FarmModel
 from bson import ObjectId
 from datetime import datetime
 from app.utils.map_browsing import generate_map
+import traceback
 
 farms_bp = Blueprint('farms', __name__, url_prefix='/farms')
 farms_bp.strict_slashes = False

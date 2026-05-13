@@ -9,12 +9,6 @@
 ## [0.9.1] - 2026-05-13
 
 ### Added
-- Automated version bump for commit
-
-
-## [0.9.1] - 2026-05-13
-
-### Added
 - **Auth decorators**: `@login_required`, `@admin_required`, `@log_func_call` in `app/utils/logging.py` — centralized session/role checks
 - **Geo calculations**: `calculate_centroid()` and `calculate_polygon_metrics()` using pyproj/shapely geodesic WGS84
 - **Map browsing module**: `app/utils/map_browsing.py` — standalone Leaflet map generation with polygon visualization and centroid marker

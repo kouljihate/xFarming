@@ -69,7 +69,7 @@ def log_message(level, message, user_id=None, username=None):
         db.logs.insert_one(log_entry)
     except Exception as e:
         pass
-    
+     
     try:
         if level == 'error':
             current_app.logger.error(message)
