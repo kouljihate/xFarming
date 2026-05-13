@@ -1,10 +1,12 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash, session
 from app.database import get_db
+from app.utils.logging import log_message, log_func_call
 from werkzeug.security import check_password_hash, generate_password_hash
 
 auth_bp = Blueprint('auth', __name__, url_prefix='/auth')
 auth_bp.strict_slashes = False
 
+@log_func_call
 @auth_bp.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
@@ -22,6 +24,7 @@ def login():
         flash('Invalid credentials', 'danger')
     return render_template('auth/login.html')
 
+@log_func_call
 @auth_bp.route('/logout')
 def logout():
     session.clear()

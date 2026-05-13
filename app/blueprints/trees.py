@@ -1,12 +1,13 @@
 from flask import Blueprint, render_template, session, redirect, url_for, request, flash, abort
 from app.database import get_db
-from app.utils.logging import log_message
+from app.utils.logging import log_message, log_func_call
 from app.models.validation import TreeModel
 from bson import ObjectId
 
 trees_bp = Blueprint('trees', __name__, url_prefix='/trees')
 trees_bp.strict_slashes = False
 
+@log_func_call
 @trees_bp.route('/')
 def index():
     if 'user_id' not in session:
@@ -38,6 +39,7 @@ def index():
     
     return render_template('trees/index.html', trees=trees, rows=rows, search=search)
 
+@log_func_call
 @trees_bp.route('/add', methods=['POST'])
 def add():
     if 'user_id' not in session or session.get('role') != 'admin':
@@ -86,6 +88,7 @@ def add():
     
     return redirect(url_for('trees.index'))
 
+@log_func_call
 @trees_bp.route('/<tree_id>')
 def detail(tree_id):
     if 'user_id' not in session:
@@ -109,6 +112,7 @@ def detail(tree_id):
     
     abort(404)
 
+@log_func_call
 @trees_bp.route('/<tree_id>/edit', methods=['POST'])
 def edit(tree_id):
     if 'user_id' not in session or session.get('role') != 'admin':
@@ -151,6 +155,7 @@ def edit(tree_id):
                             flash('Tree updated successfully!', 'success')
     return redirect(url_for('trees.index'))
 
+@log_func_call
 @trees_bp.route('/<tree_id>/delete', methods=['POST'])
 def delete(tree_id):
     if 'user_id' not in session or session.get('role') != 'admin':
@@ -178,6 +183,7 @@ def delete(tree_id):
     
     abort(404)
 
+@log_func_call
 @trees_bp.route('/bulk_add', methods=['POST'])
 def bulk_add():
     if 'user_id' not in session or session.get('role') != 'admin':

@@ -3,7 +3,8 @@
 {% block title %}Add Sector - SmartFarmerFlow{% endblock %}
 
 {% block content %}
-<a href="{{ url_for('sectors.index') }}" class="btn rounded-pill btn-secondary mb-3">{{ t('back', session.get('lang', 'en')) }}</a>
+<a href="{{ url_for('sectors.index') }}" class="btn rounded-pill btn-secondary mb-3">{{ t('back', session.get('lang',
+    'en')) }}</a>
 <h2>Add Sector</h2>
 
 <div class="card">
@@ -25,7 +26,7 @@
                 <div class="col-md-6 mb-3">
                     <label class="form-label">Unit</label>
                     <select class="form-select rounded-pill" name="area_unit">
-                        <option value="acres">Acres</option>
+                        <option value="ha">ha</option>
                         <option value="hectares">Hectares</option>
                     </select>
                 </div>
@@ -62,13 +63,15 @@
             </div>
             <div class="mb-3">
                 <label class="form-label">Boundary (JSON - Optional)</label>
-                <textarea class="form-control rounded-pill" name="boundary" rows="3" placeholder='{"type": "Polygon", "coordinates": [[[lon, lat], ...]]}'></textarea>
+                <textarea class="form-control rounded-pill" name="boundary" rows="3"
+                    placeholder='{"type": "Polygon", "coordinates": [[[lon, lat], ...]]}'></textarea>
                 <small class="text-muted">Enter boundary as JSON with type and coordinates</small>
             </div>
             <div class="row">
                 <div class="col-md-6 mb-3">
                     <label class="form-label">Sector ID (Optional)</label>
-                    <input type="text" class="form-control rounded-pill" name="sector_id" placeholder="Auto-generated if empty">
+                    <input type="text" class="form-control rounded-pill" name="sector_id"
+                        placeholder="Auto-generated if empty">
                 </div>
                 <div class="col-md-6 mb-3">
                     <label class="form-label">Sector Number</label>
@@ -88,6 +91,3 @@
     </div>
 </div>
 {% endblock %}
-
-
-

@@ -38,8 +38,8 @@
                         <div class="col-md-6 mb-3">
                             <label class="form-label">Unit</label>
                             <select class="form-select rounded-pill" name="area_unit">
-                                <option value="acres" {% if sector.get('location', {}).get('area',
-                                    {}).get('unit', 'acres' )=='acres' %}selected{% endif %}>Acres</option>
+                                <option value="ha" {% if sector.get('location', {}).get('area', {}).get('unit', 'ha'
+                                    )=='ha' %}selected{% endif %}>ha</option>
                                 <option value="hectares" {% if sector.get('location', {}).get('area', {}).get('unit', ''
                                     )=='hectares' %}selected{% endif %}>Hectares</option>
                             </select>

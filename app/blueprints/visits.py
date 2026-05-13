@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, session, redirect, url_for, request, flash, abort, jsonify
 from app.database import get_db
-from app.utils.logging import log_message
+from app.utils.logging import log_message, log_func_call
 from app.models.validation import VisitModel
 from bson import ObjectId
 from datetime import datetime
@@ -9,6 +9,7 @@ visits_bp = Blueprint('visits', __name__, url_prefix='/visits')
 visits_bp.strict_slashes = False
 
 
+@log_func_call
 @visits_bp.route('/')
 def index():
     if 'user_id' not in session:
@@ -88,6 +89,7 @@ def index():
                            visit_type_filter=visit_type_filter)
 
 
+@log_func_call
 @visits_bp.route('/add', methods=['POST'])
 def add():
     if 'user_id' not in session or session.get('role') not in ['admin', 'worker']:
@@ -144,6 +146,7 @@ def add():
     return redirect(url_for('visits.index'))
 
 
+@log_func_call
 @visits_bp.route('/<visit_id>')
 def detail(visit_id):
     if 'user_id' not in session:
@@ -171,6 +174,7 @@ def detail(visit_id):
     abort(404)
 
 
+@log_func_call
 @visits_bp.route('/<visit_id>/edit', methods=['GET', 'POST'])
 def edit(visit_id):
     if 'user_id' not in session or session.get('role') not in ['admin', 'worker']:
@@ -223,6 +227,7 @@ def edit(visit_id):
     abort(404)
 
 
+@log_func_call
 @visits_bp.route('/<visit_id>/delete', methods=['POST'])
 def delete(visit_id):
     if 'user_id' not in session or session.get('role') != 'admin':

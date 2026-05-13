@@ -1,12 +1,13 @@
 from flask import Blueprint, render_template, session, redirect, url_for, request, flash
 from app.database import get_db
-from app.utils.logging import get_logs
+from app.utils.logging import get_logs, log_message, log_func_call
 from bson import ObjectId
 from math import ceil
 
 users_bp = Blueprint('users', __name__, url_prefix='/users')
 users_bp.strict_slashes = False
 
+@log_func_call
 @users_bp.route('/')
 def index():
     if 'user_id' not in session or session.get('role') != 'admin':
@@ -19,6 +20,7 @@ def index():
         user['_id'] = str(user['_id'])
     return render_template('users/index.html', users=users)
 
+@log_func_call
 @users_bp.route('/change-role/<user_id>', methods=['POST'])
 def change_role(user_id):
     if 'user_id' not in session or session.get('role') != 'admin':
@@ -30,6 +32,7 @@ def change_role(user_id):
     flash('Role updated successfully', 'success')
     return redirect(url_for('users.index'))
 
+@log_func_call
 @users_bp.route('/delete/<user_id>', methods=['POST'])
 def delete(user_id):
     if 'user_id' not in session or session.get('role') != 'admin':
@@ -40,6 +43,7 @@ def delete(user_id):
     flash('User deleted successfully', 'success')
     return redirect(url_for('users.index'))
 
+@log_func_call
 @users_bp.route('/logs')
 def view_logs():
     if 'user_id' not in session or session.get('role') != 'admin':

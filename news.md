@@ -1,5 +1,40 @@
 # SmartFarmerFlow - Version History
 
+## [0.9.1] - 2026-05-13
+
+### Added
+- Automated version bump for commit
+
+
+## [0.9.0] - 2026-05-13
+
+### Added
+- **Auth decorators**: `@login_required`, `@admin_required`, `@log_func_call` in `app/utils/logging.py` — centralized session/role checks
+- **Geo calculations**: `calculate_centroid()` and `calculate_polygon_metrics()` using pyproj/shapely geodesic WGS84
+- **Map browsing module**: `app/utils/map_browsing.py` — standalone Leaflet map generation with polygon visualization and centroid marker
+- **500 error page** with graceful error handling and user-friendly message
+- **Farms CRUD templates**: `app/templates/farms/{index,detail,edit}.html` + farm modals (Add with tabs, Edit, Delete)
+- **Farm legal documents** and **photo upload** support in farm add/edit forms
+- **Google Maps URL** generation from centroid coordinates, linked in farm detail
+- **LOG_MODE env var**: console-only (`--debug-console`), file-only (`--debug-file`), or combined logging
+- **Farm translations**: keys for `farms`, `total_farms`, `add_farm`, `farm`, `view` in English, Arabic, and French
+- **Icecream debugging**: `ic` import in `run.py` for easier debugging
+
+### Changed
+- **Lands blueprint refactored**: removed legacy sector management from lands; simplified LandModel location structure with `center_coordinate` and `altitude` fields
+- **Farms blueprint refactored**: action-based form handling (`calculate`/`show_map`/submit); form data preserved on calculation errors; legal/photos fields integrated
+- **Calculation module**: enhanced with pyproj/shapely geodesic calculations — returns `area_ha`, `perimeter_m`, centroid with `maps_url`
+- **Logging system**: LOG_MODE controls console/file/combined output; `log_message` now also logs to Flask logger and stdout
+- **Dashboard**: farm statistics integrated into dashboard counts
+- **Translations**: added farm-related keys across all supported languages
+- **Area unit**: changed default from `acres` to `ha` in farm forms
+- **Auth pattern**: replaced inline `if 'user_id' not in session` checks with reusable decorators across all blueprints
+
+### Fixed
+- **Error handlers**: Added 500 and generic Exception handlers in `app/__init__.py` with proper logging
+- **Form values**: Preserved during calculation errors in Farm Add modal
+- **Removed debug prints**: Cleaned up legacy debug `print()` statements
+
 ## [0.8.1] - 2026-05-09
 
 ### Added

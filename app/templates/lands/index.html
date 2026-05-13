@@ -3,22 +3,27 @@
 {% block title %}{{ t('lands', session.get('lang', 'en')) }} - SmartFarmerFlow{% endblock %}
 
 {% block content %}
-<a href="{{ url_for('lands.index') }}" class="btn rounded-pill btn-secondary mb-3 rounded-pill">{{ t('back', session.get('lang',
+<a href="{{ url_for('lands.index') }}" class="btn rounded-pill btn-secondary mb-3 rounded-pill">{{ t('back',
+    session.get('lang',
     'en')) }}</a>
 <h2>{{ t('lands', session.get('lang', 'en')) }}</h2>
 
 {% if session.get('role') in ['admin', 'worker'] %}
-<button type="button" class="btn rounded-pill btn-success mb-3 rounded-pill" data-bs-toggle="modal" data-bs-target="#addLandModal">
+<button type="button" class="btn rounded-pill btn-success mb-3 rounded-pill" data-bs-toggle="modal"
+    data-bs-target="#addLandModal">
     <i class="bi-plus-circle"></i> {{ t('add_land', session.get('lang', 'en')) }}
 </button>
 {% endif %}
 
 <form method="GET" class="mb-3">
     <div class="input-group">
-        <input type="text" class="form-control rounded-pill" name="search" placeholder="Search lands..." value="{{ search }}">
-        <button class="btn rounded-pill btn-primary rounded-pill" type="submit"><i class="bi-search"></i> Search</button>
+        <input type="text" class="form-control rounded-pill" name="search" placeholder="Search lands..."
+            value="{{ search }}">
+        <button class="btn rounded-pill btn-primary rounded-pill" type="submit"><i class="bi-search"></i>
+            Search</button>
         {% if search %}
-        <a href="{{ url_for('lands.index') }}" class="btn rounded-pill btn-secondary rounded-pill"><i class="bi-x-circle"></i>
+        <a href="{{ url_for('lands.index') }}" class="btn rounded-pill btn-secondary rounded-pill"><i
+                class="bi-x-circle"></i>
             Clear</a>
         {% endif %}
     </div>
@@ -30,8 +35,7 @@
         <thead>
             <tr>
                 <th><i class="bi-geo-alt"></i> Name</th>
-                <th><i class="bi-tag"></i> Farm ID</th>
-                <th><i class="bi-person"></i> Owner</th>
+                <th><i class="bi-tag"></i> Land ID</th>
                 <th><i class="bi-gear"></i> Actions</th>
             </tr>
         </thead>
@@ -39,14 +43,13 @@
             {% for land in lands %}
             <tr>
                 <td><i class="bi-geo-alt"></i> {{ land.name }}</td>
-                <td>{{ land.farm_id or '-' }}</td>
-                <td>{{ land.owner.name if land.owner else '-' }}</td>
+                <td>{{ land.land_id or '-' }}</td>
                 <td>
                     <a href="{{ url_for('lands.detail', land_id=land._id) }}"
                         class="btn rounded-pill btn-sm btn-primary rounded-pill"><i class="bi-eye"></i></a>
                     {% if session.get('role') == 'admin' %}
-                    <button type="button" class="btn rounded-pill btn-sm btn-warning rounded-pill" data-bs-toggle="modal"
-                        data-bs-target="#editLandModal{{ land._id }}">
+                    <button type="button" class="btn rounded-pill btn-sm btn-warning rounded-pill"
+                        data-bs-toggle="modal" data-bs-target="#editLandModal{{ land._id }}">
                         <i class="bi-pencil"></i>
                     </button>
                     <button type="button" class="btn rounded-pill btn-sm btn-danger rounded-pill" data-bs-toggle="modal"
@@ -92,6 +95,3 @@
 {% endif %}
 
 {% endblock %}
-
-
-

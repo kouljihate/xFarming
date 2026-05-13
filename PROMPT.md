@@ -4,7 +4,7 @@
 
 **SmartFarmerFlow** is a Flask-based agricultural land management web application with MongoDB. It manages hierarchical farm data: Lands → Farms → Sectors → Zones → Rows → Trees.
 
-- **Version**: 0.8.0
+- **Version**: 0.9.0
 - **Framework**: Flask with Blueprint modular architecture
 - **Database**: MongoDB (pymongo)
 - **Validation**: Pydantic v2

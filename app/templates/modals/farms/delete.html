@@ -1,0 +1,19 @@
+<div class="modal fade" id="deleteFarmModal{{ farm._id }}" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form method="POST" action="{{ url_for('farms.delete', farm_id=farm._id) }}">
+                <div class="modal-header bg-{{ session.get('theme', 'minty') }} text-white">
+                    <h5 class="modal-title">Delete {{ farm.name }}</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Are you sure you want to delete farm "{{ farm.name }}"?</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn rounded-pill btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn rounded-pill btn-danger">Delete</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

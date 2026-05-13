@@ -6,10 +6,42 @@
 <a href="{{ url_for('lands.index') }}" class="btn rounded-pill btn-secondary mb-3">{{ t('back', session.get('lang', 'en')) }}</a>
 <h2>{{ t('trees', session.get('lang', 'en')) }}</h2>
 
-{% if session.get('role') == 'admin' %}
+{% set has_rows = false %}
+{% for land in lands %}
+    {% if land.farms %}
+        {% for farm in land.farms %}
+            {% if farm.sectors %}
+                {% for sector in farm.sectors %}
+                    {% if sector.zones %}
+                        {% for zone in sector.zones %}
+                            {% if zone.rows %}
+                                {% set has_rows = true %}
+                            {% endif %}
+                        {% endfor %}
+                    {% endif %}
+                {% endfor %}
+            {% endif %}
+        {% endfor %}
+    {% endif %}
+    {% if land.sectors %}
+        {% for sector in land.sectors %}
+            {% if sector.zones %}
+                {% for zone in sector.zones %}
+                    {% if zone.rows %}
+                        {% set has_rows = true %}
+                    {% endif %}
+                {% endfor %}
+            {% endif %}
+        {% endfor %}
+    {% endif %}
+{% endfor %}
+
+{% if session.get('role') == 'admin' and has_rows %}
 <button type="button" class="btn rounded-pill btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#addTreeModal">
     <i class="bi-plus-circle"></i> {{ t('add', session.get('lang', 'en')) }} {{ t('trees', session.get('lang', 'en')) }}
 </button>
+{% elif session.get('role') == 'admin' %}
+<div class="alert alert-warning mb-3"><i class="bi-exclamation-triangle me-2"></i>Please add a Farm, Sector, Zone and Row first before adding Trees.</div>
 {% endif %}
 
 <form method="GET" class="mb-3">

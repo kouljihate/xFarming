@@ -1,5 +1,6 @@
 from flask import Blueprint, render_template, session, redirect, url_for, request
 from app.database import get_db
+from app.utils.logging import log_message, log_func_call
 from app.models import Activity
 from math import ceil
 from datetime import datetime
@@ -9,6 +10,7 @@ activities_bp.strict_slashes = False
 
 ACTIVITIES_PER_PAGE = 20
 
+@log_func_call
 @activities_bp.route('/add', methods=['GET', 'POST'])
 def add():
     if 'user_id' not in session:
@@ -25,6 +27,7 @@ def add():
     
     return render_template('activities/add.html')
 
+@log_func_call
 @activities_bp.route('/')
 def index():
     if 'user_id' not in session:

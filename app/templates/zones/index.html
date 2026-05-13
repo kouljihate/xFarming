@@ -7,7 +7,21 @@
     'en')) }}</a>
 <h2>{{ t('zones', session.get('lang', 'en')) }}</h2>
 
-{% if session.get('role') == 'admin' %}
+{% set has_sectors = false %}
+{% for land in lands %}
+    {% if land.farms %}
+        {% for farm in land.farms %}
+            {% if farm.sectors %}
+                {% set has_sectors = true %}
+            {% endif %}
+        {% endfor %}
+    {% endif %}
+    {% if land.sectors %}
+        {% set has_sectors = true %}
+    {% endif %}
+{% endfor %}
+
+{% if session.get('role') == 'admin' and has_sectors %}
 <button type="button" class="btn rounded-pill btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#addZoneModal">
     <i class="bi-plus-circle"></i> {{ t('add', session.get('lang', 'en')) }} {{ t('zones', session.get('lang', 'en')) }}
 </button>
@@ -15,6 +29,8 @@
     data-bs-target="#bulkAddZoneModal">
     <i class="bi-stack"></i> {{ t('bulk_add', session.get('lang', 'en')) }} {{ t('zones', session.get('lang', 'en')) }}
 </button>
+{% elif session.get('role') == 'admin' %}
+<div class="alert alert-warning mb-3"><i class="bi-exclamation-triangle me-2"></i>Please add a Farm and Sector first before adding Zones.</div>
 {% endif %}
 
 <form method="GET" class="mb-3">
@@ -81,7 +97,7 @@
 
 <!-- Bulk Add Zone Modal (inline) -->
 <div class="modal fade" id="bulkAddZoneModal" tabindex="-1">
-    <div class="modal-dialog modal-xl">
+    <div class="modal-dialog modal-md">
         <div class="modal-content">
             <form method="POST" action="{{ url_for('zones.bulk_add') }}">
                 <input type="hidden" name="sector_id" id="bulkSectorId">
@@ -90,203 +106,19 @@
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
-
                     <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <label class="form-label">Zone ID Prefix</label>
-                            <input type="text" class="form-control rounded-pill" name="zone_id_prefix"
-                                placeholder="Auto-generated">
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">Prefix</label>
+                            <input type="text" class="form-control rounded-pill" name="prefix" value="Zone" required>
                         </div>
-                        <div class="col-md-3 mb-3">
-                            <label class="form-label">Zone Number Start</label>
-                            <input type="number" class="form-control rounded-pill" name="zone_number_start"
-                                placeholder="1">
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">Start From</label>
+                            <input type="number" class="form-control rounded-pill" name="start_from" value="1" min="1" required>
                         </div>
-                        <div class="col-md-3 mb-3">
-                            <label class="form-label">Zone Number End</label>
-                            <input type="number" class="form-control rounded-pill" name="zone_number_end"
-                                placeholder="10">
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">End At</label>
+                            <input type="number" class="form-control rounded-pill" name="end_at" value="5" min="1" required>
                         </div>
-                    </div>
-                    <hr>
-                    <h6 class="mb-3">Location (applied to all)</h6>
-                    <div class="row">
-                        <div class="col-md-3 mb-3">
-                            <label class="form-label">Area</label>
-                            <input type="number" step="0.01" class="form-control rounded-pill" name="area_value"
-                                value="0">
-                        </div>
-                        <div class="col-md-3 mb-3">
-                            <label class="form-label">Unit</label>
-                            <select class="form-select rounded-pill" name="area_unit">
-                                <option value="acres">Acres</option>
-                                <option value="hectares">Hectares</option>
-                            </select>
-                        </div>
-                        <div class="col-md-3 mb-3">
-                            <label class="form-label">Row Spacing</label>
-                            <input type="number" step="0.01" class="form-control rounded-pill" name="row_spacing_value"
-                                value="0">
-                        </div>
-                        <div class="col-md-3 mb-3">
-                            <label class="form-label">Unit</label>
-                            <select class="form-select rounded-pill" name="row_spacing_unit">
-                                <option value="feet">Feet</option>
-                                <option value="meters">Meters</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-3 mb-3">
-                            <label class="form-label">Tree Spacing</label>
-                            <input type="number" step="0.01" class="form-control rounded-pill" name="tree_spacing_value"
-                                value="0">
-                        </div>
-                        <div class="col-md-3 mb-3">
-                            <label class="form-label">Unit</label>
-                            <select class="form-select rounded-pill" name="tree_spacing_unit">
-                                <option value="feet">Feet</option>
-                                <option value="meters">Meters</option>
-                            </select>
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label class="form-label">Orientation</label>
-                            <input type="text" class="form-control rounded-pill" name="orientation" placeholder="N-S">
-                        </div>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Boundary (JSON)</label>
-                        <textarea class="form-control rounded-pill" name="boundary" rows="2"
-                            placeholder='{"type": "Polygon", "coordinates": []}'></textarea>
-                    </div>
-                    <hr>
-                    <h6 class="mb-3">Crop Info (applied to all)</h6>
-                    <div class="row">
-                        <div class="col-md-3 mb-3">
-                            <label class="form-label">Current Crop</label>
-                            <input type="text" class="form-control rounded-pill" name="current_crop"
-                                placeholder="Olives">
-                        </div>
-                        <div class="col-md-3 mb-3">
-                            <label class="form-label">Variety</label>
-                            <input type="text" class="form-control rounded-pill" name="variety" placeholder="Arbequina">
-                        </div>
-                        <div class="col-md-3 mb-3">
-                            <label class="form-label">Planting Date</label>
-                            <input type="date" class="form-control rounded-pill" name="planting_date">
-                        </div>
-                        <div class="col-md-3 mb-3">
-                            <label class="form-label">Root Stock</label>
-                            <input type="text" class="form-control rounded-pill" name="root_stock"
-                                placeholder="Own roots">
-                        </div>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Pollinators (comma-separated)</label>
-                        <input type="text" class="form-control rounded-pill" name="pollinators"
-                            placeholder="Variety A, Variety B">
-                    </div>
-                    <hr>
-                    <h6 class="mb-3">Soil Characteristics (applied to all)</h6>
-                    <div class="row">
-                        <div class="col-md-3 mb-3">
-                            <label class="form-label">Soil Type</label>
-                            <input type="text" class="form-control rounded-pill" name="soil_type" placeholder="Loam">
-                        </div>
-                        <div class="col-md-3 mb-3">
-                            <label class="form-label">pH</label>
-                            <input type="number" step="0.1" class="form-control rounded-pill" name="ph" value="0.0">
-                        </div>
-                        <div class="col-md-3 mb-3">
-                            <label class="form-label">Organic Matter</label>
-                            <input type="text" class="form-control rounded-pill" name="organic_matter" placeholder="2%">
-                        </div>
-                        <div class="col-md-3 mb-3">
-                            <label class="form-label">Drainage</label>
-                            <input type="text" class="form-control rounded-pill" name="drainage"
-                                placeholder="Well-drained">
-                        </div>
-                    </div>
-                    <hr>
-                    <h6 class="mb-3">Statistics (applied to all)</h6>
-                    <div class="row">
-                        <div class="col-md-2 mb-3">
-                            <label class="form-label">Total Rows</label>
-                            <input type="number" class="form-control rounded-pill" name="total_rows" value="0">
-                        </div>
-                        <div class="col-md-2 mb-3">
-                            <label class="form-label">Total Trees</label>
-                            <input type="number" class="form-control rounded-pill" name="total_trees" value="0">
-                        </div>
-                        <div class="col-md-2 mb-3">
-                            <label class="form-label">Trees/Acre</label>
-                            <input type="number" class="form-control rounded-pill" name="trees_per_acre" value="0">
-                        </div>
-                        <div class="col-md-2 mb-3">
-                            <label class="form-label">Active Trees</label>
-                            <input type="number" class="form-control rounded-pill" name="active_trees" value="0">
-                        </div>
-                        <div class="col-md-2 mb-3">
-                            <label class="form-label">Dead Trees</label>
-                            <input type="number" class="form-control rounded-pill" name="dead_trees" value="0">
-                        </div>
-                        <div class="col-md-2 mb-3">
-                            <label class="form-label">Replacement Rate</label>
-                            <input type="text" class="form-control rounded-pill" name="replacement_rate"
-                                placeholder="5%">
-                        </div>
-                    </div>
-                    <hr>
-                    <h6 class="mb-3">Maintenance (applied to all)</h6>
-                    <div class="row">
-                        <div class="col-md-2 mb-3">
-                            <label class="form-label">Last Pruned</label>
-                            <input type="date" class="form-control rounded-pill" name="last_pruned">
-                        </div>
-                        <div class="col-md-2 mb-3">
-                            <label class="form-label">Last Fertilized</label>
-                            <input type="date" class="form-control rounded-pill" name="last_fertilized">
-                        </div>
-                        <div class="col-md-2 mb-3">
-                            <label class="form-label">Last Irrigated</label>
-                            <input type="date" class="form-control rounded-pill" name="last_irrigated">
-                        </div>
-                        <div class="col-md-3 mb-3">
-                            <label class="form-label">Next Maintenance</label>
-                            <input type="date" class="form-control rounded-pill" name="next_maintenance">
-                        </div>
-                        <div class="col-md-3 mb-3">
-                            <label class="form-label">Maintenance Notes</label>
-                            <textarea class="form-control rounded-pill" name="maintenance_notes" rows="1"></textarea>
-                        </div>
-                    </div>
-                    <hr>
-                    <h6 class="mb-3">Metadata (applied to all)</h6>
-                    <div class="row">
-                        <div class="col-md-3 mb-3">
-                            <label class="form-label">Created Date</label>
-                            <input type="date" class="form-control rounded-pill" name="created_date">
-                        </div>
-                        <div class="col-md-3 mb-3">
-                            <label class="form-label">Last Updated</label>
-                            <input type="date" class="form-control rounded-pill" name="last_updated">
-                        </div>
-                        <div class="col-md-3 mb-3">
-                            <label class="form-label">Status</label>
-                            <select class="form-select rounded-pill" name="status">
-                                <option value="active">Active</option>
-                                <option value="inactive">Inactive</option>
-                            </select>
-                        </div>
-                        <div class="col-md-3 mb-3">
-                            <label class="form-label">Zone Manager</label>
-                            <input type="text" class="form-control rounded-pill" name="zone_manager"
-                                placeholder="Manager name">
-                        </div>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Notes</label>
-                        <textarea class="form-control rounded-pill" name="notes" rows="2"></textarea>
                     </div>
                 </div>
                 <div class="modal-footer">

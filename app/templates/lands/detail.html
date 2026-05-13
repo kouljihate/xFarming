@@ -3,7 +3,8 @@
 {% block title %}{{ land.name }} - SmartFarmerFlow{% endblock %}
 
 {% block content %}
-<a href="{{ url_for('lands.index') }}" class="btn rounded-pill btn-secondary mb-3">{{ t('back', session.get('lang', 'en')) }}</a>
+<a href="{{ url_for('lands.index') }}" class="btn rounded-pill btn-secondary mb-3">{{ t('back', session.get('lang',
+    'en')) }}</a>
 <h2>{{ land.name }}</h2>
 
 <div class="mb-4">
@@ -11,27 +12,29 @@
 </div>
 
 <div class="row mb-3">
-    <div class="col-md-3">
+    <div class="col-md-4">
         <div class="card text-white bg-primary">
             <div class="card-body">
-                <h5 class="card-title"><i class="bi-tag me-1"></i> Farm ID</h5>
-                <p class="card-text">{{ land.farm_id or 'N/A' }}</p>
+                <h5 class="card-title"><i class="bi-tag me-1"></i> Land ID</h5>
+                <p class="card-text">{{ land.land_id or 'N/A' }}</p>
             </div>
         </div>
     </div>
-    <div class="col-md-3">
-        <div class="card text-white bg-success">
-            <div class="card-body">
-                <h5 class="card-title"><i class="bi-person me-1"></i> Owner</h5>
-                <p class="card-text">{{ land.owner.name if land.owner else 'N/A' }}</p>
-            </div>
-        </div>
-    </div>
-    <div class="col-md-3">
+    <div class="col-md-4">
         <div class="card text-white bg-info">
             <div class="card-body">
                 <h5 class="card-title"><i class="bi-aspect-ratio me-1"></i> Area</h5>
-                <p class="card-text">{{ land.location.total_area.value if land.location and land.location.total_area else 0 }} acres</p>
+                <p class="card-text">{{ land.location.total_area.value if land.location and land.location.total_area
+                    else 0 }} ha</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card text-white bg-info">
+            <div class="card-body">
+                <h5 class="card-title"><i class="bi-aspect-ratio me-1"></i> Area</h5>
+                <p class="card-text">{{ land.location.total_area.value if land.location and land.location.total_area
+                    else 0 }} ha</p>
             </div>
         </div>
     </div>
@@ -51,33 +54,23 @@
         <h5 class="card-title">Land Information</h5>
         <div class="row">
             <div class="col-md-6">
-                <p><strong>Farm ID:</strong> {{ land.farm_id or 'N/A' }}</p>
-                <p><strong>Owner:</strong> {{ land.owner.name if land.owner else 'N/A' }}</p>
-                <p><strong>Email:</strong> {{ land.owner.contact.email if land.owner and land.owner.contact else 'N/A' }}</p>
-                <p><strong>Phone:</strong> {{ land.owner.contact.phone if land.owner and land.owner.contact else 'N/A' }}</p>
-                <p><strong>Legal Documents:</strong> 
-                    {% if land.legal and land.legal.type %}
-                        {{ land.legal.type|join(', ') }}
-                    {% else %}
-                        N/A
-                    {% endif %}
-                </p>
+                <p><strong>Land ID:</strong> {{ land.farm_id or 'N/A' }}</p>
             </div>
             <div class="col-md-6">
-                <p><strong>Address:</strong> 
+                <p><strong>Address:</strong>
                     {% if land.location and land.location.address %}
-                        {{ land.location.address.street or '' }}, {{ land.location.address.city or '' }}, 
-                        {{ land.location.address.state or '' }} {{ land.location.address.postal_code or '' }}, 
-                        {{ land.location.address.country or '' }}
+                    {{ land.location.address.street or '' }}, {{ land.location.address.city or '' }},
+                    {{ land.location.address.state or '' }} {{ land.location.address.postal_code or '' }},
+                    {{ land.location.address.country or '' }}
                     {% else %}
-                        N/A
+                    N/A
                     {% endif %}
                 </p>
-                <p><strong>Coordinates:</strong> 
+                <p><strong>Coordinates:</strong>
                     {% if land.location and land.location.coordinates %}
-                        {{ land.location.coordinates.latitude or 0 }}, {{ land.location.coordinates.longitude or 0 }}
+                    {{ land.location.coordinates.latitude or 0 }}, {{ land.location.coordinates.longitude or 0 }}
                     {% else %}
-                        N/A
+                    N/A
                     {% endif %}
                 </p>
                 <p><strong>Status:</strong> {{ land.metadata.status if land.metadata else 'N/A' }}</p>
@@ -92,44 +85,50 @@
     <div class="card-header d-flex justify-content-between align-items-center">
         <h5 class="mb-0"><i class="bi-images me-2"></i>Photos</h5>
         {% if session.get('role') in ['admin', 'worker'] %}
-        <button type="button" class="btn rounded-pill btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#uploadPhotoModal">
+        <button type="button" class="btn rounded-pill btn-sm btn-primary" data-bs-toggle="modal"
+            data-bs-target="#uploadPhotoModal">
             <i class="bi-cloud-upload me-1"></i>Upload Photos
         </button>
         {% endif %}
     </div>
     <div class="card-body">
         {% if land.photos %}
-            <div class="row">
-                {% for photo in land.photos %}
-                <div class="col-md-3 mb-3">
-                    <div class="card">
-                        <img src="{{ photo.path }}" class="card-img-top" alt="{{ photo.description or 'Land photo' }}" style="height: 200px; object-fit: cover;">
-                        <div class="card-body p-2">
-                            <p class="card-text">
-                                <small class="text-muted">{{ photo.description or 'No description' }}</small>
-                            </p>
-                            {% if session.get('role') == 'admin' %}
-                            <form method="POST" action="{{ url_for('lands.delete_photo', land_id=land._id, filename=photo.filename) }}" class="d-inline">
-                                <button type="submit" class="btn rounded-pill btn-sm btn-danger" onclick="return confirm('Delete this photo?')">
-                                    <i class="bi-trash"></i>
-                                </button>
-                            </form>
-                            {% endif %}
-                        </div>
+        <div class="row">
+            {% for photo in land.photos %}
+            <div class="col-md-3 mb-3">
+                <div class="card">
+                    <img src="{{ photo.path }}" class="card-img-top" alt="{{ photo.description or 'Land photo' }}"
+                        style="height: 200px; object-fit: cover;">
+                    <div class="card-body p-2">
+                        <p class="card-text">
+                            <small class="text-muted">{{ photo.description or 'No description' }}</small>
+                        </p>
+                        {% if session.get('role') == 'admin' %}
+                        <form method="POST"
+                            action="{{ url_for('lands.delete_photo', land_id=land._id, filename=photo.filename) }}"
+                            class="d-inline">
+                            <button type="submit" class="btn rounded-pill btn-sm btn-danger"
+                                onclick="return confirm('Delete this photo?')">
+                                <i class="bi-trash"></i>
+                            </button>
+                        </form>
+                        {% endif %}
                     </div>
                 </div>
-                {% endfor %}
             </div>
+            {% endfor %}
+        </div>
         {% else %}
-            <div class="text-center py-4">
-                <h1 class="display-1 text-muted">ZERO</h1>
-                <p class="lead text-muted">No photos uploaded yet</p>
-                {% if session.get('role') in ['admin', 'worker'] %}
-                <button type="button" class="btn rounded-pill btn-primary mt-3" data-bs-toggle="modal" data-bs-target="#uploadPhotoModal">
-                    <i class="bi-cloud-upload me-1"></i>Upload Your First Photo
-                </button>
-                {% endif %}
-            </div>
+        <div class="text-center py-4">
+            <h1 class="display-1 text-muted">ZERO</h1>
+            <p class="lead text-muted">No photos uploaded yet</p>
+            {% if session.get('role') in ['admin', 'worker'] %}
+            <button type="button" class="btn rounded-pill btn-primary mt-3" data-bs-toggle="modal"
+                data-bs-target="#uploadPhotoModal">
+                <i class="bi-cloud-upload me-1"></i>Upload Your First Photo
+            </button>
+            {% endif %}
+        </div>
         {% endif %}
     </div>
 </div>
@@ -139,7 +138,8 @@
 <div class="modal fade" id="uploadPhotoModal" tabindex="-1">
     <div class="modal-dialog">
         <div class="modal-content">
-            <form method="POST" action="{{ url_for('lands.upload_photo', land_id=land._id) }}" enctype="multipart/form-data">
+            <form method="POST" action="{{ url_for('lands.upload_photo', land_id=land._id) }}"
+                enctype="multipart/form-data">
                 <div class="modal-header bg-success text-white">
                     <h5 class="modal-title"><i class="bi-cloud-upload me-2"></i>Upload Photos</h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
@@ -147,18 +147,22 @@
                 <div class="modal-body">
                     <div class="mb-3">
                         <label class="form-label"><i class="bi-images me-1"></i>Select Photos</label>
-                        <input type="file" class="form-control rounded-pill" name="photos" multiple accept="image/*" required>
+                        <input type="file" class="form-control rounded-pill" name="photos" multiple accept="image/*"
+                            required>
                         <small class="text-muted">Hold Ctrl (or Cmd) to select multiple files</small>
                     </div>
                     <div class="mb-3">
                         <label class="form-label"><i class="bi-card-text me-1"></i>Photo Descriptions (Optional)</label>
-                        <textarea class="form-control rounded-pill" name="photo_descriptions" rows="3" placeholder="Enter descriptions for each photo (one per line)"></textarea>
-                        <small class="text-muted">Enter one description per line, matching the order of selected photos</small>
+                        <textarea class="form-control rounded-pill" name="photo_descriptions" rows="3"
+                            placeholder="Enter descriptions for each photo (one per line)"></textarea>
+                        <small class="text-muted">Enter one description per line, matching the order of selected
+                            photos</small>
                     </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn rounded-pill btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="submit" class="btn rounded-pill btn-success"><i class="bi-cloud-upload me-1"></i>Upload</button>
+                    <button type="submit" class="btn rounded-pill btn-success"><i
+                            class="bi-cloud-upload me-1"></i>Upload</button>
                 </div>
             </form>
         </div>
@@ -169,7 +173,8 @@
 {% if session.get('role') == 'admin' %}
 <a href="{{ url_for('lands.edit', land_id=land._id) }}" class="btn rounded-pill btn-warning">Edit Land</a>
 <form method="POST" action="{{ url_for('lands.delete', land_id=land._id) }}" class="d-inline">
-    <button type="submit" class="btn rounded-pill btn-danger" onclick="return confirm('Delete this land?')">Delete Land</button>
+    <button type="submit" class="btn rounded-pill btn-danger" onclick="return confirm('Delete this land?')">Delete
+        Land</button>
 </form>
 {% endif %}
 
@@ -183,10 +188,14 @@
                 <p class="card-text">
                     {{ sector.zones|length if sector.zones else 0 }} {{ t('zones', session.get('lang', 'en')) }}
                 </p>
-                <a href="{{ url_for('sectors.detail', sector_id=sector._id) }}" class="btn rounded-pill btn-sm btn-primary">{{ t('view', session.get('lang', 'en')) }}</a>
+                <a href="{{ url_for('sectors.detail', sector_id=sector._id) }}"
+                    class="btn rounded-pill btn-sm btn-primary">{{ t('view', session.get('lang', 'en')) }}</a>
                 {% if session.get('role') == 'admin' %}
-                <form method="POST" action="{{ url_for('lands.delete_sector', land_id=land._id, sector_id=sector._id) }}" class="d-inline">
-                    <button type="submit" class="btn rounded-pill btn-sm btn-danger" onclick="return confirm('Delete this sector?')">
+                <form method="POST"
+                    action="{{ url_for('lands.delete_sector', land_id=land._id, sector_id=sector._id) }}"
+                    class="d-inline">
+                    <button type="submit" class="btn rounded-pill btn-sm btn-danger"
+                        onclick="return confirm('Delete this sector?')">
                         <i class="bi-trash"></i>
                     </button>
                 </form>
@@ -197,6 +206,3 @@
     {% endfor %}
 </div>
 {% endblock %}
-
-
-

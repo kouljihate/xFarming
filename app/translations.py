@@ -2,6 +2,7 @@ TRANSLATIONS = {
     'en': {
         'dashboard': 'Dashboard',
         'lands': 'Lands',
+        'farms': 'Farms',
         'activities': 'Activities',
         'users': 'Users',
         'login': 'Login',
@@ -14,6 +15,7 @@ TRANSLATIONS = {
         'admin': 'Administrator',
         'customer': 'Customer',
         'total_lands': 'Total Lands',
+        'total_farms': 'Total Farms',
         'total_sectors': 'Total Sectors',
         'total_zones': 'Total Zones',
         'total_rows': 'Total Rows',
@@ -34,6 +36,7 @@ TRANSLATIONS = {
         'add': 'Add',
         'add_land': 'Add Land',
         'add_sector': 'Add Sector',
+        'add_farm': 'Add Farm',
         'add_zone': 'Add Zone',
         'add_row': 'Add Row',
         'add_tree': 'Add Tree',
@@ -58,11 +61,15 @@ TRANSLATIONS = {
         'tree': 'Tree',
         'zones': 'Zones',
         'zone': 'Zone',
-        'of': 'of'
+        'of': 'of',
+        'view': 'View',
+        'farm': 'Farm',
+        'farms': 'Farms'
     },
     'ar': {
         'dashboard': 'لوحة التحكم',
         'lands': 'الأراضي',
+        'farms': 'المزارع',
         'activities': 'الأنشطة',
         'users': 'المستخدمين',
         'login': 'تسجيل الدخول',
@@ -75,6 +82,7 @@ TRANSLATIONS = {
         'admin': 'مدير',
         'customer': 'عميل',
         'total_lands': 'إجمالي الأراضي',
+        'total_farms': 'إجمالي المزارع',
         'total_sectors': 'إجمالي القطاعات',
         'total_zones': 'إجمالي المناطق',
         'total_rows': 'إجمالي الصفوف',
@@ -119,11 +127,15 @@ TRANSLATIONS = {
         'tree': 'شجرة',
         'zones': 'مناطق',
         'zone': 'منطقة',
-        'of': 'من'
+        'of': 'من',
+        'view': 'عرض',
+        'farm': 'مزرعة',
+        'farms': 'المزارع'
     },
     'fr': {
         'dashboard': 'Tableau de bord',
         'lands': 'Terres',
+        'farms': 'Fermes',
         'activities': 'Activités',
         'users': 'Utilisateurs',
         'login': 'Connexion',
@@ -136,6 +148,7 @@ TRANSLATIONS = {
         'admin': 'Administrateur',
         'customer': 'Client',
         'total_lands': 'Total des terres',
+        'total_farms': 'Total des fermes',
         'total_sectors': 'Total des secteurs',
         'total_zones': 'Total des zones',
         'total_rows': 'Total des rangées',
@@ -181,7 +194,10 @@ TRANSLATIONS = {
         'tree': 'Arbre',
         'zones': 'Zones',
         'zone': 'Zone',
-        'of': 'sur'
+        'of': 'sur',
+        'view': 'Voir',
+        'farm': 'Ferme',
+        'farms': 'Fermes'
     }
 }
 

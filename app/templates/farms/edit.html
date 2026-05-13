@@ -1,0 +1,123 @@
+{% extends "base.html" %}
+
+{% block title %}Edit {{ farm.name }} - SmartFarmerFlow{% endblock %}
+
+{% block content %}
+<a href="{{ url_for('farms.detail', farm_id=farm._id) }}" class="btn rounded-pill btn-secondary mb-3">{{ t('back',
+    session.get('lang', 'en')) }}</a>
+<h2>Edit Farm</h2>
+
+<div class="card">
+    <div class="card-body">
+        <form method="POST">
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Farm ID</label>
+                    <input type="text" class="form-control rounded-pill" name="farm_id"
+                        value="{{ farm.get('farm_id', '') }}">
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Farm Number</label>
+                    <input type="number" class="form-control rounded-pill" name="farm_number"
+                        value="{{ farm.get('farm_number', 1) }}" min="1">
+                </div>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Farm Name</label>
+                <input type="text" class="form-control rounded-pill" name="name" value="{{ farm.name }}" required>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Description</label>
+                <textarea class="form-control rounded-pill" name="description"
+                    rows="2">{{ farm.get('description', '') }}</textarea>
+            </div>
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Area</label>
+                    <input type="number" step="0.01" class="form-control rounded-pill" name="area"
+                        value="{{ farm.get('location', {}).get('area', {}).get('value', 0) }}">
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Unit</label>
+                    <select class="form-select rounded-pill" name="area_unit">
+                        <option value="ha" {% if farm.get('location', {}).get('area', {}).get('unit', 'ha' )=='ha'
+                            %}selected{% endif %}>ha</option>
+                        <option value="hectares" {% if farm.get('location', {}).get('area', {}).get('unit', ''
+                            )=='hectares' %}selected{% endif %}>Hectares</option>
+                    </select>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-4 mb-3">
+                    <label class="form-label">Soil Type</label>
+                    <select class="form-select rounded-pill" name="soil_type">
+                        <option value="loam" {% if farm.get('location', {}).get('soil_type', 'loam' )=='loam'
+                            %}selected{% endif %}>Loam</option>
+                        <option value="clay" {% if farm.get('location', {}).get('soil_type', '' )=='clay' %}selected{%
+                            endif %}>Clay</option>
+                        <option value="sandy" {% if farm.get('location', {}).get('soil_type', '' )=='sandy' %}selected{%
+                            endif %}>Sandy</option>
+                        <option value="silt" {% if farm.get('location', {}).get('soil_type', '' )=='silt' %}selected{%
+                            endif %}>Silt</option>
+                    </select>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label class="form-label">Topography</label>
+                    <input type="text" class="form-control rounded-pill" name="topography"
+                        value="{{ farm.get('location', {}).get('topography', '') }}">
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label class="form-label">Climate Zone</label>
+                    <input type="text" class="form-control rounded-pill" name="climate_zone"
+                        value="{{ farm.get('location', {}).get('climate_zone', '') }}">
+                </div>
+            </div>
+            <h5 class="mt-3">Irrigation System</h5>
+            <div class="row">
+                <div class="col-md-3 mb-3">
+                    <label class="form-label">Irrigation Type</label>
+                    <input type="text" class="form-control rounded-pill" name="irrigation_type"
+                        value="{{ farm.get('irrigation_system', {}).get('type', '') }}">
+                </div>
+                <div class="col-md-3 mb-3">
+                    <label class="form-label">Source</label>
+                    <input type="text" class="form-control rounded-pill" name="irrigation_source"
+                        value="{{ farm.get('irrigation_system', {}).get('source', '') }}">
+                </div>
+                <div class="col-md-3 mb-3">
+                    <label class="form-label">Capacity (LPH)</label>
+                    <input type="number" class="form-control rounded-pill" name="irrigation_capacity"
+                        value="{{ farm.get('irrigation_system', {}).get('capacity_lph', 0) }}">
+                </div>
+                <div class="col-md-3 mb-3">
+                    <label class="form-label">Notes</label>
+                    <input type="text" class="form-control rounded-pill" name="irrigation_notes"
+                        value="{{ farm.get('irrigation_system', {}).get('notes', '') }}">
+                </div>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Boundary (JSON)</label>
+                <textarea class="form-control rounded-pill" name="boundary"
+                    rows="3">{{ farm.get('boundary', '') }}</textarea>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Status</label>
+                <select class="form-select rounded-pill" name="status">
+                    <option value="active" {% if farm.get('metadata', {}).get('status', 'active' )=='active'
+                        %}selected{% endif %}>Active</option>
+                    <option value="inactive" {% if farm.get('metadata', {}).get('status', '' )=='inactive' %}selected{%
+                        endif %}>Inactive</option>
+                    <option value="maintenance" {% if farm.get('metadata', {}).get('status', '' )=='maintenance'
+                        %}selected{% endif %}>Under Maintenance</option>
+                </select>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Notes</label>
+                <textarea class="form-control rounded-pill" name="notes"
+                    rows="2">{{ farm.get('metadata', {}).get('notes', '') }}</textarea>
+            </div>
+            <button type="submit" class="btn rounded-pill btn-primary">Save Changes</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

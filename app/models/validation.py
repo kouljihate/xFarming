@@ -63,7 +63,7 @@ class ZoneModel(BaseModel):
     name: str = Field(..., min_length=1, max_length=100)
     description: Optional[str] = None
     location: Optional[dict] = Field(default_factory=lambda: {
-        'area': {'value': 0, 'unit': 'acres'},
+        'area': {'value': 0, 'unit': 'ha'},
         'row_spacing': {'value': 0, 'unit': 'feet'},
         'tree_spacing': {'value': 0, 'unit': 'feet'},
         'orientation': ''
@@ -97,7 +97,7 @@ class SectorModel(BaseModel):
     name: str = Field(..., min_length=1, max_length=100)
     description: Optional[str] = None
     location: Optional[dict] = Field(default_factory=lambda: {
-        'area': {'value': 0, 'unit': 'acres'},
+        'area': {'value': 0, 'unit': 'ha'},
         'soil_type': 'loam', 'slope': '', 'irrigation_type': ''
     })
     boundary: Optional[dict] = Field(default_factory=lambda: {'type': 'Polygon', 'coordinates': []})
@@ -112,25 +112,19 @@ class SectorModel(BaseModel):
     _id: Optional[str] = None
 
 class LandModel(BaseModel):
-    farm_id: str = Field(default='', min_length=1, max_length=50)
+    land_id: str = Field(default='', min_length=0, max_length=50)
     name: str = Field(..., min_length=1, max_length=100)
-    legal: Optional[dict] = Field(default_factory=lambda: {
-        'type': ['Document Administratif', 'Malkiya', 'Titre'], 'deleivered': '', 'date': ''
-    })
-    owner: Optional[dict] = Field(default_factory=lambda: {
-        'party_id': '', 'name': '', 'contact': {'email': '', 'phone': ''}
-    })
     location: Optional[dict] = Field(default_factory=lambda: {
         'address': {'street': '', 'city': '', 'state': '', 'postal_code': '', 'country': ''},
-        'coordinates': {'latitude': 0.0, 'longitude': 0.0},
-        'total_area': {'value': 0.0, 'unit': 'acres'},
-        'boundary': {'type': 'Polygon', 'coordinates': []}
+        'city': '',
+        'center_coordinate': {'latitude': 0.0, 'longitude': 0.0},
+        'altitude': {'minimum': 0.0, 'maximum': 0.0},
     })
     metadata: Optional[dict] = Field(default_factory=lambda: {
-        'established_date': '', 'last_updated': '', 'status': 'active'
+        'established_date': '', 'last_updated': '', 'status': 'active', 'notes': '', 'version': 1
     })
     farms: List[FarmModel] = Field(default_factory=list)
-    created_at: Optional[datetime] = None
+    created_at: Optional[datetime] = datetime.now()
     _id: Optional[str] = None
     
     @validator('name')
@@ -156,18 +150,22 @@ class ActivityModel(BaseModel):
     date: Optional[datetime] = None
 
 class FarmModel(BaseModel):
-    farm_id: str = Field(default='')
-    farm_number: int = Field(default=1)
-    name: str = Field(..., min_length=1, max_length=100)
+    farm_id: int = Field(default=1)
+    farm_name: str = Field(..., min_length=1, max_length=100)
     description: Optional[str] = None
     location: Optional[dict] = Field(default_factory=lambda: {
-        'area': {'value': 0, 'unit': 'acres'},
-        'soil_type': 'loam', 'topography': '', 'climate_zone': ''
+        'area': {'value': 0, 'unit': 'ha'},
+        'soil_type': '', 'topography': '', 'climate_zone': ''
     })
     boundary: Optional[dict] = Field(default_factory=lambda: {'type': 'Polygon', 'coordinates': []})
     irrigation_system: Optional[dict] = Field(default_factory=lambda: {
         'type': '', 'source': '', 'capacity_lph': 0, 'notes': ''
     })
+    legal: Optional[dict] = Field(default_factory=lambda: {
+        'registration_number': '', 'lease_status': 'owned',
+        'lease_expiry': '', 'documents': ''
+    })
+    photos: Optional[List[dict]] = Field(default_factory=list)
     metadata: Optional[dict] = Field(default_factory=lambda: {
         'created_date': '', 'last_updated': '', 'status': 'active', 'notes': '', 'version': 1
     })

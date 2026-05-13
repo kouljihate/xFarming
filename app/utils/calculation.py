@@ -1,6 +1,8 @@
 import math
 import re
 import json
+from pyproj import Geod
+from shapely.geometry import Polygon
 
 
 def calculate_distance(p1, p2):
@@ -88,6 +90,7 @@ def calculate_polygon_from_boundary(boundary_json):
 
 
 def convert_and_calculate(coordinates_str):
+
     coords = parse_simple_coordinates(coordinates_str)
     
     if not coords:
@@ -106,3 +109,114 @@ def convert_and_calculate(coordinates_str):
         'perimeter': round(perimeter, 2),
         'geojson': json.dumps(geojson)
     }
+
+def calculate_centroid(
+    coords,
+) -> dict:
+    """
+    Calculate the geometric centroid of a polygon.
+
+    Args:
+        coords : List of (latitude, longitude) tuples in decimal degrees OR
+                 string format "[(lat, lon), (lat, lon), ...]"
+                 Auto-closed if the first and last point differ.
+
+    Returns:
+        dict with keys:
+            latitude   – centroid latitude
+            longitude  – centroid longitude
+            maps_url   – Google Maps link to the centroid
+    """
+    # Handle string input
+    if isinstance(coords, str):
+        coords = parse_simple_coordinates(coords)
+        if coords is None:
+            raise ValueError("Invalid coordinate format. Use [(lat, lon), (lat, lon), ...]")
+    
+    try:
+        if len(coords) < 3:
+            raise ValueError("[ERROR] A polygon requires at least 3 coordinate points.")
+
+        if coords[0] != coords[-1]:
+            coords = coords + [coords[0]]
+
+        poly = Polygon([(lon, lat) for lat, lon in coords])
+        if not poly.is_valid:
+            poly = poly.buffer(0)
+
+        centroid = poly.centroid
+        lat = round(centroid.y, 7)
+        lon = round(centroid.x, 7)
+
+        return {
+            "latitude":  lat,
+            "longitude": lon,
+            "maps_url":  f"https://www.google.com/maps?q={lat},{lon}",
+        }
+    except Exception as e:
+        return {'[ERROR]': str(e)}
+
+def calculate_polygon_metrics(
+    coords,
+    ellps: str = "WGS84",
+) -> dict:
+    """
+    Calculate the geodesic area and perimeter of a polygon.
+  
+    Args:
+        coords : List of (latitude, longitude) tuples in decimal degrees OR
+                 string format "[(lat, lon), (lat, lon), ...]"
+                 The polygon is auto-closed if the first and last point differ.
+        ellps  : Reference ellipsoid (default: "WGS84").
+  
+    Returns:
+        dict with keys:
+            area_m2       – area in square metres
+            area_ha       – area in hectares
+            area_ha    – area in ha
+            perimeter_m   – perimeter in metres
+            perimeter_km  – perimeter in kilometres
+            num_vertices  – number of unique vertices
+    """
+    # Handle string input
+    if isinstance(coords, str):
+        coords = parse_simple_coordinates(coords)
+        if coords is None:
+            raise ValueError("Invalid coordinate format. Use [(lat, lon), (lat, lon), ...]")
+    
+    if len(coords) < 3:
+        raise ValueError("A polygon requires at least 3 coordinate points.")
+  
+    # Auto-close the polygon if needed
+    if coords[0] != coords[-1]:
+        coords = coords + [coords[0]]
+ 
+    lons = [c[1] for c in coords]
+    lats = [c[0] for c in coords]
+ 
+    geod = Geod(ellps=ellps)
+ 
+    # --- Area ---
+    poly = Polygon(zip(lons, lats))
+    raw_area, _ = geod.geometry_area_perimeter(poly)
+    area_m2 = abs(raw_area)
+ 
+    # --- Perimeter ---
+    perimeter_m = 0.0
+    for i in range(len(coords) - 1):
+        lat1, lon1 = coords[i]
+        lat2, lon2 = coords[i + 1]
+        _, _, dist = geod.inv(lon1, lat1, lon2, lat2)
+        perimeter_m += dist
+ 
+    return {
+        "area_m2":      round(area_m2, 4),
+        "area_ha":      round(area_m2 / 10_000, 6),
+        "area_ha":   round(area_m2 / 4_046.856, 6),
+        "perimeter_m":  round(perimeter_m, 4),
+        "perimeter_km": round(perimeter_m / 1_000, 6),
+        "num_vertices": len(coords) - 1,  # exclude closing point
+    }
+
+    
+

@@ -81,7 +81,7 @@ SFarming/
 ├── run.py
 ├── init_data.py
 ├── requirements.txt
-├── NEWS.md               # Version history
+├── news.md               # Version history
 └── README.md
 ```
 
@@ -236,7 +236,17 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 
 ## Version History
 
-### v0.6.0 (2026-05-04)
+### v0.9.0 (2026-05-13)
+- Auth decorators (`@login_required`, `@admin_required`, `@log_func_call`) for centralized access control
+- Geo calculations: centroid, geodesic area/perimeter using pyproj/shapely WGS84
+- Map browsing module with Leaflet.js polygon visualization
+- Farms CRUD with legal docs, photo upload, Google Maps integration
+- 500 error page and improved error handlers
+- LOG_MODE env var for console/file/combined logging
+- Farm translations in EN/AR/FR
+- Refactored lands/farms blueprints with action-based form handling
+
+### v0.7.73 (2026-05-07)
 - Bootstrap Tabs in Add Land modal (Basic Info, Address & Location, Legal Documents, Photos)
 - Photos tab with multiple file upload support
 - Backend photo upload handling (saved to `static/uploads/lands/`)
@@ -245,11 +255,9 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 - Language buttons organized in btn-group structure
 - Removed duplicate forms, fixed template syntax errors
 - Updated Land layout to match exact JSON structure
-
-### v0.5.0 (2026-05-03)
 - Refactored all blueprints to use validation.py Pydantic models
 - TreeModel, RowModel, ZoneModel, SectorModel, LandModel integration
 - Bulk add functionality for all hierarchy levels
 - Updated forms/templates to match validation.py structure
 
-See [NEWS.md](NEWS.md) for complete version history.
+See [news.md](news.md) for complete version history.

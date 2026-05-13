@@ -1,11 +1,13 @@
 from flask import Blueprint, render_template, session, redirect, url_for, request
 from app.database import get_db
+from app.utils.logging import log_message, log_func_call
 import plotly.graph_objects as go
 import plotly.offline as pyo
 
 dashboard_bp = Blueprint('dashboard', __name__, url_prefix='/dashboard')
 dashboard_bp.strict_slashes = False
 
+@log_func_call
 @dashboard_bp.route('/')
 def index():
     if 'user_id' not in session:
@@ -23,6 +25,7 @@ def index():
     lands = list(db.lands.find())
     stats = {
         'lands': len(lands),
+        'farms': 0,
         'sectors': 0,
         'zones': 0,
         'rows': 0,
@@ -30,13 +33,15 @@ def index():
     }
     
     for land in lands:
-        stats['sectors'] += len(land.get('sectors', []))
-        for sector in land.get('sectors', []):
-            stats['zones'] += len(sector.get('zones', []))
-            for zone in sector.get('zones', []):
-                stats['rows'] += len(zone.get('rows', []))
-                for row in zone.get('rows', []):
-                    stats['trees'] += len(row.get('trees', []))
+        stats['farms'] += len(land.get('farms', []))
+        for farm in land.get('farms', []):
+            stats['sectors'] += len(farm.get('sectors', []))
+            for sector in farm.get('sectors', []):
+                stats['zones'] += len(sector.get('zones', []))
+                for zone in sector.get('zones', []):
+                    stats['rows'] += len(zone.get('rows', []))
+                    for row in zone.get('rows', []):
+                        stats['trees'] += len(row.get('trees', []))
     
     recent_activities = list(db.activities.find().sort('date', -1).limit(10))
     
@@ -84,7 +89,7 @@ def index():
             customdata=custom_data,
             hovertemplate='<b>%{text}</b><br>' +
                          'Soil Type: %{customdata[0]}<br>' +
-                         'Area: %{customdata[1]} acres<br>' +
+                         'Area: %{customdata[1]} ha<br>' +
                          'Sectors: %{customdata[2]}<br>' +
                          '<extra></extra>'
         ))
@@ -105,6 +110,7 @@ def index():
     
     return render_template('dashboard/index.html', stats=stats, activities=recent_activities, map_html=map_html)
 
+@log_func_call
 @dashboard_bp.route('/set-theme/<theme>')
 def set_theme(theme):
     # Map legacy light/dark to Bootswatch themes

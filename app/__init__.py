@@ -5,7 +5,7 @@ from app.config import Config
 from app.translations import t as t_func
 from app.utils.logging import setup_logging
 
-__version__ = '0.8.1'
+__version__ = '0.9.1'
 
 bootstrap = Bootstrap()
 
@@ -23,7 +23,18 @@ def create_app():
     
     @app.errorhandler(404)
     def not_found_error(error):
+        app.logger.error(f'404 Not Found: {error}')
         return render_template('404.html'), 404
+    
+    @app.errorhandler(500)
+    def internal_error(error):
+        app.logger.error(f'500 Internal Server Error: {error}')
+        return render_template('500.html'), 500
+    
+    @app.errorhandler(Exception)
+    def handle_exception(error):
+        app.logger.error(f'Unhandled Exception: {str(error)}', exc_info=True)
+        return render_template('500.html'), 500
     
     @app.route('/')
     def index():
@@ -56,4 +67,8 @@ def create_app():
     app.register_blueprint(trees_bp)
     app.register_blueprint(visits_bp)
     
+
+    # for rule in app.url_map.iter_rules():
+    #     print(rule)
+
     return app

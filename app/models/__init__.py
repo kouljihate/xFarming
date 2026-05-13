@@ -2,25 +2,27 @@ from datetime import datetime
 from bson import ObjectId
 
 class Land:
-    def __init__(self, name, latitude, longitude, soil_type, area, boundaries, sectors=None):
+    def __init__(self, id, name, street, city, latitude, longitude, altitude_min, altitude_max):
+        self.id = id
         self.name = name
+        self.street = street
+        self.city = city
         self.latitude = latitude
         self.longitude = longitude
-        self.soil_type = soil_type
-        self.area = area
-        self.boundaries = boundaries
-        self.sectors = sectors or []
+        self.altitude_min = altitude_min
+        self.altitude_max = altitude_max
         self.created_at = datetime.utcnow()
     
     def to_dict(self):
         return {
+            '_id': self.id,
             'name': self.name,
+            'street': self.street,
+            'city': self.city,
             'latitude': self.latitude,
             'longitude': self.longitude,
-            'soil_type': self.soil_type,
-            'area': self.area,
-            'boundaries': self.boundaries,
-            'sectors': self.sectors,
+            'altitude_min': self.altitude_min,
+            'altitude_max': self.altitude_max,
             'created_at': self.created_at
         }
 

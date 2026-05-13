@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, session, redirect, url_for, request, flash, abort, jsonify
 from app.database import get_db
-from app.utils.logging import log_message
+from app.utils.logging import log_message, log_func_call
 from app.utils.calculation import convert_and_calculate
 from app.models.validation import SectorModel
 from bson import ObjectId
@@ -8,6 +8,7 @@ from bson import ObjectId
 sectors_bp = Blueprint('sectors', __name__, url_prefix='/sectors')
 sectors_bp.strict_slashes = False
 
+@log_func_call
 @sectors_bp.route('/')
 def index():
     if 'user_id' not in session:
@@ -34,6 +35,7 @@ def index():
     return render_template('sectors/index.html', sectors=sectors, lands=lands_for_select, search=search)
 
 
+@log_func_call
 @sectors_bp.route('/calculate', methods=['POST'])
 def calculate():
     if 'user_id' not in session:
@@ -54,6 +56,7 @@ def calculate():
                            calc_coords=coords)
 
 
+@log_func_call
 @sectors_bp.route('/add', methods=['POST'])
 def add():
     if 'user_id' not in session or session.get('role') != 'admin':
@@ -116,7 +119,7 @@ def add():
             name=request.form.get('name', ''),
             description=request.form.get('description', ''),
             location={
-                'area': {'value': float(request.form.get('area', 0) or 0), 'unit': request.form.get('area_unit', 'acres')},
+                'area': {'value': float(request.form.get('area', 0) or 0), 'unit': request.form.get('area_unit', 'ha')},
                 'soil_type': request.form.get('soil_type', 'loam'),
                 'slope': request.form.get('slope', ''),
                 'irrigation_type': request.form.get('irrigation_type', '')
@@ -144,6 +147,7 @@ def add():
     
     return redirect(url_for('sectors.index'))
 
+@log_func_call
 @sectors_bp.route('/<sector_id>')
 def detail(sector_id):
     if 'user_id' not in session:
@@ -169,6 +173,7 @@ def detail(sector_id):
     
     abort(404)
 
+@log_func_call
 @sectors_bp.route('/<sector_id>/edit', methods=['GET', 'POST'])
 def edit(sector_id):
     if 'user_id' not in session or session.get('role') != 'admin':
@@ -211,7 +216,7 @@ def edit(sector_id):
                             name=request.form.get('name', ''),
                             description=request.form.get('description', ''),
                             location={
-                                'area': {'value': float(request.form.get('area', 0) or 0), 'unit': request.form.get('area_unit', 'acres')},
+                                'area': {'value': float(request.form.get('area', 0) or 0), 'unit': request.form.get('area_unit', 'ha')},
                                 'soil_type': request.form.get('soil_type', 'loam'),
                                 'slope': request.form.get('slope', ''),
                                 'irrigation_type': request.form.get('irrigation_type', '')
@@ -244,6 +249,7 @@ def edit(sector_id):
     
     abort(404)
 
+@log_func_call
 @sectors_bp.route('/<sector_id>/delete', methods=['POST'])
 def delete(sector_id):
     if 'user_id' not in session or session.get('role') != 'admin':
@@ -267,6 +273,7 @@ def delete(sector_id):
     flash('Sector not found', 'danger')
     return redirect(url_for('sectors.index'))
 
+@log_func_call
 @sectors_bp.route('/bulk_add', methods=['POST'])
 def bulk_add():
     if 'user_id' not in session or session.get('role') != 'admin':
@@ -294,7 +301,7 @@ def bulk_add():
     # Get other fields
     description = request.form.get('description', '')
     area_value = request.form.get('area', 0)
-    area_unit = request.form.get('area_unit', 'acres')
+    area_unit = request.form.get('area_unit', 'ha')
     soil_type = request.form.get('soil_type', 'loam')
     slope = request.form.get('slope', '')
     irrigation_type = request.form.get('irrigation_type', '')

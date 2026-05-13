@@ -1,7 +1,8 @@
 
 from flask import Blueprint, render_template, session, redirect, url_for, request, flash, abort
+
 from app.database import get_db
-from app.utils.logging import log_message
+from app.utils.logging import log_message, log_func_call, login_required, admin_required
 from app.utils.calculation import convert_and_calculate
 from app.models.validation import LandModel, SectorModel, ZoneModel, RowModel, TreeModel
 from bson import ObjectId
@@ -18,107 +19,52 @@ UPLOAD_FOLDER = 'static/uploads/lands'
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
 
+@log_func_call
+@admin_required
 @lands_bp.route('/add', methods=['GET', 'POST'])
 def add():
-    print(f"[DEBUG] lands.add() - Method: {request.method}")
-    print(f"[DEBUG] Form keys: {list(request.form.keys())}")
-    print(f"[DEBUG] calculate value: {request.form.get('calculate')}")
-    
     if request.method == 'GET':
+        log_message('info', f"[LAND] Add page - User: {session.get('username')}")
         return render_template('lands/index.html',
-                               lands=list(get_db().lands.find()),
-                               calc_area=0,
-                               calc_perimeter=0,
-                               calc_geojson='',
-                               calc_coords='')
+                               lands=list(get_db().lands.find()))
+    
+    log_message('info', f"[LAND] Add form submitted - User: {session.get('username')}")
 
     if 'user_id' not in session or session.get('role') not in ['admin', 'worker']:
         flash('Permission denied', 'danger')
         return redirect(url_for('lands.index'))
-
-    if request.form.get('calculate'):
-        coords = request.form.get('coordinates', '').strip()
-        print(f"[DEBUG] coordinates: {coords}")
-        
-        if not coords:
-            flash('Please enter coordinates', 'warning')
-            return render_template('lands/index.html',
-                                   lands=list(get_db().lands.find()),
-                                   show_add_modal=True,
-                                   calc_area=0,
-                                   calc_perimeter=0,
-                                   calc_geojson='',
-                                   calc_coords='')
-        
-        result = convert_and_calculate(coords)
-
-        if 'error' in result:
-            flash(result['error'], 'danger')
-            return render_template('lands/index.html',
-                                   lands=list(get_db().lands.find()),
-                                   show_add_modal=True,
-                                   calc_area=0,
-                                   calc_perimeter=0,
-                                   calc_geojson='',
-                                   calc_coords='')
-        
-flash('Calculation complete', 'success')
-        return render_template('lands/index.html',
-                               lands=list(get_db().lands.find()),
-                               calc_area=result.get('area', 0),
-                               calc_perimeter=result.get('perimeter', 0),
-                               calc_geojson=result.get('geojson', ''),
-                               calc_coords=coords,
-                               show_add_modal=True,
-                               active_tab='location')
     
-    # Save AAdd Land
     db = get_db()
     
     try:
-        # Process legal types from comma-separated string
-        legal_types_str = request.form.get('legal_types', '')
-        if legal_types_str:
-            legal_types = [t.strip() for t in legal_types_str.split(',') if t.strip()]
-        else:
-            legal_types = ['Document Administratif', 'Malkiya', 'Titre']
-        
         land_data = LandModel(
-            farm_id=request.form.get('farm_id', ''),
+            land_id=request.form.get('land_id', ''),
             name=request.form.get('name', ''),
-            legal={
-                'type': legal_types,
-                'deleivered': request.form.get('legal_delivered', ''),
-                'date': request.form.get('legal_date', '')
-            },
-            owner={
-                'party_id': request.form.get('owner_party_id', 'P001'),
-                'name': request.form.get('owner_name', ''),
-                'contact': {
-                    'email': request.form.get('owner_email', ''),
-                    'phone': request.form.get('owner_phone', '')
-                }
-            },
             location={
                 'address': {
                     'street': request.form.get('street', ''),
                     'city': request.form.get('city', ''),
-                    'state': request.form.get('state', ''),
-                    'postal_code': request.form.get('postal_code', ''),
-                    'country': request.form.get('country', '')
                 },
-                'coordinates': {
+                'center_coordinate': {
                     'latitude': float(request.form.get('latitude', 0)),
                     'longitude': float(request.form.get('longitude', 0))
                 },
-                'total_area': {'value': float(request.form.get('area', 0)), 'unit': 'acres'},
-                'boundary': {'type': 'Polygon', 'coordinates': []}
+                'altitude': {
+                    'minimum': float(request.form.get('altitude_min', 0)),
+                    'maximum': float(request.form.get('altitude_max', 0))
+                },
             },
-            metadata={'established_date': '', 'last_updated': '', 'status': 'active'}
+            metadata={
+                'established_date': request.form.get('established_date', ''),
+                'last_updated': '',
+                'status': request.form.get('status', 'active'),
+                'notes': request.form.get('notes', ''),
+                'version': int(request.form.get('version', 1))
+            }
         )
         LandModel.check_duplicate(db, land_data.name)
         land_dict = land_data.model_dump()
-        land_dict['sectors'] = []
+        # land_dict['lands'] = []
         db.lands.insert_one(land_dict)
         log_message('info', f"Added land: {land_data.name}", session.get('user_id'), session.get('username'))
         flash('Land added successfully!', 'success')
@@ -127,9 +73,12 @@ flash('Calculation complete', 'success')
     
     return redirect(url_for('lands.index'))
 
+@log_func_call
+@admin_required
 @lands_bp.route('/<land_id>/edit', methods=['POST'])
 def edit(land_id):
-    
+    log_message('info', f"[LAND] Edit Land form submitted - Land ID: {land_id} - User: {session.get('username')}")
+
     if 'user_id' not in session or session.get('role') != 'admin':
         flash('Admin access required', 'danger')
         return redirect(url_for('lands.index'))
@@ -150,28 +99,29 @@ def edit(land_id):
         location['address']['postal_code'] = request.form.get('postal_code', '')
         location['address']['country'] = request.form.get('country', '')
         
-        location['coordinates'] = {
+        location['city'] = request.form.get('city', '')
+        location['center_coordinate'] = {
             'latitude': float(request.form.get('latitude', 0)),
             'longitude': float(request.form.get('longitude', 0))
         }
-        location['total_area'] = {'value': float(request.form.get('area', 0)), 'unit': 'acres'}
+        location['altitude'] = {
+            'minimum': float(request.form.get('altitude_min', 0)),
+            'maximum': float(request.form.get('altitude_max', 0))
+        }
+        location['total_area'] = {'value': float(request.form.get('area', 0)), 'unit': 'ha'}
         
-        # Build owner dict
-        owner = land.get('owner', {})
-        owner['party_id'] = request.form.get('owner_party_id', owner.get('party_id', 'P001'))
-        owner['name'] = request.form.get('owner_name', '')
-        if 'contact' not in owner:
-            owner['contact'] = {}
-        owner['contact']['email'] = request.form.get('owner_email', '')
-        owner['contact']['phone'] = request.form.get('owner_phone', '')
+        metadata = land.get('metadata', {})
+        metadata['established_date'] = request.form.get('established_date', '')
+        metadata['last_updated'] = datetime.now().isoformat()
+        metadata['status'] = request.form.get('status', 'active')
+        metadata['notes'] = request.form.get('notes', '')
+        metadata['version'] = int(request.form.get('version', 1))
         
         land_data = LandModel(
-            farm_id=request.form.get('farm_id', land.get('farm_id', '')),
+            land_id=request.form.get('land_id', land.get('land_id', '')),
             name=request.form.get('name', ''),
-            owner=owner,
             location=location,
-            legal={'type': ['Document Administratif', 'Malkiya', 'Titre'], 'deleivered': '', 'date': ''},
-            metadata={'established_date': '', 'last_updated': '', 'status': 'active'}
+            metadata=metadata
         )
         LandModel.check_duplicate(db, land_data.name, exclude_id=land_id)
         
@@ -179,11 +129,10 @@ def edit(land_id):
         db.lands.update_one(
             {'_id': ObjectId(land_id)}, 
             {'$set': {
-                'farm_id': land_data.farm_id,
+                'land_id': land_data.land_id,
                 'name': land_data.name,
-                'owner': owner,
                 'location': location,
-                'legal': land_data.legal
+                'metadata': metadata
             }}
         )
         log_message('info', f"Updated land: {land_data.name}", session.get('user_id'), session.get('username'))
@@ -193,79 +142,11 @@ def edit(land_id):
     
     return redirect(url_for('lands.index'))
 
-@lands_bp.route('/<land_id>/add-sector', methods=['GET', 'POST'])
-def add_sector(land_id):
-    
-    if 'user_id' not in session or session.get('role') != 'admin':
-        flash('Admin access required', 'danger')
-        return redirect(url_for('lands.index'))
-    
-    if request.method == 'POST':
-        db = get_db()
-        try:
-            import json
-            
-            # Parse boundary if provided
-            boundary = None
-            boundary_str = request.form.get('boundary', '').strip()
-            if boundary_str:
-                try:
-                    boundary = json.loads(boundary_str)
-                except:
-                    boundary = {'type': 'Polygon', 'coordinates': []}
-            else:
-                boundary = {'type': 'Polygon', 'coordinates': []}
-            
-            # Get sector_id and sector_number
-            sector_id = request.form.get('sector_id', '').strip()
-            sector_number = request.form.get('sector_number', 1)
-            try:
-                sector_number = int(sector_number)
-            except:
-                sector_number = 1
-            
-            # Validate with SectorModel
-            sector_data = SectorModel(
-                sector_id=sector_id,
-                sector_number=sector_number,
-                name=request.form.get('name', ''),
-                description=request.form.get('description', ''),
-                location={
-                    'area': {'value': float(request.form.get('area', 0) or 0), 'unit': request.form.get('area_unit', 'acres')},
-                    'soil_type': request.form.get('soil_type', 'loam'),
-                    'slope': request.form.get('slope', ''),
-                    'irrigation_type': request.form.get('irrigation_type', '')
-                },
-                boundary=boundary,
-                metadata={
-                    'status': request.form.get('status', 'active'),
-                    'notes': request.form.get('notes', '')
-                }
-            )
-            
-            land = db.lands.find_one({'_id': ObjectId(land_id)})
-            if land:
-                if 'sectors' not in land:
-                    land['sectors'] = []
-                
-                sector_dict = sector_data.model_dump()
-                sector_dict['_id'] = str(ObjectId())
-                sector_dict['zones'] = []
-                
-                land['sectors'].append(sector_dict)
-                db.lands.update_one({'_id': ObjectId(land_id)}, {'$set': {'sectors': land['sectors']}})
-                log_message('info', f"Added sector: {sector_data.name}", session.get('user_id'), session.get('username'))
-                flash('Sector added successfully!', 'success')
-            return redirect(url_for('lands.detail', land_id=land_id))
-        except Exception as e:
-            flash(f'Validation error: {str(e)}', 'danger')
-            return redirect(url_for('lands.detail', land_id=land_id))
-    
-    return render_template('lands/add_sector.html', land_id=land_id)
-
+@log_func_call
+@login_required
 @lands_bp.route('/', methods=['GET'])
 def index():
-    
+    log_message('info', f"[LAND] Index page - User: {session.get('username')}")
     if 'user_id' not in session:
         return redirect(url_for('auth.login'))
     
@@ -287,9 +168,11 @@ def index():
     
     return render_template('lands/index.html', lands=lands, search=search)
 
+@log_func_call
+@login_required
 @lands_bp.route('/<land_id>', methods=['GET', 'POST'])
 def detail(land_id):
-    
+    log_message('info', f"Detail Land {land_id} - Method {request.method} | {session.get('username')}")
     if 'user_id' not in session:
         return redirect(url_for('auth.login'))
     
@@ -388,9 +271,11 @@ def detail(land_id):
     
     return render_template('lands/detail.html', land=land)
 
+@log_func_call
+@admin_required
 @lands_bp.route('/<land_id>/delete', methods=['POST'])
 def delete(land_id):
-    
+    log_message('info', f"[LAND] Delete Land request - Land ID: {land_id} - User: {session.get('username')}")
     if 'user_id' not in session or session.get('role') != 'admin':
         flash('Admin access required', 'danger')
         return redirect(url_for('lands.index'))
@@ -404,9 +289,11 @@ def delete(land_id):
     
     return redirect(url_for('lands.index'))
 
+@log_func_call
+@admin_required
 @lands_bp.route('/<land_id>/upload_photo', methods=['POST'])
 def upload_photo(land_id):
-    
+    log_message('info', f"Upload Photo Land {land_id} - Method {request.method} | {session.get('username')}")
     if 'user_id' not in session or session.get('role') not in ['admin', 'worker']:
         abort(403)
     
@@ -446,9 +333,11 @@ def upload_photo(land_id):
     flash('Photos uploaded successfully!', 'success')
     return redirect(url_for('lands.detail', land_id=land_id))
 
+@log_func_call
+@admin_required
 @lands_bp.route('/<land_id>/delete_photo/<filename>', methods=['POST'])
 def delete_photo(land_id, filename):
-    
+    log_message('info', f"Delete Photo Land {land_id} - Method {request.method} | {session.get('username')}")
     if 'user_id' not in session or session.get('role') not in ['admin', 'worker']:
         abort(403)
     
