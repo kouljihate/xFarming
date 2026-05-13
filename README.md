@@ -236,7 +236,7 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 
 ## Version History
 
-### v0.9.0 (2026-05-13)
+### v0.9.1 (2026-05-13)
 - Auth decorators (`@login_required`, `@admin_required`, `@log_func_call`) for centralized access control
 - Geo calculations: centroid, geodesic area/perimeter using pyproj/shapely WGS84
 - Map browsing module with Leaflet.js polygon visualization

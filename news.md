@@ -1,12 +1,18 @@
 # SmartFarmerFlow - Version History
 
+## [0.9.2] - 2026-05-13
+
+### Added
+- Automated version bump for commit
+
+
 ## [0.9.1] - 2026-05-13
 
 ### Added
 - Automated version bump for commit
 
 
-## [0.9.0] - 2026-05-13
+## [0.9.1] - 2026-05-13
 
 ### Added
 - **Auth decorators**: `@login_required`, `@admin_required`, `@log_func_call` in `app/utils/logging.py` — centralized session/role checks
