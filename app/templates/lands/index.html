@@ -8,13 +8,6 @@
     'en')) }}</a>
 <h2>{{ t('lands', session.get('lang', 'en')) }}</h2>
 
-{% if session.get('role') in ['admin', 'worker'] %}
-<button type="button" class="btn rounded-pill btn-success mb-3 rounded-pill" data-bs-toggle="modal"
-    data-bs-target="#addLandModal">
-    <i class="bi-plus-circle"></i> {{ t('add_land', session.get('lang', 'en')) }}
-</button>
-{% endif %}
-
 <form method="GET" class="mb-3">
     <div class="input-group">
         <input type="text" class="form-control rounded-pill" name="search" placeholder="Search lands..."
@@ -42,7 +35,7 @@
         <tbody>
             {% for land in lands %}
             <tr>
-                <td><i class="bi-geo-alt"></i> {{ land.name }}</td>
+                <td><a href="{{ url_for('lands.detail', land_id=land._id) }}" class="text-decoration-none"><i class="bi-geo-alt"></i> {{ land.name }}</a></td>
                 <td>{{ land.land_id or '-' }}</td>
                 <td>
                     <a href="{{ url_for('lands.detail', land_id=land._id) }}"
@@ -57,9 +50,10 @@
                         <i class="bi-trash"></i>
                     </button>
                     <button type="button" class="btn rounded-pill btn-sm btn-info"
-                        onclick="document.getElementById('addSectorLandId').value='{{ land._id }}'; new bootstrap.Modal(document.getElementById('addSectorModal')).show();">
+                        onclick="document.getElementById('addFarmLandId').value='{{ land._id }}'; new bootstrap.Modal(document.getElementById('addFarmModal')).show();">
                         <i class="bi-plus-circle"></i>
                     </button>
+
                     {% endif %}
                 </td>
             </tr>
