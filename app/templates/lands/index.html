@@ -8,6 +8,13 @@
     'en')) }}</a>
 <h2>{{ t('lands', session.get('lang', 'en')) }}</h2>
 
+{% if session.get('role') in ['admin', 'worker'] %}
+<button type="button" class="btn rounded-pill btn-success mb-3 rounded-pill" data-bs-toggle="modal"
+    data-bs-target="#addLandModal">
+    <i class="bi-plus-circle"></i> {{ t('add_land', session.get('lang', 'en')) }}
+</button>
+{% endif %}
+
 <form method="GET" class="mb-3">
     <div class="input-group">
         <input type="text" class="form-control rounded-pill" name="search" placeholder="Search lands..."
@@ -63,6 +70,12 @@
 {% else %}
 <div class="text-center py-5">
     <h1 class="display-1 text-muted">No Land Found</h1>
+    {% if session.get('role') in ['admin', 'worker'] %}
+    <button type="button" class="btn rounded-pill btn-success mt-3 rounded-pill" data-bs-toggle="modal"
+        data-bs-target="#addLandModal">
+        <i class="bi-plus-circle"></i> Add Your First Land
+    </button>
+    {% endif %}
 </div>
 {% endif %}
 
