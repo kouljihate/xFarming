@@ -1,13 +1,13 @@
 import sys
 import traceback
-from flask import Flask, render_template, redirect, url_for
+from flask import Flask, render_template, redirect, url_for, request
 from flask_bootstrap import Bootstrap
 from dotenv import load_dotenv
 from app.config import Config
 from app.translations import t as t_func
-from app.utils.logging import setup_logging
+from app.utils.logger import setup_logging, before_request_logger, after_request_logger, log_exception
 
-__version__ = '0.9.6'
+__version__ = '0.9.7'
 
 bootstrap = Bootstrap()
 
@@ -30,36 +30,47 @@ def create_app():
         
         bootstrap.init_app(app)
         
-        setup_logging(app)
+        logger = setup_logging(app)
         
         app.jinja_env.globals['t'] = t_func
         app.jinja_env.globals['app_version'] = __version__
         
+        if logger:
+            app.before_request(before_request_logger)
+            app.after_request(after_request_logger)
+        
         @app.errorhandler(404)
+        @log_exception
         def not_found_error(error):
             try:
-                app.logger.error(f'404 Not Found: {error}')
+                if logger:
+                    logger.error(f'404 Not Found: {error}')
                 return render_template('404.html'), 404
             except Exception as e:
                 return f'404 Not Found: {error}', 404
         
         @app.errorhandler(500)
+        @log_exception
         def internal_error(error):
             try:
-                app.logger.error(f'500 Internal Server Error: {error}')
+                if logger:
+                    logger.error(f'500 Internal Server Error: {error}', exc_info=True)
                 return render_template('500.html'), 500
             except Exception as e:
                 return f'500 Internal Server Error: {error}', 500
         
         @app.errorhandler(Exception)
+        @log_exception
         def handle_exception(error):
             try:
-                app.logger.error(f'Unhandled Exception: {str(error)}', exc_info=True)
+                if logger:
+                    logger.error(f'Unhandled Exception: {str(error)}', exc_info=True)
                 return render_template('500.html'), 500
             except Exception as e:
                 return f'Server Error: {error}', 500
         
         @app.route('/')
+        @log_exception
         def index():
             try:
                 from flask import session
@@ -68,6 +79,8 @@ def create_app():
                 return redirect(url_for('auth.login'))
             except Exception as e:
                 err = _error_info(e)
+                if logger:
+                    logger.error(f"Index route error: {err['message']} at line {err['line']}", exc_info=True)
                 return f'Index route error: {err["message"]}', 500
         
         from app.blueprints.auth import auth_bp
