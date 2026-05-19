@@ -105,36 +105,31 @@ def add():
                         try:
                             addr_info = latlon_to_dms_and_address(latitude, longitude)
                             if not street:
-                                # Extract street from address (first part before first comma)
                                 address = addr_info.get('address', '')
                                 if address:
                                     location_data['address']['street'] = address.split(',')[0].strip()
                             if not city and address:
-                                # Extract city from address (second part between first and second comma)
                                 address_parts = address.split(',')
                                 if len(address_parts) >= 2:
                                     location_data['address']['city'] = address_parts[1].strip()
-                        except Exception as geo_err:
-                            # Geocoding failed, but we continue with what we have
+                        except Exception:
                             pass
                     
                     # If altitude is not set or is default, try to get from elevation service
-                    try:
-                        altitude_val = float(altitude_str) if altitude_str else 0.0
-                        if altitude_val == 0.0 and latitude != 0.0 and longitude != 0.0:
+                    altitude_val = float(altitude_str) if altitude_str else 0.0
+                    if altitude_val == 0.0 and latitude != 0.0 and longitude != 0.0:
+                        try:
                             from app.utils.map_utils import get_altitude_meters
-                            try:
-                                altitude = get_altitude_meters(latitude, longitude)
-                                if altitude is not None:
-                                    altitude_val = altitude
-                            except Exception as alt_err:
-                                # Elevation service failed, but we continue with what we have
-                                pass
-                    except ValueError:
-                        pass  # Keep calculated/default values
+                            altitude = get_altitude_meters(latitude, longitude)
+                            if altitude is not None:
+                                altitude_val = altitude
+                        except Exception:
+                            pass
                     
                     location_data['altitude'] = altitude_val
-            }
+                except ValueError:
+                    pass
+            
             # Process altitude if manually set
             try:
                 altitude_val = float(altitude_str) if altitude_str else 0.0
