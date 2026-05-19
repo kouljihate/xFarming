@@ -11,42 +11,6 @@
     {{ land.map | safe }}
 </div>
 
-<div class="row mb-3">
-    <div class="col-md-4">
-        <div class="card text-white bg-primary">
-            <div class="card-body">
-                <h5 class="card-title"><i class="bi-tag me-1"></i> Land ID</h5>
-                <p class="card-text">{{ land.land_id or 'N/A' }}</p>
-            </div>
-        </div>
-    </div>
-    <div class="col-md-4">
-        <div class="card text-white bg-info">
-            <div class="card-body">
-                <h5 class="card-title"><i class="bi-aspect-ratio me-1"></i> Area</h5>
-                <p class="card-text">{{ land.location.total_area.value if land.location and land.location.total_area
-                    else 0 }} ha</p>
-            </div>
-        </div>
-    </div>
-    <div class="col-md-4">
-        <div class="card text-white bg-info">
-            <div class="card-body">
-                <h5 class="card-title"><i class="bi-aspect-ratio me-1"></i> Area</h5>
-                <p class="card-text">{{ land.location.total_area.value if land.location and land.location.total_area
-                    else 0 }} ha</p>
-            </div>
-        </div>
-    </div>
-    <div class="col-md-3">
-        <div class="card text-white bg-warning">
-            <div class="card-body">
-                <h5 class="card-title"><i class="bi-grid-fill me-1"></i> Sectors</h5>
-                <p class="card-text">{{ land.sector_count }}</p>
-            </div>
-        </div>
-    </div>
-</div>
 
 <!-- Land Details Card -->
 <div class="card mb-4">
@@ -67,71 +31,22 @@
                     {% endif %}
                 </p>
                 <p><strong>Coordinates:</strong>
-                    {% if land.location and land.location.coordinates %}
-                    {{ land.location.coordinates.latitude or 0 }}, {{ land.location.coordinates.longitude or 0 }}
+                    {% if land.location and land.location.center_coordinate %}
+                    {{ land.location.center_coordinate.latitude or 0 }}, {{ land.location.center_coordinate.longitude or 0 }}
                     {% else %}
                     N/A
                     {% endif %}
                 </p>
+                <p><strong>Altitude:</strong> {{ land.location.altitude if land.location and land.location.altitude else 0 }} m</p>
                 <p><strong>Status:</strong> {{ land.metadata.status if land.metadata else 'N/A' }}</p>
                 <p><strong>Established:</strong> {{ land.metadata.established_date if land.metadata else 'N/A' }}</p>
+                <p><strong>Created:</strong> {{ land.created_at.strftime('%Y-%m-%d %H:%M:%S') if land.created_at else 'N/A' }}</p>
+                <p><strong>Last Updated:</strong> {{ land.last_updated_at.strftime('%Y-%m-%d %H:%M:%S') if land.last_updated_at else 'N/A' }}</p>
             </div>
         </div>
     </div>
 </div>
 
-<!-- Photos Section -->
-<div class="card mb-4">
-    <div class="card-header d-flex justify-content-between align-items-center">
-        <h5 class="mb-0"><i class="bi-images me-2"></i>Photos</h5>
-        {% if session.get('role') in ['admin', 'worker'] %}
-        <button type="button" class="btn rounded-pill btn-sm btn-primary" data-bs-toggle="modal"
-            data-bs-target="#uploadPhotoModal">
-            <i class="bi-cloud-upload me-1"></i>Upload Photos
-        </button>
-        {% endif %}
-    </div>
-    <div class="card-body">
-        {% if land.photos %}
-        <div class="row">
-            {% for photo in land.photos %}
-            <div class="col-md-3 mb-3">
-                <div class="card">
-                    <img src="{{ photo.path }}" class="card-img-top" alt="{{ photo.description or 'Land photo' }}"
-                        style="height: 200px; object-fit: cover;">
-                    <div class="card-body p-2">
-                        <p class="card-text">
-                            <small class="text-muted">{{ photo.description or 'No description' }}</small>
-                        </p>
-                        {% if session.get('role') == 'admin' %}
-                        <form method="POST"
-                            action="{{ url_for('lands.delete_photo', land_id=land._id, filename=photo.filename) }}"
-                            class="d-inline">
-                            <button type="submit" class="btn rounded-pill btn-sm btn-danger"
-                                onclick="return confirm('Delete this photo?')">
-                                <i class="bi-trash"></i>
-                            </button>
-                        </form>
-                        {% endif %}
-                    </div>
-                </div>
-            </div>
-            {% endfor %}
-        </div>
-        {% else %}
-        <div class="text-center py-4">
-            <h1 class="display-1 text-muted">ZERO</h1>
-            <p class="lead text-muted">No photos uploaded yet</p>
-            {% if session.get('role') in ['admin', 'worker'] %}
-            <button type="button" class="btn rounded-pill btn-primary mt-3" data-bs-toggle="modal"
-                data-bs-target="#uploadPhotoModal">
-                <i class="bi-cloud-upload me-1"></i>Upload Your First Photo
-            </button>
-            {% endif %}
-        </div>
-        {% endif %}
-    </div>
-</div>
 
 {% if session.get('role') in ['admin', 'worker'] %}
 <!-- Upload Photo Modal -->
@@ -178,31 +93,6 @@
 </form>
 {% endif %}
 
-<h3 class="mt-4">{{ t('sectors', session.get('lang', 'en')) }}</h3>
-<div class="row">
-    {% for sector in land.sectors %}
-    <div class="col-md-4 mb-3">
-        <div class="card">
-            <div class="card-body">
-                <h5 class="card-title">{{ sector.name }}</h5>
-                <p class="card-text">
-                    {{ sector.zones|length if sector.zones else 0 }} {{ t('zones', session.get('lang', 'en')) }}
-                </p>
-                <a href="{{ url_for('sectors.detail', sector_id=sector._id) }}"
-                    class="btn rounded-pill btn-sm btn-primary">{{ t('view', session.get('lang', 'en')) }}</a>
-                {% if session.get('role') == 'admin' %}
-                <form method="POST"
-                    action="{{ url_for('lands.delete_sector', land_id=land._id, sector_id=sector._id) }}"
-                    class="d-inline">
-                    <button type="submit" class="btn rounded-pill btn-sm btn-danger"
-                        onclick="return confirm('Delete this sector?')">
-                        <i class="bi-trash"></i>
-                    </button>
-                </form>
-                {% endif %}
-            </div>
-        </div>
-    </div>
-    {% endfor %}
-</div>
+
+
 {% endblock %}

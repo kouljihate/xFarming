@@ -2,7 +2,7 @@
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <form method="POST" action="{{ url_for('lands.edit', land_id=land._id) }}">
-                <div class="modal-header bg-{{ session.get('theme', 'minty') }} text-white">
+                <div class="modal-header bg-warning text-white">
                     <h5 class="modal-title">Edit {{ land.name }}</h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                 </div>
@@ -12,11 +12,13 @@
                         <div class="row">
                             <div class="col-md-4 mb-3">
                                 <label class="form-label"><i class="bi-hash me-1"></i>Land ID</label>
-                                <input type="text" class="form-control rounded-pill" name="farm_id" value="{{ land.farm_id or '' }}">
+                                <input type="text" class="form-control rounded-pill" name="land_id"
+                                    value="{{ land.land_id or '' }}">
                             </div>
                             <div class="col-md-8 mb-3">
                                 <label class="form-label"><i class="bi-geo-alt me-1"></i>Name</label>
-                                <input type="text" class="form-control rounded-pill" name="name" value="{{ land.name }}" required>
+                                <input type="text" class="form-control rounded-pill" name="name" value="{{ land.name }}"
+                                    required>
                             </div>
                         </div>
                     </div>
@@ -26,11 +28,13 @@
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <label class="form-label"><i class="bi-house me-1"></i>Street</label>
-                                <input type="text" class="form-control rounded-pill" name="street" value="{{ land.location.address.street if land.location and land.location.address else '' }}">
+                                <input type="text" class="form-control rounded-pill" name="street"
+                                    value="{{ land.location.address.street if land.location and land.location.address else '' }}">
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label class="form-label"><i class="bi-building me-1"></i>City</label>
-                                <input type="text" class="form-control rounded-pill" name="city" value="{{ land.location.city if land.location else '' }}">
+                                <input type="text" class="form-control rounded-pill" name="city"
+                                    value="{{ land.location.address.city if land.location and land.location.address else '' }}">
                             </div>
                         </div>
                     </div>
@@ -38,27 +42,20 @@
                     <div class="border p-3 rounded mb-3">
                         <h6 class="mb-3 bg-success text-white p-2"><i class="bi-geo me-2"></i>Center Coordinate</h6>
                         <div class="row">
-                            <div class="col-md-6 mb-3">
+                            <div class="col-md-4 mb-3">
                                 <label class="form-label"><i class="bi-geo-alt me-1"></i>Latitude</label>
-                                <input type="number" step="any" class="form-control rounded-pill" name="latitude" value="{{ land.location.center_coordinate.latitude if land.location and land.location.center_coordinate else 0.0 }}">
+                                <input type="number" step="any" class="form-control rounded-pill" name="latitude"
+                                    value="{{ land.location.center_coordinate.latitude if land.location and land.location.center_coordinate else 0.0 }}">
                             </div>
-                            <div class="col-md-6 mb-3">
+                            <div class="col-md-4 mb-3">
                                 <label class="form-label"><i class="bi-geo-alt me-1"></i>Longitude</label>
-                                <input type="number" step="any" class="form-control rounded-pill" name="longitude" value="{{ land.location.center_coordinate.longitude if land.location and land.location.center_coordinate else 0.0 }}">
+                                <input type="number" step="any" class="form-control rounded-pill" name="longitude"
+                                    value="{{ land.location.center_coordinate.longitude if land.location and land.location.center_coordinate else 0.0 }}">
                             </div>
-                        </div>
-                    </div>
-
-                    <div class="border p-3 rounded mb-3">
-                        <h6 class="mb-3 bg-success text-white p-2"><i class="bi-arrow-up me-2"></i>Altitude</h6>
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label class="form-label"><i class="bi-arrow-down me-1"></i>Minimum (m)</label>
-                                <input type="number" step="any" class="form-control rounded-pill" name="altitude_min" value="{{ land.location.altitude.minimum if land.location and land.location.altitude else 0.0 }}">
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label class="form-label"><i class="bi-arrow-up me-1"></i>Maximum (m)</label>
-                                <input type="number" step="any" class="form-control rounded-pill" name="altitude_max" value="{{ land.location.altitude.maximum if land.location and land.location.altitude else 0.0 }}">
+                            <div class="col-md-4 mb-3">
+                                <label class="form-label"><i class="bi-arrow-up me-1"></i>Altitude (m)</label>
+                                <input type="number" step="any" class="form-control rounded-pill" name="altitude"
+                                    value="{{ (land.location.altitude.minimum + land.location.altitude.maximum) / 2 if land.location and land.location.altitude else 0 }}">
                             </div>
                         </div>
                     </div>
@@ -68,24 +65,32 @@
                         <div class="row">
                             <div class="col-md-4 mb-3">
                                 <label class="form-label"><i class="bi-calendar me-1"></i>Established Date</label>
-                                <input type="date" class="form-control rounded-pill" name="established_date" value="{{ land.metadata.established_date if land.metadata else '' }}">
+                                <input type="date" class="form-control rounded-pill" name="established_date"
+                                    value="{{ land.metadata.established_date if land.metadata else '' }}">
                             </div>
                             <div class="col-md-4 mb-3">
                                 <label class="form-label"><i class="bi-check-circle me-1"></i>Status</label>
                                 <select class="form-select rounded-pill" name="status">
-                                    <option value="active" {% if land.metadata and land.metadata.status == 'active' %}selected{% endif %}>Active</option>
-                                    <option value="inactive" {% if land.metadata and land.metadata.status == 'inactive' %}selected{% endif %}>Inactive</option>
-                                    <option value="maintenance" {% if land.metadata and land.metadata.status == 'maintenance' %}selected{% endif %}>Under Maintenance</option>
+                                    <option value="active" {% if land.metadata and land.metadata.status=='active'
+                                        %}selected{% endif %}>Active</option>
+                                    <option value="inactive" {% if land.metadata and land.metadata.status=='inactive'
+                                        %}selected{% endif %}>Inactive</option>
+                                    <option value="maintenance" {% if land.metadata and
+                                        land.metadata.status=='maintenance' %}selected{% endif %}>Under Maintenance
+                                    </option>
                                 </select>
                             </div>
                             <div class="col-md-4 mb-3">
                                 <label class="form-label"><i class="bi-hash me-1"></i>Version</label>
-                                <input type="number" class="form-control rounded-pill" name="version" value="{{ land.metadata.version if land.metadata and land.metadata.version else 1 }}" min="1">
+                                <input type="number" class="form-control rounded-pill" name="version"
+                                    value="{{ land.metadata.version if land.metadata and land.metadata.version else 1 }}"
+                                    min="1">
                             </div>
                         </div>
                         <div class="mb-3">
                             <label class="form-label"><i class="bi-text-paragraph me-1"></i>Notes</label>
-                            <textarea class="form-control rounded-pill" name="notes" rows="2">{{ land.metadata.notes if land.metadata and land.metadata.notes else '' }}</textarea>
+                            <textarea class="form-control rounded-pill" name="notes"
+                                rows="2">{{ land.metadata.notes if land.metadata and land.metadata.notes else '' }}</textarea>
                         </div>
                     </div>
                 </div>
