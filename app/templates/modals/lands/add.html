@@ -8,70 +8,68 @@
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
             </div>
             <form method="POST" action="{{ url_for('lands.add') }}">
-                <div class="modal-body">
-                    <div class="border p-3 rounded mb-3">
-                        <h6 class="mb-3 bg-success text-white p-2"><i class="bi-tag me-2"></i>Basic Information</h6>
-                        <div class="row">
-                            <div class="col-md-4 mb-3">
-                                <label class="form-label"><i class="bi-hash me-1"></i>Land ID</label>
-                                <input type="text" class="form-control rounded-pill" name="land_id"
-                                    placeholder="LAND001">
-                            </div>
-                            <div class="col-md-8 mb-3">
-                                <label class="form-label"><i class="bi-geo-alt me-1"></i>Name</label>
-                                <input type="text" class="form-control rounded-pill" name="name"
-                                    placeholder="Green Valley Land" required>
-                            </div>
-                        </div>
-                    </div>
+<div class="modal-body">
+                      <div class="border p-3 rounded mb-3">
+                          <h6 class="mb-3 bg-success text-white p-2"><i class="bi-tag me-2"></i>Basic Information</h6>
+                          <div class="row">
+                              <div class="col-md-4 mb-3">
+                                  <label class="form-label"><i class="bi-hash me-1"></i>Land ID</label>
+                                  <input type="text" class="form-control rounded-pill" name="land_id"
+                                      placeholder="LAND001">
+                              </div>
+                              <div class="col-md-8 mb-3">
+                                  <label class="form-label"><i class="bi-geo-alt me-1"></i>Name</label>
+                                  <input type="text" class="form-control rounded-pill" name="name"
+                                      placeholder="Green Valley Land" required>
+                              </div>
+                          </div>
+                      </div>
 
-                    <div class="border p-3 rounded mb-3">
-                        <h6 class="mb-3 bg-success text-white p-2"><i class="bi-house me-2"></i>Address</h6>
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label class="form-label"><i class="bi-house me-1"></i>Street</label>
-                                <input type="text" class="form-control rounded-pill" name="street"
-                                    placeholder="1234 Rural Route 5">
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label class="form-label"><i class="bi-building me-1"></i>City</label>
-                                <input type="text" class="form-control rounded-pill" name="city"
-                                    placeholder="Springfield">
-                            </div>
-                        </div>
-                    </div>
+                      <div class="border p-3 rounded mb-3">
+                          <h6 class="mb-3 bg-success text-white p-2"><i class="bi-geo me-2"></i>Center Coordinate</h6>
+                          <div class="row">
+                              <div class="col-md-6 mb-3">
+                                  <label class="form-label"><i class="bi-geo-alt me-1"></i>Latitude</label>
+                                  <input type="number" step="any" class="form-control rounded-pill" name="latitude"
+                                      id="latitudeInput" value="{{ calc_centroid_latitude if calc_centroid_latitude is defined else '' }}">
+                              </div>
+                              <div class="col-md-6 mb-3">
+                                  <label class="form-label"><i class="bi-geo-alt me-1"></i>Longitude</label>
+                                  <input type="number" step="any" class="form-control rounded-pill" name="longitude"
+                                      id="longitudeInput" value="{{ calc_centroid_longitude if calc_centroid_longitude is defined else '' }}">
+                              </div>
+                          </div>
+                          <div class="row mt-3">
+                              <div class="col-md-6 mb-3">
+                                  <label class="form-label"><i class="bi-geo-alt me-1"></i>Latitude (DMS)</label>
+                                  <input type="text" class="form-control rounded-pill" name="latitude_dms" id="latitudeDMS" readonly>
+                              </div>
+                              <div class="col-md-6 mb-3">
+                                  <label class="form-label"><i class="bi-geo-alt me-1"></i>Longitude (DMS)</label>
+                                  <input type="text" class="form-control rounded-pill" name="longitude_dms" id="longitudeDMS" readonly>
+                              </div>
+                              <div class="col-md-6 mb-3">
+                                  <label class="form-label"><i class="bi-arrow-up me-1"></i>Altitude (m)</label>
+                                  <input type="number" step="any" class="form-control rounded-pill" name="altitude" id="altitudeInput">
+                              </div>
+                          </div>
+                      </div>
 
-                    <div class="border p-3 rounded mb-3">
-                        <h6 class="mb-3 bg-success text-white p-2"><i class="bi-geo me-2"></i>Center Coordinate</h6>
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label class="form-label"><i class="bi-geo-alt me-1"></i>Latitude</label>
-                                <input type="number" step="any" class="form-control rounded-pill" name="latitude"
-                                    value="{{ calc_centroid_latitude if calc_centroid_latitude is defined else '' }}">
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label class="form-label"><i class="bi-geo-alt me-1"></i>Longitude</label>
-                                <input type="number" step="any" class="form-control rounded-pill" name="longitude"
-                                    value="{{ calc_centroid_longitude if calc_centroid_longitude is defined else '' }}">
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="border p-3 rounded mb-3">
-                        <h6 class="mb-3 bg-success text-white p-2"><i class="bi-arrow-up me-2"></i>Altitude</h6>
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label class="form-label"><i class="bi-arrow-down me-1"></i>Minimum (m)</label>
-                                <input type="number" step="any" class="form-control rounded-pill" name="altitude_min"
-                                    value="0">
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label class="form-label"><i class="bi-arrow-up me-1"></i>Maximum (m)</label>
-                                <input type="number" step="any" class="form-control rounded-pill" name="altitude_max"
-                                    value="0">
-                            </div>
-                        </div>
-                    </div>
+                      <div class="border p-3 rounded mb-3">
+                          <h6 class="mb-3 bg-success text-white p-2"><i class="bi-house me-2"></i>Address</h6>
+                          <div class="row">
+                              <div class="col-md-6 mb-3">
+                                  <label class="form-label"><i class="bi-house me-1"></i>Street</label>
+                                  <input type="text" class="form-control rounded-pill" name="street"
+                                      id="streetInput" placeholder="1234 Rural Route 5">
+                              </div>
+                              <div class="col-md-6 mb-3">
+                                  <label class="form-label"><i class="bi-building me-1"></i>City</label>
+                                  <input type="text" class="form-control rounded-pill" name="city"
+                                      id="cityInput" placeholder="Springfield">
+                              </div>
+                          </div>
+                      </div>
 
                     <div class="border p-3 rounded mb-3">
                         <h6 class="mb-3 bg-success text-white p-2"><i class="bi-info-circle me-2"></i>Metadata</h6>
@@ -100,12 +98,60 @@
                         </div>
                     </div>
                 </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn rounded-pill btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="submit" name="action" value="save" class="btn rounded-pill btn-success"><i
-                            class="bi-check-circle me-1"></i>Save Land</button>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
+                 <div class="modal-footer">
+                     <button type="button" class="btn rounded-pill btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                     <button type="submit" name="action" value="save" class="btn rounded-pill btn-success"><i
+                             class="bi-check-circle me-1"></i>Save Land</button>
+                 </div>
+             </form>
+         </div>
+     </div>
+ </div>
+
+ <script>
+     document.addEventListener('DOMContentLoaded', function() {
+         const latitudeInput = document.getElementById('latitudeInput');
+         const longitudeInput = document.getElementById('longitudeInput');
+         const latitudeDMS = document.getElementById('latitudeDMS');
+         const longitudeDMS = document.getElementById('longitudeDMS');
+         const streetInput = document.getElementById('streetInput');
+         const cityInput = document.getElementById('cityInput');
+         const altitudeInput = document.getElementById('altitudeInput');
+
+         function decimalToDMS(value, isLat) {
+             const direction = isLat ? (value >= 0 ? 'N' : 'S') : (value >= 0 ? 'E' : 'W');
+             const absValue = Math.abs(value);
+             const degrees = Math.floor(absValue);
+             const minutesFull = (absValue - degrees) * 60;
+             const minutes = Math.floor(minutesFull);
+             const seconds = ((minutesFull - minutes) * 60).toFixed(2);
+             return `${degrees}° ${minutes}' ${seconds}" ${direction}`;
+         }
+
+         function updateDMSAndAddress() {
+             const lat = parseFloat(latitudeInput.value);
+             const lng = parseFloat(longitudeInput.value);
+
+             if (!isNaN(lat) && !isNaN(lng)) {
+                 // Update DMS displays
+                 latitudeDMS.value = decimalToDMS(lat, true);
+                 longitudeDMS.value = decimalToDMS(lng, false);
+
+                 // For now, we'll simulate the behavior by keeping existing values
+                 // The actual reverse geocoding and altitude calculation would happen on form submit
+                 // via the backend logic
+             } else {
+                 latitudeDMS.value = '';
+                 longitudeDMS.value = '';
+                 altitudeInput.value = '';
+             }
+         }
+
+         // Update DMS when coordinates change
+         latitudeInput.addEventListener('input', updateDMSAndAddress);
+         longitudeInput.addEventListener('input', updateDMSAndAddress);
+
+         // Initialize DMS if values exist
+         updateDMSAndAddress();
+     });
+ </script>
