@@ -5,34 +5,80 @@
 {% block content %}
 <div class="container">
     <div class="row justify-content-center align-items-center" style="min-height: 80vh;">
-        <div class="col-md-6 col-lg-4">
+        <div class="col-md-6 col-lg-5">
             <div class="card shadow-lg border-0">
                 <div class="card-header bg-primary text-white text-center py-3">
-                    <h4 class="mb-0"><i class="bi-box-arrow-in-right me-2"></i>{{ t('login', session.get('lang', 'en'))
-                        }}</h4>
+                    <h4 class="mb-0"><i class="bi-box-arrow-in-right me-2"></i>SmartFarmerFlow</h4>
+                </div>
+                <div class="card-header bg-white border-bottom-0 pb-0">
+                    <ul class="nav nav-pills mb-0" id="authTabs" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link {% if active_tab != 'register' %}active{% endif %}" id="login-tab" data-bs-toggle="tab" data-bs-target="#login-pane" type="button" role="tab">
+                                <i class="bi-box-arrow-in-right me-1"></i>{{ t('login', session.get('lang', 'en')) }}
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link {% if active_tab == 'register' %}active{% endif %}" id="register-tab" data-bs-toggle="tab" data-bs-target="#register-pane" type="button" role="tab">
+                                <i class="bi-person-plus me-1"></i>{{ t('register', session.get('lang', 'en')) }}
+                            </button>
+                        </li>
+                    </ul>
                 </div>
                 <div class="card-body p-4">
-                    <form method="POST">
-                        <div class="mb-3">
-                            <label for="username" class="form-label"><i class="bi-person me-1"></i>{{ t('username',
-                                session.get('lang', 'en')) }}</label>
-                            <input type="text" class="form-control rounded-pill form-control-lg" id="username" name="username"
-                                placeholder="{{ t('username', session.get('lang', 'en')) }}" required>
+                    <div class="tab-content" id="authTabsContent">
+                        <div class="tab-pane fade {% if active_tab != 'register' %}show active{% endif %}" id="login-pane" role="tabpanel" aria-labelledby="login-tab">
+                            <form method="POST" action="{{ url_for('auth.login') }}">
+                                <div class="mb-3">
+                                    <label for="username" class="form-label"><i class="bi-person me-1"></i>{{ t('username', session.get('lang', 'en')) }}</label>
+                                    <input type="text" class="form-control rounded-pill" id="username" name="username"
+                                        placeholder="{{ t('username', session.get('lang', 'en')) }}" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="password" class="form-label"><i class="bi-lock me-1"></i>{{ t('password', session.get('lang', 'en')) }}</label>
+                                    <input type="password" class="form-control rounded-pill" id="password" name="password"
+                                        placeholder="{{ t('password', session.get('lang', 'en')) }}" required>
+                                </div>
+                                <div class="d-grid gap-2">
+                                    <button type="submit" class="btn rounded-pill btn-primary btn-lg">{{ t('login', session.get('lang', 'en')) }}</button>
+                                </div>
+                            </form>
                         </div>
-                        <div class="mb-3">
-                            <label for="password" class="form-label"><i class="bi-lock me-1"></i>{{ t('password',
-                                session.get('lang', 'en')) }}</label>
-                            <input type="password" class="form-control rounded-pill form-control-lg" id="password" name="password"
-                                placeholder="{{ t('password', session.get('lang', 'en')) }}" required>
+                        <div class="tab-pane fade {% if active_tab == 'register' %}show active{% endif %}" id="register-pane" role="tabpanel" aria-labelledby="register-tab">
+                            <form method="POST" action="{{ url_for('auth.register') }}">
+                                <div class="mb-3">
+                                    <label for="reg_username" class="form-label"><i class="bi-person me-1"></i>{{ t('username', session.get('lang', 'en')) }}</label>
+                                    <input type="text" class="form-control rounded-pill" id="reg_username" name="username"
+                                        placeholder="{{ t('username', session.get('lang', 'en')) }}" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="reg_full_name" class="form-label"><i class="bi-person-badge me-1"></i>{{ t('full_name', session.get('lang', 'en')) }}</label>
+                                    <input type="text" class="form-control rounded-pill" id="reg_full_name" name="full_name"
+                                        placeholder="{{ t('full_name', session.get('lang', 'en')) }}" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="reg_email" class="form-label"><i class="bi-envelope me-1"></i>{{ t('email', session.get('lang', 'en')) }}</label>
+                                    <input type="email" class="form-control rounded-pill" id="reg_email" name="email"
+                                        placeholder="{{ t('email', session.get('lang', 'en')) }}">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="reg_password" class="form-label"><i class="bi-lock me-1"></i>{{ t('password', session.get('lang', 'en')) }}</label>
+                                    <input type="password" class="form-control rounded-pill" id="reg_password" name="password"
+                                        placeholder="{{ t('password', session.get('lang', 'en')) }}" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="reg_confirm_password" class="form-label"><i class="bi-lock-fill me-1"></i>{{ t('confirm_password', session.get('lang', 'en')) }}</label>
+                                    <input type="password" class="form-control rounded-pill" id="reg_confirm_password" name="confirm_password"
+                                        placeholder="{{ t('confirm_password', session.get('lang', 'en')) }}" required>
+                                </div>
+                                <div class="d-grid gap-2">
+                                    <button type="submit" class="btn rounded-pill btn-success btn-lg">{{ t('create_account', session.get('lang', 'en')) }}</button>
+                                </div>
+                            </form>
                         </div>
-                        <div class="d-grid gap-2">
-                            <button type="submit" class="btn rounded-pill btn-primary btn-lg">{{ t('login', session.get('lang',
-                                'en')) }}</button>
-                        </div>
-                    </form>
+                    </div>
                 </div>
                 <div class="card-footer text-center text-muted py-3">
-                    <small>🌾 Smart Farm Management by Koul</small><br>
+                    <small> Smart Farm Management by Koul</small><br>
                     <small class="text-muted">v{{ app_version }}</small>
                 </div>
             </div>
@@ -40,6 +86,3 @@
     </div>
 </div>
 {% endblock %}
-
-
-

@@ -1,3 +1,6 @@
+import sys
+import traceback
+
 TRANSLATIONS = {
     'en': {
         'dashboard': 'Dashboard',
@@ -64,7 +67,17 @@ TRANSLATIONS = {
         'of': 'of',
         'view': 'View',
         'farm': 'Farm',
-        'farms': 'Farms'
+        'farms': 'Farms',
+        'register': 'Register',
+        'confirm_password': 'Confirm Password',
+        'email': 'Email',
+        'full_name': 'Full Name',
+        'already_have_account': 'Already have an account?',
+        'create_account': 'Create Account',
+        'registration_success': 'Registration successful! Please log in.',
+        'passwords_do_not_match': 'Passwords do not match',
+        'username_taken': 'Username already taken',
+        'registration_failed': 'Registration failed'
     },
     'ar': {
         'dashboard': 'لوحة التحكم',
@@ -130,7 +143,17 @@ TRANSLATIONS = {
         'of': 'من',
         'view': 'عرض',
         'farm': 'مزرعة',
-        'farms': 'المزارع'
+        'farms': 'المزارع',
+        'register': 'تسجيل',
+        'confirm_password': 'تأكيد كلمة المرور',
+        'email': 'البريد الإلكتروني',
+        'full_name': 'الاسم الكامل',
+        'already_have_account': 'لديك حساب بالفعل؟',
+        'create_account': 'إنشاء حساب',
+        'registration_success': 'تم التسجيل بنجاح! يرجى تسجيل الدخول.',
+        'passwords_do_not_match': 'كلمات المرور غير متطابقة',
+        'username_taken': 'اسم المستخدم مستخدم بالفعل',
+        'registration_failed': 'فشل التسجيل'
     },
     'fr': {
         'dashboard': 'Tableau de bord',
@@ -140,7 +163,7 @@ TRANSLATIONS = {
         'users': 'Utilisateurs',
         'login': 'Connexion',
         'logout': 'Déconnexion',
-        'username': 'Nom d\'utilisateur',
+        'username': "Nom d'utilisateur",
         'password': 'Mot de passe',
         'role': 'Rôle',
         'guest': 'Invité',
@@ -170,7 +193,6 @@ TRANSLATIONS = {
         'add': 'Ajouter',
         'add_sector': 'Ajouter un secteur',
         'add_zone': 'Ajouter une zone',
-
         'add_row': 'Ajouter une rangée',
         'add_tree': 'Ajouter un arbre',
         'back': 'Retour',
@@ -197,9 +219,25 @@ TRANSLATIONS = {
         'of': 'sur',
         'view': 'Voir',
         'farm': 'Ferme',
-        'farms': 'Fermes'
+        'farms': 'Fermes',
+        'register': 'Inscription',
+        'confirm_password': 'Confirmer le mot de passe',
+        'email': 'Email',
+        'full_name': 'Nom complet',
+        'already_have_account': 'Déjà un compte?',
+        'create_account': 'Créer un compte',
+        'registration_success': 'Inscription réussie! Veuillez vous connecter.',
+        'passwords_do_not_match': 'Les mots de passe ne correspondent pas',
+        'username_taken': "Nom d'utilisateur déjà pris",
+        'registration_failed': "Échec de l'inscription"
     }
 }
 
+
 def t(key, lang='en'):
-    return TRANSLATIONS.get(lang, TRANSLATIONS['en']).get(key, key)
+    try:
+        return TRANSLATIONS.get(lang, TRANSLATIONS['en']).get(key, key)
+    except Exception as e:
+        tb = sys.exc_info()[-1]
+        print(f"[TRANSLATION ERROR] key={key} lang={lang} error={e} line={tb.tb_lineno if tb else 0}", file=sys.stderr)
+        return key

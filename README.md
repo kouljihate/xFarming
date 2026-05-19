@@ -236,6 +236,25 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 
 ## Version History
 
+### v0.9.3 (2026-05-19)
+- Version number display at bottom of sidebar
+- Enhanced map utilities with new map_utils.py module
+- Improved logging infrastructure with log rotation
+- Additional data validation checks in utility scripts
+- Enhanced farm and land management capabilities
+- Updated version references throughout the codebase
+- Refactored blueprint implementations for better maintainability
+- Improved template structures for farms and lands
+- Enhanced validation models with stricter constraints
+- Updated calculation utilities for better precision
+- Improved translation management system
+- Enhanced database connection handling
+- Resolved various UI inconsistencies in modal dialogs
+- Fixed form validation issues in farm and land modules
+- Addressed template rendering problems
+- Fixed coordinate calculation edge cases
+- Resolved logging file handle issues
+
 ### v0.9.1 (2026-05-13)
 - Auth decorators (`@login_required`, `@admin_required`, `@log_func_call`) for centralized access control
 - Geo calculations: centroid, geodesic area/perimeter using pyproj/shapely WGS84
