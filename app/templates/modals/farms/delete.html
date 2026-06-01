@@ -2,12 +2,12 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <form method="POST" action="{{ url_for('farms.delete', farm_id=farm._id) }}">
-                <div class="modal-header bg-{{ session.get('theme', 'minty') }} text-white">
-                    <h5 class="modal-title">Delete {{ farm.name }}</h5>
+                <div class="modal-header bg-danger text-white">
+                    <h5 class="modal-title">Delete {{ farm.farm_name }}</h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
-                    <p>Are you sure you want to delete farm "{{ farm.name }}"?</p>
+                    <p>Are you sure you want to delete farm <b> "{{ farm.farm_name }}"</b>?</p>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn rounded-pill btn-secondary" data-bs-dismiss="modal">Cancel</button>

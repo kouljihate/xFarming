@@ -34,6 +34,19 @@
     </div>
 </form>
 
+{% if map_html %}
+<div class="card mb-4">
+    <div class="card-header">
+        <h5 class="mb-0"><i class="bi-map me-2"></i>Map of ALL Lands</h5>
+    </div>
+    <div class="card-body p-2">
+        <div style="height: 400px; width: 100%;">
+            {{ map_html | safe }}
+        </div>
+    </div>
+</div>
+{% endif %}
+
 {% if sectors %}
 <div class="table-responsive">
     <table class="table table-striped">

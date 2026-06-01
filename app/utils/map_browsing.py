@@ -1,42 +1,41 @@
 import os
 import webbrowser
+import sys
+import traceback
+
+
+def _error_info(e):
+    tb = sys.exc_info()[-1]
+    return {
+        'error': True,
+        'message': str(e),
+        'function': sys._getframe(1).f_code.co_name,
+        'line': tb.tb_lineno if tb else 0,
+        'trace': traceback.format_exc()
+    }
 
 
 def generate_map(
-    coords: list[tuple[float, float]],
+    coords: dict,
     label: str = "Parcel",
     output_path: str = "map.html",
     open_browser: bool = True,
 ) -> str:
-    """
-    Generate a standalone HTML file showing the polygon traced on an
-    interactive map (Leaflet.js — no API key required).
+    try:
+        c_lat    = coords["latitude"]
+        c_lon    = coords["longitude"]
+        gmaps    = coords["maps_url"]
+        n_verts  = len(coords)
 
-    Args:
-        coords       : List of (latitude, longitude) tuples.
-        label        : Display name shown on the map.
-        output_path  : Where to write the HTML file.
-        open_browser : Automatically open the map in the default browser.
+        closed = list(coords)
+        if closed[0] != closed[-1]:
+            closed.append(closed[0])
 
-    Returns:
-        Absolute path to the generated HTML file.
-    """
-    # centroid = calculate_centroid(coords)
-    c_lat    = coords["latitude"]
-    c_lon    = coords["longitude"]
-    gmaps    = coords["maps_url"]
-    n_verts  = len(coords)
+        js_coords = ",\n            ".join(
+            f"[{lat}, {lon}]" for lat, lon in closed
+        )
 
-    # Close the ring for display if needed
-    closed = list(coords)
-    if closed[0] != closed[-1]:
-        closed.append(closed[0])
-
-    js_coords = ",\n            ".join(
-        f"[{lat}, {lon}]" for lat, lon in closed
-    )
-
-    html = f"""<!DOCTYPE html>
+        html = f"""<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
@@ -102,7 +101,6 @@ def generate_map(
     .info-bar .item span {{ color: #6b7394; margin-right: .35rem; }}
     .info-bar .item strong {{ color: #e8ff47; }}
     .info-bar a {{ color: #e8ff47; text-decoration: none; }}
-    /* Leaflet dark overrides */
     .leaflet-container {{ background: #1a1c23; }}
     .leaflet-popup-content-wrapper {{
       background: #13151a; color: #d4d8e8;
@@ -140,7 +138,6 @@ def generate_map(
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
-  // ── MAP ────────────────────────────────────────────────────
   const map = L.map('map').setView([{c_lat}, {c_lon}], 17);
 
   L.tileLayer(
@@ -148,7 +145,6 @@ def generate_map(
     {{ attribution: '&copy; OpenStreetMap &amp; CartoDB', subdomains:'abcd', maxZoom:21 }}
   ).addTo(map);
 
-  // ── POLYGON ─────────────────────────────────────────────────
   const poly = L.polygon([
     {js_coords}
   ], {{
@@ -165,7 +161,6 @@ def generate_map(
     'Vertices: {n_verts}'
   );
 
-  // ── CENTROID ────────────────────────────────────────────────
   const dot = L.divIcon({{
     className: '',
     html: '<div style="width:14px;height:14px;background:#e8ff47;border:2px solid #0b0c0f;border-radius:50%;box-shadow:0 0 10px #e8ff4799;"></div>',
@@ -180,20 +175,20 @@ def generate_map(
     )
     .openPopup();
 
-  // ── FIT TO POLYGON ──────────────────────────────────────────
   map.fitBounds(poly.getBounds(), {{ padding: [40, 40] }});
 </script>
 </body>
 </html>"""
 
-    abs_path = os.path.abspath(output_path)
-    with open(abs_path, "w", encoding="utf-8") as f:
-        f.write(html)
+        abs_path = os.path.abspath(output_path)
+        with open(abs_path, "w", encoding="utf-8") as f:
+            f.write(html)
 
-    print(f"  Map saved  → {abs_path}")
+        print(f"  Map saved  \u2192 {abs_path}")
 
-    if open_browser:
-        webbrowser.open(f"file://{abs_path}")
+        if open_browser:
+            webbrowser.open(f"file://{abs_path}")
 
-    return abs_path
-
+        return abs_path
+    except Exception as e:
+        return _error_info(e)

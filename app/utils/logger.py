@@ -10,6 +10,18 @@ from functools import wraps
 from flask import request, session, g, current_app
 from app.utils.logger_config import LOGGING_CONFIG, APP_NAME, LOG_MODE
 
+_old_factory = logging.getLogRecordFactory()
+def _record_factory(*args, **kwargs):
+    record = _old_factory(*args, **kwargs)
+    record.app_name = APP_NAME
+    record.user = 'system'
+    record.action = 'SYSTEM'
+    record.action_type = 'NONE'
+    record.func_name = 'unknown'
+    record.line_no = 0
+    return record
+logging.setLogRecordFactory(_record_factory)
+
 
 class ContextFilter(logging.Filter):
     def __init__(self, app_name=APP_NAME):
@@ -20,17 +32,16 @@ class ContextFilter(logging.Filter):
         try:
             record.app_name = self.app_name
             record.user = session.get('username', 'anonymous') if 'username' in session else 'anonymous'
-            record.action = getattr(record, 'action', 'SYSTEM')
-            record.action_type = getattr(record, 'action_type', 'NONE')
-            record.func_name = getattr(record, 'func_name', 'unknown')
-            record.line_no = getattr(record, 'line_no', 0)
+            if hasattr(record, '_action'):
+                record.action = record._action
+            if hasattr(record, '_action_type'):
+                record.action_type = record._action_type
+            if hasattr(record, '_func_name'):
+                record.func_name = record._func_name
+            if hasattr(record, '_line_no'):
+                record.line_no = record._line_no
         except Exception:
-            record.app_name = self.app_name
-            record.user = 'unknown'
-            record.action = 'SYSTEM'
-            record.action_type = 'NONE'
-            record.func_name = 'unknown'
-            record.line_no = 0
+            pass
         return True
 
 
@@ -70,14 +81,14 @@ def _get_caller_info(depth=2):
 def _log_message(logger, level, action, action_type, description, line_no=None):
     try:
         extra = {
-            'action': action or 'SYSTEM',
-            'action_type': action_type or 'NONE',
-            'func_name': _get_caller_info(3)['func'],
-            'line_no': line_no or _get_caller_info(3)['line']
+            '_action': action or 'SYSTEM',
+            '_action_type': action_type or 'NONE',
+            '_func_name': _get_caller_info(3)['func'],
+            '_line_no': line_no or _get_caller_info(3)['line']
         }
         
         if level == 'error':
-            extra['line_no'] = line_no or _get_caller_info(2)['line']
+            extra['_line_no'] = line_no or _get_caller_info(2)['line']
             logger.error(description, extra=extra)
         elif level == 'warning':
             logger.warning(description, extra=extra)
@@ -106,10 +117,10 @@ def log_function_call(func):
             module = func.__module__ or 'unknown'
             
             extra = {
-                'action': 'CALL',
-                'action_type': 'FUNCTION',
-                'func_name': f"{module}.{func.__name__}",
-                'line_no': caller['line']
+                '_action': 'CALL',
+                '_action_type': 'FUNCTION',
+                '_func_name': f"{module}.{func.__name__}",
+                '_line_no': caller['line']
             }
             logger.debug(f"Entering: {module}.{func.__name__}()", extra=extra)
             
@@ -120,7 +131,7 @@ def log_function_call(func):
             except Exception as e:
                 tb = traceback.format_exc()
                 caller_exc = _get_caller_info(2)
-                extra['line_no'] = caller_exc['line']
+                extra['_line_no'] = caller_exc['line']
                 logger.error(
                     f"Error in {module}.{func.__name__}(): {str(e)} | Line: {caller_exc['line']} | Trace: {tb}",
                     extra=extra
@@ -141,14 +152,14 @@ def log_with_context(action, action_type, level='info'):
                 module = func.__module__ or 'unknown'
                 
                 extra = {
-                    'action': action,
-                    'action_type': action_type,
-                    'func_name': f"{module}.{func.__name__}",
-                    'line_no': caller['line']
+                    '_action': action,
+                    '_action_type': action_type,
+                    '_func_name': f"{module}.{func.__name__}",
+                    '_line_no': caller['line']
                 }
                 
                 logger.log(
-                    logging._levelToName.get(getattr(logging, level.upper(), logging.INFO)),
+                    logging._nameToLevel.get(level.upper(), logging.INFO),
                     f"Executing: {module}.{func.__name__}() - {action}",
                     extra=extra
                 )
@@ -156,7 +167,7 @@ def log_with_context(action, action_type, level='info'):
                 try:
                     result = func(*args, **kwargs)
                     logger.log(
-                        logging._levelToName.get(getattr(logging, level.upper(), logging.INFO)),
+                        logging._nameToLevel.get(level.upper(), logging.INFO),
                         f"Completed: {module}.{func.__name__}() - {action}",
                         extra=extra
                     )
@@ -186,10 +197,10 @@ def log_exception(func):
             tb = traceback.format_exc()
             
             extra = {
-                'action': 'EXCEPTION',
-                'action_type': 'ERROR',
-                'func_name': f"{module}.{func.__name__}",
-                'line_no': caller['line']
+                '_action': 'EXCEPTION',
+                '_action_type': 'ERROR',
+                '_func_name': f"{module}.{func.__name__}",
+                '_line_no': caller['line']
             }
             logger.error(
                 f"Exception in {module}.{func.__name__}(): {str(e)} | Line: {caller['line']} | Trace: {tb}",
@@ -210,10 +221,10 @@ def log_request(request_handler):
             user = session.get('username', 'anonymous')
             
             extra = {
-                'action': f'{method} {path}',
-                'action_type': 'HTTP_REQUEST',
-                'func_name': endpoint,
-                'line_no': 0
+                '_action': f'{method} {path}',
+                '_action_type': 'HTTP_REQUEST',
+                '_func_name': endpoint,
+                '_line_no': 0
             }
             
             logger.info(
@@ -231,7 +242,7 @@ def log_request(request_handler):
             except Exception as e:
                 tb = traceback.format_exc()
                 caller = _get_caller_info(2)
-                extra['line_no'] = caller['line']
+                extra['_line_no'] = caller['line']
                 logger.error(
                     f"Request Error: {method} {path} | Error: {str(e)} | Line: {caller['line']} | Trace: {tb}",
                     extra=extra
@@ -248,10 +259,10 @@ def before_request_logger():
         logger = get_logger('app')
         
         extra = {
-            'action': f'{request.method} {request.path}',
-            'action_type': 'HTTP_REQUEST',
-            'func_name': request.endpoint or 'unknown',
-            'line_no': 0
+            '_action': f'{request.method} {request.path}',
+            '_action_type': 'HTTP_REQUEST',
+            '_func_name': request.endpoint or 'unknown',
+            '_line_no': 0
         }
         logger.info(
             f"Start: {request.method} {request.path} | User: {session.get('username', 'anonymous')}",
@@ -267,10 +278,10 @@ def after_request_logger(response):
         duration = (datetime.utcnow() - g.get('request_start_time', datetime.utcnow())).total_seconds()
         
         extra = {
-            'action': f'{request.method} {request.path}',
-            'action_type': 'HTTP_RESPONSE',
-            'func_name': request.endpoint or 'unknown',
-            'line_no': 0
+            '_action': f'{request.method} {request.path}',
+            '_action_type': 'HTTP_RESPONSE',
+            '_func_name': request.endpoint or 'unknown',
+            '_line_no': 0
         }
         logger.info(
             f"End: {request.method} {request.path} | Status: {response.status_code} | Duration: {duration:.3f}s",
@@ -307,10 +318,10 @@ def log_message(level, message, user_id=None, username=None, caller_info=None):
         caller = caller_info or _get_caller_info(2)
         
         extra = {
-            'action': 'LOG',
-            'action_type': 'MESSAGE',
-            'func_name': caller.get('func', 'unknown'),
-            'line_no': caller.get('line', 0)
+            '_action': 'LOG',
+            '_action_type': 'MESSAGE',
+            '_func_name': caller.get('func', 'unknown'),
+            '_line_no': caller.get('line', 0)
         }
         
         level_map = {

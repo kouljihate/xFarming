@@ -8,13 +8,21 @@
             </div>
             <form method="POST" action="{{ url_for('sectors.add') }}">
                 <div class="modal-body">
-                    <div class="mb-3">
-                        <label class="form-label">Land</label>
-                        <select class="form-select rounded-pill" name="land_id" required>
-                            {% for land in lands %}
-                            <option value="{{ land._id }}">{{ land.name }}</option>
-                            {% endfor %}
-                        </select>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label"><i class="bi-geo-alt me-1"></i>Land</label>
+                            <select class="form-select rounded-pill" name="land_id" id="addSectorLand" required onchange="updateFarmSelect()">
+                                {% for land in lands %}
+                                <option value="{{ land._id }}">{{ land.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label"><i class="bi-building me-1"></i>Farm</label>
+                            <select class="form-select rounded-pill" name="farm_id" id="addSectorFarm" required>
+                                <option value="">-- Select Farm --</option>
+                            </select>
+                        </div>
                     </div>
                     <div class="row">
 
@@ -67,18 +75,6 @@
                         </div>
                     </div>
                     <div class="mb-3">
-                        <label class="form-label">Boundary (GeoJSON)</label>
-                        <textarea class="form-control rounded" name="boundary"
-                            rows="2">{{ calc_geojson if calc_geojson else '' }}</textarea>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Status</label>
-                        <select class="form-select rounded-pill" name="status">
-                            <option value="active">Active</option>
-                            <option value="inactive">Inactive</option>
-                        </select>
-                    </div>
-                    <div class="mb-3">
                         <label class="form-label">Notes</label>
                         <textarea class="form-control rounded" name="notes" rows="2"></textarea>
                     </div>
@@ -92,3 +88,20 @@
         </div>
     </div>
 </div>
+
+<script>
+var landsFarms = {{ lands_farms_json|safe }};
+function updateFarmSelect() {
+    var landId = document.getElementById('addSectorLand').value;
+    var farmSelect = document.getElementById('addSectorFarm');
+    farmSelect.innerHTML = '<option value="">-- Select Farm --</option>';
+    if (landsFarms[landId]) {
+        landsFarms[landId].forEach(function(farm) {
+            var opt = document.createElement('option');
+            opt.value = farm._id;
+            opt.text = farm.farm_name;
+            farmSelect.appendChild(opt);
+        });
+    }
+}
+</script>

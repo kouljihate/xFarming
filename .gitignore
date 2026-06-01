@@ -11,3 +11,4 @@ venv/
 *.log
 flask_session/
 instance/
+.pytest_cache/

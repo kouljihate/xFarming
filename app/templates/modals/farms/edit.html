@@ -1,123 +1,306 @@
 <div class="modal fade" id="editFarmModal{{ farm._id }}" tabindex="-1">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
-            <form method="POST" action="{{ url_for('farms.edit', farm_id=farm._id) }}">
-                <div class="modal-header bg-{{ session.get('theme', 'minty') }} text-white">
-                    <h5 class="modal-title">Edit {{ farm.name }}</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-                </div>
+            <div class="modal-header bg-warning text-white">
+                <h5 class="modal-title"><i class="bi-pencil me-2"></i>Edit {{ farm.farm_name or farm.name }}</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <form method="POST" action="{{ url_for('farms.edit', farm_id=farm._id) }}" enctype="multipart/form-data">
                 <div class="modal-body">
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <label class="form-label">Farm ID</label>
-                            <input type="text" class="form-control rounded-pill" name="farm_id"
-                                value="{{ farm.get('farm_id', '') }}">
+                    <ul class="nav nav-tabs mb-3" id="farmEditTabs{{ farm._id }}" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active" id="basic-tab-{{ farm._id }}" data-bs-toggle="tab"
+                                data-bs-target="#basic-pane-{{ farm._id }}" type="button" role="tab">
+                                <i class="bi-info-circle me-1"></i>Basic
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="status-tab-{{ farm._id }}" data-bs-toggle="tab"
+                                data-bs-target="#status-pane-{{ farm._id }}" type="button" role="tab">
+                                <i class="bi-clipboard-check me-1"></i>Status
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="docs-tab-{{ farm._id }}" data-bs-toggle="tab"
+                                data-bs-target="#docs-pane-{{ farm._id }}" type="button" role="tab">
+                                <i class="bi-file-earmark-text me-1"></i>Documents & Photos
+                            </button>
+                        </li>
+                    </ul>
+
+                    <div class="tab-content" id="farmEditTabContent{{ farm._id }}">
+                        <!-- TAB 1: BASIC -->
+                        <div class="tab-pane fade show active" id="basic-pane-{{ farm._id }}" role="tabpanel">
+                            <div class="card mb-3">
+                                <div class="card-header bg-light">
+                                    <h6 class="mb-0"><i class="bi-geo-alt me-2"></i>FARM</h6>
+                                </div>
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-md-3 mb-3">
+                                            <label class="form-label">Farm ID</label>
+                                            <input type="text" class="form-control rounded-pill" name="farm_id"
+                                                value="{{ farm.farm_id }}">
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <label class="form-label">Farm Name</label>
+                                            <input type="text" class="form-control rounded-pill" name="farm_name"
+                                                value="{{ farm.farm_name or farm.name }}" required>
+                                        </div>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Description</label>
+                                        <textarea class="form-control rounded" name="description"
+                                            rows="2">{{ farm.get('description', '') }}</textarea>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="card">
+                                <div class="card-header bg-light">
+                                    <h6 class="mb-0"><i class="bi-pin-map me-2"></i>COORDINATE BOUNDARIES</h6>
+                                </div>
+                                <div class="card-body">
+                                    <div class="mb-3">
+                                        <label class="form-label">Coordinates</label>
+                                        <div class="input-group">
+                                            <input type="text" class="form-control rounded" name="coordinates"
+                                                id="farmEditCoordinates{{ farm._id }}"
+                                                placeholder="[(x1, y1), (x2, y2), (x3, y3), ...]"
+                                                value="{% if calc_coords is defined %}{{ calc_coords }}{% endif %}">
+                                            <button type="submit" name="action" value="calculate"
+                                                class="btn btn-primary rounded-pill" title="Calculate">
+                                                <i class="bi-arrow-repeat"></i>
+                                            </button>
+                                        </div>
+                                        <small class="text-muted">Enter as [(x, y), (x, y), ...] and click
+                                            Calculate</small>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-3 mb-3">
+                                            <label class="form-label">Area (Hectares)</label>
+                                            <input type="number" class="form-control rounded-pill" name="area"
+                                                value="{% if calc_area is defined %}{{ calc_area }}{% else %}{{ (farm.get('location') or {}).get('area', {}).get('value', 0) }}{% endif %}"
+                                                readonly>
+                                        </div>
+                                        <div class="col-md-3 mb-3">
+                                            <label class="form-label">Perimeter (Meters)</label>
+                                            <input type="number" class="form-control rounded-pill" name="perimeter"
+                                                value="{% if calc_perimeter is defined %}{{ calc_perimeter }}{% else %}0{% endif %}"
+                                                readonly>
+                                        </div>
+                                        <div class="col-md-2 mb-3">
+                                            <label class="form-label">Latitude</label>
+                                            <input type="number" step="0.01" class="form-control rounded-pill"
+                                                name="center_lat"
+                                                value="{% if calc_center_lat is defined %}{{ calc_center_lat }}{% else %}0{% endif %}"
+                                                readonly>
+                                        </div>
+                                        <div class="col-md-3 mb-3">
+                                            <label class="form-label">Longitude</label>
+                                            <input type="number" step="0.01" class="form-control rounded-pill"
+                                                name="center_lon"
+                                                value="{% if calc_center_lon is defined %}{{ calc_center_lon }}{% else %}0{% endif %}"
+                                                readonly>
+                                        </div>
+                                        <div class="col-md-1 mb-3">
+                                            <button type="submit" name="action" value="map"
+                                                class="btn btn-primary rounded-pill" title="Show on Map">
+                                                <i class="bi-map"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                        <div class="col-md-6 mb-3">
-                            <label class="form-label">Farm Number</label>
-                            <input type="number" class="form-control rounded-pill" name="farm_number"
-                                value="{{ farm.get('farm_number', 1) }}" min="1">
+
+                        <!-- TAB 2: STATUS -->
+                        <div class="tab-pane fade" id="status-pane-{{ farm._id }}" role="tabpanel">
+                            <div class="card mb-3">
+                                <div class="card-header bg-light">
+                                    <h6 class="mb-0"><i class="bi-droplet me-2"></i>SOIL</h6>
+                                </div>
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-md-4 mb-3">
+                                            <label class="form-label">Soil Type</label>
+                                            <select class="form-select rounded-pill" name="soil_type">
+                                                <option value="" disabled {% if not (farm.get('location') or {}).get('soil_type') %}selected{% endif %}>-- Select soil type --
+                                                </option>
+                                                <option value="loam" {% if (farm.get('location') or {}).get('soil_type')=='loam' %}selected{% endif %}>Loam</option>
+                                                <option value="clay" {% if (farm.get('location') or {}).get('soil_type')=='clay' %}selected{% endif %}>Clay</option>
+                                                <option value="sandy" {% if (farm.get('location') or {}).get('soil_type')=='sandy' %}selected{% endif %}>Sandy</option>
+                                                <option value="silt" {% if (farm.get('location') or {}).get('soil_type')=='silt' %}selected{% endif %}>Silt</option>
+                                                <option value="peat" {% if (farm.get('location') or {}).get('soil_type')=='peat' %}selected{% endif %}>Peat</option>
+                                                <option value="chalky" {% if (farm.get('location') or {}).get('soil_type')=='chalky' %}selected{% endif %}>Chalky</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-4 mb-3">
+                                            <label class="form-label">Topography</label>
+                                            <select class="form-select rounded-pill" name="topography">
+                                                <option value="" disabled {% if not (farm.get('location') or {}).get('topography') %}selected{% endif %}>-- Select topography --
+                                                </option>
+                                                <option value="flat" {% if (farm.get('location') or {}).get('topography')=='flat' %}selected{% endif %}>Flat</option>
+                                                <option value="sloping" {% if (farm.get('location') or {}).get('topography')=='sloping' %}selected{% endif %}>Sloping</option>
+                                                <option value="hilly" {% if (farm.get('location') or {}).get('topography')=='hilly' %}selected{% endif %}>Hilly</option>
+                                                <option value="mountainous" {% if (farm.get('location') or {}).get('topography')=='mountainous' %}selected{% endif %}>Mountainous</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-4 mb-3">
+                                            <label class="form-label">Climate Zone</label>
+                                            <select class="form-select rounded-pill" name="climate_zone">
+                                                <option value="" disabled {% if not (farm.get('location') or {}).get('climate_zone') %}selected{% endif %}>-- Select climate zone --</option>
+                                                <option value="Costal-Med" {% if (farm.get('location') or {}).get('climate_zone')=='Costal-Med' %}selected{% endif %}>Coastal Mediterranean</option>
+                                                <option value="Interior-Med" {% if (farm.get('location') or {}).get('climate_zone')=='Interior-Med' %}selected{% endif %}>Interior Mediterranean</option>
+                                                <option value="Mountain-Atlas" {% if (farm.get('location') or {}).get('climate_zone')=='Mountain-Atlas' %}selected{% endif %}>Mountain Atlas</option>
+                                                <option value="Desert" {% if (farm.get('location') or {}).get('climate_zone')=='Desert' %}selected{% endif %}>Desert</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="card">
+                                <div class="card-header bg-light">
+                                    <h6 class="mb-0"><i class="bi-water me-2"></i>IRRIGATION</h6>
+                                </div>
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-md-3 mb-3">
+                                            <label class="form-label">Type</label>
+                                            <select class="form-select rounded-pill" name="irrigation_type">
+                                                <option value="" {% if not (farm.get('irrigation_system') or {}).get('type') %}selected{% endif %}>-- Select --</option>
+                                                <option value="drip" {% if (farm.get('irrigation_system') or {}).get('type')=='drip' %}selected{% endif %}>Drip</option>
+                                                <option value="sprinkler" {% if (farm.get('irrigation_system') or {}).get('type')=='sprinkler' %}selected{% endif %}>Sprinkler</option>
+                                                <option value="flood" {% if (farm.get('irrigation_system') or {}).get('type')=='flood' %}selected{% endif %}>Flood</option>
+                                                <option value="center_pivot" {% if (farm.get('irrigation_system') or {}).get('type')=='center_pivot' %}selected{% endif %}>Center Pivot</option>
+                                                <option value="manual" {% if (farm.get('irrigation_system') or {}).get('type')=='manual' %}selected{% endif %}>Manual</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-3 mb-3">
+                                            <label class="form-label">Source</label>
+                                            <select class="form-select rounded-pill" name="irrigation_source">
+                                                <option value="" {% if not (farm.get('irrigation_system') or {}).get('source') %}selected{% endif %}>-- Select --</option>
+                                                <option value="well" {% if (farm.get('irrigation_system') or {}).get('source')=='well' %}selected{% endif %}>Well</option>
+                                                <option value="river" {% if (farm.get('irrigation_system') or {}).get('source')=='river' %}selected{% endif %}>River</option>
+                                                <option value="dam" {% if (farm.get('irrigation_system') or {}).get('source')=='dam' %}selected{% endif %}>Dam</option>
+                                                <option value="borehole" {% if (farm.get('irrigation_system') or {}).get('source')=='borehole' %}selected{% endif %}>Borehole</option>
+                                                <option value="rainwater" {% if (farm.get('irrigation_system') or {}).get('source')=='rainwater' %}selected{% endif %}>Rainwater</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-3 mb-3">
+                                            <label class="form-label">Capacity (LPH)</label>
+                                            <input type="number" class="form-control rounded-pill"
+                                                name="irrigation_capacity"
+                                                value="{{ (farm.get('irrigation_system') or {}).get('capacity_lph', 0) }}">
+                                        </div>
+                                        <div class="col-md-3 mb-3">
+                                            <label class="form-label">Status</label>
+                                            <select class="form-select rounded-pill" name="status">
+                                                <option value="active" {% if (farm.get('metadata') or {}).get('status')=='active' %}selected{% endif %}>Active</option>
+                                                <option value="inactive" {% if (farm.get('metadata') or {}).get('status')=='inactive' %}selected{% endif %}>Inactive</option>
+                                                <option value="maintenance" {% if (farm.get('metadata') or {}).get('status')=='maintenance' %}selected{% endif %}>Under Maintenance</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Notes</label>
+                                        <textarea class="form-control rounded" name="irrigation_notes"
+                                            rows="2">{{ (farm.get('irrigation_system') or {}).get('notes', '') }}</textarea>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Farm Name</label>
-                        <input type="text" class="form-control rounded-pill" name="name" value="{{ farm.name }}"
-                            required>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Description</label>
-                        <textarea class="form-control rounded-pill" name="description"
-                            rows="2">{{ farm.get('description', '') }}</textarea>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <label class="form-label">Area</label>
-                            <input type="number" step="0.01" class="form-control rounded-pill" name="area"
-                                value="{{ farm.get('location', {}).get('area', {}).get('value', 0) }}">
+
+                        <!-- TAB 3: DOCUMENTS & PHOTOS -->
+                        <div class="tab-pane fade" id="docs-pane-{{ farm._id }}" role="tabpanel">
+                            <div class="card mb-3">
+                                <div class="card-header bg-light">
+                                    <h6 class="mb-0"><i class="bi-file-earmark me-2"></i>LEGAL</h6>
+                                </div>
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-md-6 mb-3">
+                                            <label class="form-label">Registration Number</label>
+                                            <input type="text" class="form-control rounded-pill"
+                                                name="registration_number"
+                                                value="{{ (farm.get('legal') or {}).get('registration_number', '') }}">
+                                        </div>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Legal Documents (comma-separated)</label>
+                                        <input type="text" class="form-control rounded-pill" name="legal_docs"
+                                            value="{{ (farm.get('legal') or {}).get('documents', '') }}"
+                                            placeholder="e.g. Title Deed, Survey Report">
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-6 mb-3">
+                                            <label class="form-label">Lease Status</label>
+                                            <select class="form-select rounded-pill" name="lease_status">
+                                                <option value="owned" {% if (farm.get('legal') or {}).get('lease_status')=='owned' %}selected{% endif %}>Owned</option>
+                                                <option value="leased" {% if (farm.get('legal') or {}).get('lease_status')=='leased' %}selected{% endif %}>Leased</option>
+                                                <option value="rented" {% if (farm.get('legal') or {}).get('lease_status')=='rented' %}selected{% endif %}>Rented</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <label class="form-label">Expiry Date</label>
+                                            <input type="date" class="form-control rounded-pill" name="lease_expiry"
+                                                value="{{ (farm.get('legal') or {}).get('lease_expiry', '') }}">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="card">
+                                <div class="card-header bg-light">
+                                    <h6 class="mb-0"><i class="bi-camera me-2"></i>PHOTOS</h6>
+                                </div>
+                                <div class="card-body">
+                                    {% set farm_photos = farm.get('photos') or [] %}
+                                    {% if farm_photos %}
+                                    <div class="row mb-3">
+                                        {% for photo in farm_photos %}
+                                        <div class="col-md-4 mb-2">
+                                            <div class="card">
+                                                <img src="{{ photo.path }}" class="card-img-top"
+                                                    alt="{{ photo.description }}"
+                                                    style="height:120px;object-fit:cover;">
+                                                <div class="card-body p-1 text-center">
+                                                    <small>{{ photo.description }}</small>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        {% endfor %}
+                                    </div>
+                                    {% endif %}
+                                    <div class="mb-3">
+                                        <label class="form-label">Upload Photos</label>
+                                        <input type="file" class="form-control rounded-pill" name="photos" multiple
+                                            accept="image/*">
+                                        <small class="text-muted">You can select multiple images</small>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Photo Description</label>
+                                        <textarea class="form-control rounded" name="photo_description" rows="2"
+                                            placeholder="Describe the photos..."></textarea>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">General Notes</label>
+                                        <textarea class="form-control rounded" name="notes" rows="3"
+                                            placeholder="Additional notes...">{{ (farm.get('metadata') or {}).get('notes', '') }}</textarea>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                        <div class="col-md-6 mb-3">
-                            <label class="form-label">Unit</label>
-                            <select class="form-select rounded-pill" name="area_unit">
-                                <option value="ha" {% if farm.get('location', {}).get('area', {}).get('unit', 'ha'
-                                    )=='ha' %}selected{% endif %}>ha</option>
-                                <option value="hectares" {% if farm.get('location', {}).get('area', {}).get('unit', ''
-                                    )=='hectares' %}selected{% endif %}>Hectares</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-4 mb-3">
-                            <label class="form-label">Soil Type</label>
-                            <select class="form-select rounded-pill" name="soil_type">
-                                <option value="loam" {% if farm.get('location', {}).get('soil_type', 'loam' )=='loam'
-                                    %}selected{% endif %}>Loam</option>
-                                <option value="clay" {% if farm.get('location', {}).get('soil_type', '' )=='clay'
-                                    %}selected{% endif %}>Clay</option>
-                                <option value="sandy" {% if farm.get('location', {}).get('soil_type', '' )=='sandy'
-                                    %}selected{% endif %}>Sandy</option>
-                                <option value="silt" {% if farm.get('location', {}).get('soil_type', '' )=='silt'
-                                    %}selected{% endif %}>Silt</option>
-                            </select>
-                        </div>
-                        <div class="col-md-4 mb-3">
-                            <label class="form-label">Topography</label>
-                            <input type="text" class="form-control rounded-pill" name="topography"
-                                value="{{ farm.get('location', {}).get('topography', '') }}">
-                        </div>
-                        <div class="col-md-4 mb-3">
-                            <label class="form-label">Climate Zone</label>
-                            <input type="text" class="form-control rounded-pill" name="climate_zone"
-                                value="{{ farm.get('location', {}).get('climate_zone', '') }}">
-                        </div>
-                    </div>
-                    <h6 class="mt-3">Irrigation System</h6>
-                    <div class="row">
-                        <div class="col-md-3 mb-3">
-                            <label class="form-label">Type</label>
-                            <input type="text" class="form-control rounded-pill" name="irrigation_type"
-                                value="{{ farm.get('irrigation_system', {}).get('type', '') }}">
-                        </div>
-                        <div class="col-md-3 mb-3">
-                            <label class="form-label">Source</label>
-                            <input type="text" class="form-control rounded-pill" name="irrigation_source"
-                                value="{{ farm.get('irrigation_system', {}).get('source', '') }}">
-                        </div>
-                        <div class="col-md-3 mb-3">
-                            <label class="form-label">Capacity (LPH)</label>
-                            <input type="number" class="form-control rounded-pill" name="irrigation_capacity"
-                                value="{{ farm.get('irrigation_system', {}).get('capacity_lph', 0) }}">
-                        </div>
-                        <div class="col-md-3 mb-3">
-                            <label class="form-label">Notes</label>
-                            <input type="text" class="form-control rounded-pill" name="irrigation_notes"
-                                value="{{ farm.get('irrigation_system', {}).get('notes', '') }}">
-                        </div>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Boundary (JSON)</label>
-                        <textarea class="form-control rounded-pill" name="boundary"
-                            rows="2">{{ farm.get('boundary', '') }}</textarea>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Status</label>
-                        <select class="form-select rounded-pill" name="status">
-                            <option value="active" {% if farm.get('metadata', {}).get('status', 'active' )=='active'
-                                %}selected{% endif %}>Active</option>
-                            <option value="inactive" {% if farm.get('metadata', {}).get('status', '' )=='inactive'
-                                %}selected{% endif %}>Inactive</option>
-                            <option value="maintenance" {% if farm.get('metadata', {}).get('status', '' )=='maintenance'
-                                %}selected{% endif %}>Under Maintenance</option>
-                        </select>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Notes</label>
-                        <textarea class="form-control rounded-pill" name="notes"
-                            rows="2">{{ farm.get('metadata', {}).get('notes', '') }}</textarea>
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn rounded-pill btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="submit" class="btn rounded-pill btn-primary">Update</button>
+                    <button type="button" class="btn rounded-pill btn-secondary" data-bs-dismiss="modal">
+                        <i class="bi-x-circle me-1"></i>Cancel
+                    </button>
+                    <button type="submit" name="action" value="save" class="btn rounded-pill btn-success">
+                        <i class="bi-check-circle me-1"></i>Save
+                    </button>
                 </div>
             </form>
         </div>

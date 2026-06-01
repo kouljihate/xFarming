@@ -7,3 +7,7 @@ folium>=0.15.0
 plotly>=5.18.0
 dash>=2.14.0
 Werkzeug>=3.0.0
+geopy>=2.0.0
+icecream>=2.0.0
+pyproj>=3.0.0
+shapely>=2.0.0

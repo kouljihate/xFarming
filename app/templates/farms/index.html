@@ -18,7 +18,8 @@
     }}
 </button>
 {% elif session.get('role') == 'admin' and lands|length == 0 %}
-<div class="alert alert-warning mb-3"><i class="bi-exclamation-triangle me-2"></i>Please add a Land first before adding Farms.</div>
+<div class="alert alert-warning mb-3"><i class="bi-exclamation-triangle me-2"></i>Please add a Land first before adding
+    Farms.</div>
 {% endif %}
 
 <form method="GET" class="mb-3">
@@ -40,6 +41,7 @@
             <tr>
                 <th><i class="bi-building me-1"></i> Name</th>
                 <th><i class="bi-geo-alt-fill me-1"></i> Land</th>
+                <th><i class="bi-arrows-angle-expand me-1"></i> Area</th>
                 <th><i class="bi-grid-fill me-1"></i> Sectors</th>
                 <th><i class="bi-gear me-1"></i> Actions</th>
             </tr>
@@ -47,20 +49,25 @@
         <tbody>
             {% for farm in farms %}
             <tr>
-                <td>{{ farm.name }}</td>
+                <td>{{ farm.farm_name }}</td>
                 <td>{{ farm.land.name if farm.land else '' }}</td>
+                <td>{{ farm.location.area.value if farm.location and farm.location.area else '' }} {{ farm.location.area.unit if farm.location and farm.location.area else '' }}</td>
                 <td>{{ farm.sector_count }}</td>
                 <td>
-                    <a href="{{ url_for('farms.detail', farm_id=farm._id) }}"
+                    <a href="{{ url_for('farms.detail', farm_id=farm._id) }} " title="View Farm - {{farm.farm_name}} "
                         class="btn rounded-pill btn-sm btn-primary"><i class="bi-eye"></i></a>
                     {% if session.get('role') == 'admin' %}
                     <button type="button" class="btn rounded-pill btn-sm btn-warning" data-bs-toggle="modal"
-                        data-bs-target="#editFarmModal{{ farm._id }}" title="Edit Farm {{farm._id}}">
+                        data-bs-target="#editFarmModal{{ farm._id }}" title="Edit Farm - {{farm.farm_name}}">
                         <i class="bi-pencil"></i>
                     </button>
                     <button type="button" class="btn rounded-pill btn-sm btn-danger" data-bs-toggle="modal"
-                        data-bs-target="#deleteFarmModal{{ farm._id }}" title="Delete Farm {{farm._id}}">
+                        data-bs-target="#deleteFarmModal{{ farm._id }}" title="Delete Farm - {{farm.farm_name}}">
                         <i class="bi-trash"></i>
+                    </button>
+                    <button type="button" class="btn rounded-pill btn-sm btn-info"
+                        onclick="document.getElementById('addFarmLandId').value='{{ farm._id }}'; new bootstrap.Modal(document.getElementById('addFarmModal')).show();">
+                        <i class="bi-plus-circle"></i>
                     </button>
                     {% endif %}
                 </td>

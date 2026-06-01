@@ -82,6 +82,7 @@ def init_sample_data():
                 
                 land_data['sectors'].append(sector)
             
+            land_data['last_updated_at'] = datetime.now().isoformat()
             db.lands.insert_one(land_data)
             print(f"Created land: {land_data['name']}")
         

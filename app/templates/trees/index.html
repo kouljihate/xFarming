@@ -23,17 +23,6 @@
             {% endif %}
         {% endfor %}
     {% endif %}
-    {% if land.sectors %}
-        {% for sector in land.sectors %}
-            {% if sector.zones %}
-                {% for zone in sector.zones %}
-                    {% if zone.rows %}
-                        {% set has_rows = true %}
-                    {% endif %}
-                {% endfor %}
-            {% endif %}
-        {% endfor %}
-    {% endif %}
 {% endfor %}
 
 {% if session.get('role') == 'admin' and has_rows %}

@@ -125,6 +125,7 @@ class LandModel(BaseModel):
     })
     farms: List[FarmModel] = Field(default_factory=list)
     created_at: Optional[datetime] = datetime.now()
+    last_updated_at: Optional[datetime] = None
     _id: Optional[str] = None
     
     @validator('name')

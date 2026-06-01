@@ -266,7 +266,7 @@ def index():
         
         for land in lands:
             land['_id'] = str(land['_id'])
-            land['sector_count'] = len(land.get('sectors', []))
+            land['sector_count'] = sum(len(farm.get('sectors', [])) for farm in land.get('farms', []))
         
         lands_farms = {}
         for land in lands:
@@ -275,12 +275,12 @@ def index():
                 'farm_name': farm.get('farm_name', farm.get('name', ''))
             } for farm in land.get('farms', [])]
 
-        return render_template('lands/index.html', lands=lands, search=search, lands_farms_json=json.dumps(lands_farms))
+        return render_template('lands/index.html', lands=lands, search=search, lands_farms_json=json.dumps(lands_farms), form_data={})
     except Exception as e:
         err = _error_info(e)
         log_message('error', f"lands.index() line {err['line']}: {err['message']}\n{err['trace']}")
         flash(f'Error: {err["message"]}', 'danger')
-        return render_template('lands/index.html', lands=[], search='', lands_farms_json='{}')
+        return render_template('lands/index.html', lands=[], search='', lands_farms_json='{}', form_data={})
 
 
 @log_func_call
@@ -309,33 +309,44 @@ def detail(land_id):
             parent_id = request.form.get('parent_id')
             
             if entity_type == 'sector':
-                if 'sectors' not in land:
-                    land['sectors'] = []
-                land['sectors'].append({
-                    '_id': str(ObjectId()),
-                    'name': request.form.get('name'),
-                    'zones': []
-                })
-                db.lands.update_one({'_id': ObjectId(land_id)}, {'$set': {'sectors': land['sectors'], 'last_updated_at': datetime.now().isoformat()}})
-                db.activities.insert_one({
-                    'type': 'planting',
-                    'notes': f'Added sector {request.form.get("name")} to {land.get("name", "")}',
-                    'date': datetime.utcnow()
-                })
-                flash('Sector added successfully!', 'success')
-            
-            elif entity_type == 'zone':
-                for sector in land.get('sectors', []):
-                    if sector.get('_id') == parent_id:
-                        if 'zones' not in sector:
-                            sector['zones'] = []
-                        sector['zones'].append({
+                farm_id = request.form.get('farm_id', '')
+                if not farm_id:
+                    flash('Farm is required to add a sector', 'danger')
+                    return redirect(url_for('lands.detail', land_id=land_id))
+                for farm in land.get('farms', []):
+                    if farm.get('_id') == farm_id or str(farm.get('_id', '')) == farm_id:
+                        if 'sectors' not in farm:
+                            farm['sectors'] = []
+                        farm['sectors'].append({
                             '_id': str(ObjectId()),
                             'name': request.form.get('name'),
-                            'rows': []
+                            'zones': [],
+                            'farm_id': farm_id
                         })
+                        db.lands.update_one({'_id': ObjectId(land_id)}, {'$set': {'farms': land.get('farms', []), 'last_updated_at': datetime.now().isoformat()}})
+                        db.activities.insert_one({
+                            'type': 'planting',
+                            'notes': f'Added sector {request.form.get("name")} to {land.get("name", "")}',
+                            'date': datetime.utcnow()
+                        })
+                        flash('Sector added successfully!', 'success')
                         break
-                db.lands.update_one({'_id': ObjectId(land_id)}, {'$set': {'sectors': land['sectors'], 'last_updated_at': datetime.now().isoformat()}})
+                else:
+                    flash('Farm not found', 'danger')
+            
+            elif entity_type == 'zone':
+                for farm in land.get('farms', []):
+                    for sector in farm.get('sectors', []):
+                        if sector.get('_id') == parent_id:
+                            if 'zones' not in sector:
+                                sector['zones'] = []
+                            sector['zones'].append({
+                                '_id': str(ObjectId()),
+                                'name': request.form.get('name'),
+                                'rows': []
+                            })
+                            break
+                db.lands.update_one({'_id': ObjectId(land_id)}, {'$set': {'farms': land.get('farms', []), 'last_updated_at': datetime.now().isoformat()}})
                 db.activities.insert_one({
                     'type': 'planting',
                     'notes': f'Added zone {request.form.get("name")}',
@@ -344,18 +355,19 @@ def detail(land_id):
                 flash('Zone added successfully!', 'success')
             
             elif entity_type == 'row':
-                for sector in land.get('sectors', []):
-                    for zone in sector.get('zones', []):
-                        if zone.get('_id') == parent_id:
-                            if 'rows' not in zone:
-                                zone['rows'] = []
-                            zone['rows'].append({
-                                '_id': str(ObjectId()),
-                                'name': request.form.get('name'),
-                                'trees': []
-                            })
-                            break
-                db.lands.update_one({'_id': ObjectId(land_id)}, {'$set': {'sectors': land['sectors'], 'last_updated_at': datetime.now().isoformat()}})
+                for farm in land.get('farms', []):
+                    for sector in farm.get('sectors', []):
+                        for zone in sector.get('zones', []):
+                            if zone.get('_id') == parent_id:
+                                if 'rows' not in zone:
+                                    zone['rows'] = []
+                                zone['rows'].append({
+                                    '_id': str(ObjectId()),
+                                    'name': request.form.get('name'),
+                                    'trees': []
+                                })
+                                break
+                db.lands.update_one({'_id': ObjectId(land_id)}, {'$set': {'farms': land.get('farms', []), 'last_updated_at': datetime.now().isoformat()}})
                 db.activities.insert_one({
                     'type': 'planting',
                     'notes': f'Added row {request.form.get("name")}',
@@ -364,18 +376,19 @@ def detail(land_id):
                 flash('Row added successfully!', 'success')
             
             elif entity_type == 'tree':
-                for sector in land.get('sectors', []):
-                    for zone in sector.get('zones', []):
-                        for row in zone.get('rows', []):
-                            if row.get('_id') == parent_id:
-                                if 'trees' not in row:
-                                    row['trees'] = []
-                                row['trees'].append({
-                                    '_id': str(ObjectId()),
-                                    'name': request.form.get('name', 'Tree')
-                                })
-                                break
-                db.lands.update_one({'_id': ObjectId(land_id)}, {'$set': {'sectors': land['sectors'], 'last_updated_at': datetime.now().isoformat()}})
+                for farm in land.get('farms', []):
+                    for sector in farm.get('sectors', []):
+                        for zone in sector.get('zones', []):
+                            for row in zone.get('rows', []):
+                                if row.get('_id') == parent_id:
+                                    if 'trees' not in row:
+                                        row['trees'] = []
+                                    row['trees'].append({
+                                        '_id': str(ObjectId()),
+                                        'name': request.form.get('name', 'Tree')
+                                    })
+                                    break
+                db.lands.update_one({'_id': ObjectId(land_id)}, {'$set': {'farms': land.get('farms', []), 'last_updated_at': datetime.now().isoformat()}})
                 db.activities.insert_one({
                     'type': 'planting',
                     'notes': f'Added tree {request.form.get("name", "Tree")}',

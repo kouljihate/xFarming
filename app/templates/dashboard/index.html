@@ -124,7 +124,7 @@
             <ul class="list-group">
                 {% for activity in activities %}
                 <li class="list-group-item">
-                    {{ activity.date.strftime('%Y-%m-%d %H:%M') if activity.date else '' }} - {{ t(activity.type,
+                    {{ activity.date.strftime('%Y-%m-%d %H:%M') if activity.date is not string else (activity.date[:16] if activity.date else '') }} - {{ t(activity.type,
                     session.get('lang', 'en')) }}
                     {% if activity.notes %}<br><small>{{ activity.notes }}</small>{% endif %}
                 </li>

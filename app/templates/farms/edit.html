@@ -19,12 +19,12 @@
                 <div class="col-md-6 mb-3">
                     <label class="form-label">Farm Number</label>
                     <input type="number" class="form-control rounded-pill" name="farm_number"
-                        value="{{ farm.get('farm_number', 1) }}" min="1">
+                        value="{{ farm.get('farm_id', 1) }}" min="1">
                 </div>
             </div>
             <div class="mb-3">
                 <label class="form-label">Farm Name</label>
-                <input type="text" class="form-control rounded-pill" name="name" value="{{ farm.name }}" required>
+                <input type="text" class="form-control rounded-pill" name="name" value="{{ farm.farm_name or farm.name }}" required>
             </div>
             <div class="mb-3">
                 <label class="form-label">Description</label>

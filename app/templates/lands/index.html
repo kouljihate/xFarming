@@ -15,6 +15,8 @@
 </button>
 {% endif %}
 
+
+<!-- Search Part -->
 <form method="GET" class="mb-3">
     <div class="input-group">
         <input type="text" class="form-control rounded-pill" name="search" placeholder="Search lands..."
@@ -57,7 +59,7 @@
                         <i class="bi-trash"></i>
                     </button>
                     <button type="button" class="btn rounded-pill btn-sm btn-info"
-                        onclick="document.getElementById('addSectorLandId').value='{{ land._id }}'; new bootstrap.Modal(document.getElementById('addSectorModal')).show();">
+                        onclick="var sel = document.getElementById('farmLandSelect'); if(sel) { sel.value='{{ land._id }}'; } new bootstrap.Modal(document.getElementById('addFarmModal')).show();">
                         <i class="bi-plus-circle"></i>
                     </button>
                     {% endif %}
@@ -70,7 +72,7 @@
 {% else %}
 <div class="text-center py-5">
     <h1 class="display-1 text-muted">No Land Found</h1>
-    {% if session.get('role') in ['admin', 'worker'] %}
+    {% if session.get('role') in ['admin'] %}
     <button type="button" class="btn rounded-pill btn-success mt-3 rounded-pill" data-bs-toggle="modal"
         data-bs-target="#addLandModal">
         <i class="bi-plus-circle"></i> Add Your First Land
@@ -79,18 +81,19 @@
 </div>
 {% endif %}
 
-{% if session.get('role') in ['admin', 'worker'] %}
-{% if show_add_modal %}<div class="modal-backdrop fade show"></div>{% endif %}
+<!-- {% if session.get('role') in ['admin'] %} -->
+<!-- {% if show_add_modal %}<div class="modal-backdrop fade show"></div>{% endif %} -->
 <!-- Include Modals -->
-{% include "modals/lands/add.html" %}
+
 
 {% if session.get('role') == 'admin' %}
+{% include "modals/lands/add.html" %}
+{% include "modals/farms/add.html" %}
 {% for land in lands %}
 {% include "modals/lands/edit.html" %}
 {% include "modals/lands/delete.html" %}
-{% include "modals/sectors/add.html" %}
 {% endfor %}
-{% endif %}
+<!-- {% endif %} -->
 
 {% endif %}
 

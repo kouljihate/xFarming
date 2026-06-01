@@ -1,42 +1,70 @@
 import math
 import re
 import json
+import sys
+import traceback
 from pyproj import Geod
 from shapely.geometry import Polygon
 
 
+def _error_info(e):
+    tb = sys.exc_info()[-1]
+    return {
+        'error': True,
+        'message': str(e),
+        'function': sys._getframe(1).f_code.co_name,
+        'line': tb.tb_lineno if tb else 0,
+        'trace': traceback.format_exc()
+    }
+
+
 def calculate_distance(p1, p2):
-    return math.sqrt((p2[0] - p1[0]) ** 2 + (p2[1] - p1[1]) ** 2)
+    try:
+        return math.sqrt((p2[0] - p1[0]) ** 2 + (p2[1] - p1[1]) ** 2)
+    except Exception as e:
+        return _error_info(e)
 
 
 def calculate_perimeter(coordinates):
-    if not coordinates or len(coordinates) < 2:
-        return 0.0
-    
-    perimeter = 0.0
-    for i in range(len(coordinates) - 1):
-        perimeter += calculate_distance(coordinates[i], coordinates[i + 1])
-    
-    if len(coordinates) > 2:
-        perimeter += calculate_distance(coordinates[-1], coordinates[0])
-    
-    return perimeter
+    try:
+        if not coordinates or len(coordinates) < 2:
+            return 0.0
+        
+        perimeter = 0.0
+        for i in range(len(coordinates) - 1):
+            r = calculate_distance(coordinates[i], coordinates[i + 1])
+            if isinstance(r, dict) and r.get('error'):
+                return r
+            perimeter += r
+        
+        if len(coordinates) > 2:
+            r = calculate_distance(coordinates[-1], coordinates[0])
+            if isinstance(r, dict) and r.get('error'):
+                return r
+            perimeter += r
+        
+        return perimeter
+    except Exception as e:
+        return _error_info(e)
 
 
 def calculate_area(coordinates):
-    if not coordinates or len(coordinates) < 3:
-        return 0.0
-    
-    n = len(coordinates)
-    area = 0.0
-    
-    for i in range(n):
-        j = (i + 1) % n
-        area += coordinates[i][0] * coordinates[j][1]
-        area -= coordinates[j][0] * coordinates[i][1]
-    
-    area = abs(area) / 2.0
-    return area
+    try:
+        if not coordinates or len(coordinates) < 3:
+            return 0.0
+        
+        n = len(coordinates)
+        area = 0.0
+        
+        for i in range(n):
+            j = (i + 1) % n
+            area += coordinates[i][0] * coordinates[j][1]
+            area -= coordinates[j][0] * coordinates[i][1]
+        
+        area = abs(area) / 2.0
+        return area
+    except Exception as e:
+        return _error_info(e)
 
 
 def parse_simple_coordinates(input_str):
@@ -54,8 +82,8 @@ def parse_simple_coordinates(input_str):
             return None
         
         return coords
-    except Exception:
-        return None
+    except Exception as e:
+        return _error_info(e)
 
 
 def calculate_polygon_from_boundary(boundary_json):
@@ -79,63 +107,63 @@ def calculate_polygon_from_boundary(boundary_json):
             return {'area': 0.0, 'perimeter': 0.0}
         
         area = calculate_area(ring)
+        if isinstance(area, dict) and area.get('error'):
+            return {'area': 0.0, 'perimeter': 0.0, 'error': area['message']}
         perimeter = calculate_perimeter(ring)
+        if isinstance(perimeter, dict) and perimeter.get('error'):
+            return {'area': 0.0, 'perimeter': 0.0, 'error': perimeter['message']}
         
         return {
             'area': round(area, 2),
             'perimeter': round(perimeter, 2)
         }
     except Exception as e:
-        return {'area': 0.0, 'perimeter': 0.0, 'error': str(e)}
+        err = _error_info(e)
+        return {'area': 0.0, 'perimeter': 0.0, 'error': err['message'], 'line': err['line']}
 
 
 def convert_and_calculate(coordinates_str):
-
-    coords = parse_simple_coordinates(coordinates_str)
-    
-    if not coords:
-        return {'error': 'Invalid coordinate format. Use: [(x, y), (x, y), ...]'}
-    
-    area = calculate_area(coords)
-    perimeter = calculate_perimeter(coords)
-    
-    geojson = {
-        'type': 'Polygon',
-        'coordinates': [coords]
-    }
-    
-    return {
-        'area': round(area, 2),
-        'perimeter': round(perimeter, 2),
-        'geojson': json.dumps(geojson)
-    }
-
-def calculate_centroid(
-    coords,
-) -> dict:
-    """
-    Calculate the geometric centroid of a polygon.
-
-    Args:
-        coords : List of (latitude, longitude) tuples in decimal degrees OR
-                 string format "[(lat, lon), (lat, lon), ...]"
-                 Auto-closed if the first and last point differ.
-
-    Returns:
-        dict with keys:
-            latitude   – centroid latitude
-            longitude  – centroid longitude
-            maps_url   – Google Maps link to the centroid
-    """
-    # Handle string input
-    if isinstance(coords, str):
-        coords = parse_simple_coordinates(coords)
-        if coords is None:
-            raise ValueError("Invalid coordinate format. Use [(lat, lon), (lat, lon), ...]")
-    
     try:
+        coords = parse_simple_coordinates(coordinates_str)
+        
+        if isinstance(coords, dict) and coords.get('error'):
+            return coords
+        
+        if not coords:
+            return {'error': 'Invalid coordinate format. Use: [(x, y), (x, y), ...]'}
+        
+        area = calculate_area(coords)
+        if isinstance(area, dict) and area.get('error'):
+            return area
+        perimeter = calculate_perimeter(coords)
+        if isinstance(perimeter, dict) and perimeter.get('error'):
+            return perimeter
+        
+        geojson = {
+            'type': 'Polygon',
+            'coordinates': [coords]
+        }
+        
+        return {
+            'area': round(area, 2),
+            'perimeter': round(perimeter, 2),
+            'geojson': json.dumps(geojson)
+        }
+    except Exception as e:
+        return _error_info(e)
+
+
+def calculate_centroid(coords) -> dict:
+    try:
+        if isinstance(coords, str):
+            coords = parse_simple_coordinates(coords)
+            if isinstance(coords, dict) and coords.get('error'):
+                return coords
+            if coords is None:
+                return _error_info(ValueError("Invalid coordinate format. Use [(lat, lon), (lat, lon), ...]"))
+        
         if len(coords) < 3:
-            raise ValueError("[ERROR] A polygon requires at least 3 coordinate points.")
+            return _error_info(ValueError("A polygon requires at least 3 coordinate points."))
 
         if coords[0] != coords[-1]:
             coords = coords + [coords[0]]
@@ -154,69 +182,47 @@ def calculate_centroid(
             "maps_url":  f"https://www.google.com/maps?q={lat},{lon}",
         }
     except Exception as e:
-        return {'[ERROR]': str(e)}
+        return _error_info(e)
 
-def calculate_polygon_metrics(
-    coords,
-    ellps: str = "WGS84",
-) -> dict:
-    """
-    Calculate the geodesic area and perimeter of a polygon.
-  
-    Args:
-        coords : List of (latitude, longitude) tuples in decimal degrees OR
-                 string format "[(lat, lon), (lat, lon), ...]"
-                 The polygon is auto-closed if the first and last point differ.
-        ellps  : Reference ellipsoid (default: "WGS84").
-  
-    Returns:
-        dict with keys:
-            area_m2       – area in square metres
-            area_ha       – area in hectares
-            area_ha    – area in ha
-            perimeter_m   – perimeter in metres
-            perimeter_km  – perimeter in kilometres
-            num_vertices  – number of unique vertices
-    """
-    # Handle string input
-    if isinstance(coords, str):
-        coords = parse_simple_coordinates(coords)
-        if coords is None:
-            raise ValueError("Invalid coordinate format. Use [(lat, lon), (lat, lon), ...]")
+
+def calculate_polygon_metrics(coords, ellps: str = "WGS84") -> dict:
+    try:
+        if isinstance(coords, str):
+            coords = parse_simple_coordinates(coords)
+            if isinstance(coords, dict) and coords.get('error'):
+                return coords
+            if coords is None:
+                return _error_info(ValueError("Invalid coordinate format. Use [(lat, lon), (lat, lon), ...]"))
+        
+        if len(coords) < 3:
+            return _error_info(ValueError("A polygon requires at least 3 coordinate points."))
     
-    if len(coords) < 3:
-        raise ValueError("A polygon requires at least 3 coordinate points.")
-  
-    # Auto-close the polygon if needed
-    if coords[0] != coords[-1]:
-        coords = coords + [coords[0]]
- 
-    lons = [c[1] for c in coords]
-    lats = [c[0] for c in coords]
- 
-    geod = Geod(ellps=ellps)
- 
-    # --- Area ---
-    poly = Polygon(zip(lons, lats))
-    raw_area, _ = geod.geometry_area_perimeter(poly)
-    area_m2 = abs(raw_area)
- 
-    # --- Perimeter ---
-    perimeter_m = 0.0
-    for i in range(len(coords) - 1):
-        lat1, lon1 = coords[i]
-        lat2, lon2 = coords[i + 1]
-        _, _, dist = geod.inv(lon1, lat1, lon2, lat2)
-        perimeter_m += dist
- 
-    return {
-        "area_m2":      round(area_m2, 4),
-        "area_ha":      round(area_m2 / 10_000, 6),
-        "area_ha":   round(area_m2 / 4_046.856, 6),
-        "perimeter_m":  round(perimeter_m, 4),
-        "perimeter_km": round(perimeter_m / 1_000, 6),
-        "num_vertices": len(coords) - 1,  # exclude closing point
-    }
-
+        if coords[0] != coords[-1]:
+            coords = coords + [coords[0]]
     
-
+        lons = [c[1] for c in coords]
+        lats = [c[0] for c in coords]
+    
+        geod = Geod(ellps=ellps)
+    
+        poly = Polygon(zip(lons, lats))
+        raw_area, _ = geod.geometry_area_perimeter(poly)
+        area_m2 = abs(raw_area)
+    
+        perimeter_m = 0.0
+        for i in range(len(coords) - 1):
+            lat1, lon1 = coords[i]
+            lat2, lon2 = coords[i + 1]
+            _, _, dist = geod.inv(lon1, lat1, lon2, lat2)
+            perimeter_m += dist
+    
+        return {
+            "area_m2":      round(area_m2, 4),
+            "area_ha":      round(area_m2 / 10_000, 6),
+            "area_acres":   round(area_m2 / 4_046.856, 6),
+            "perimeter_m":  round(perimeter_m, 4),
+            "perimeter_km": round(perimeter_m / 1_000, 6),
+            "num_vertices": len(coords) - 1,
+        }
+    except Exception as e:
+        return _error_info(e)
