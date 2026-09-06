@@ -33,10 +33,14 @@ def _error_info(e):
 
 def build_farms_map(farms, height=500):
     try:
+        import json
+
         lats = []
         lngs = []
         texts = []
         custom_data = []
+
+        fig = go.Figure()
 
         for farm in farms:
             coords = farm.get('center_coordinate', {})
@@ -59,6 +63,32 @@ def build_farms_map(farms, height=500):
 
                 sector_count = len(farm.get('sectors', []))
                 custom_data.append(sector_count)
+
+                boundary = farm.get('boundary') or {}
+                if isinstance(boundary, str):
+                    try:
+                        boundary = json.loads(boundary)
+                    except Exception:
+                        boundary = {}
+
+                boundary_coords = boundary.get('coordinates', []) if isinstance(boundary, dict) else []
+
+                if boundary_coords and len(boundary_coords) > 0:
+                    ring = boundary_coords[0]
+                    if len(ring) >= 3:
+                        boundary_lngs = [p[0] for p in ring]
+                        boundary_lats = [p[1] for p in ring]
+                        fig.add_trace(go.Scattermap(
+                            lat=boundary_lats,
+                            lon=boundary_lngs,
+                            mode='lines',
+                            fill='toself',
+                            fillcolor='rgba(46, 180, 100, 0.15)',
+                            line=dict(width=2, color='#2eb464'),
+                            name=farm.get('farm_name', 'Boundary'),
+                            hoverinfo='none',
+                            showlegend=False
+                        ))
             except (ValueError, TypeError):
                 continue
 
@@ -73,7 +103,7 @@ def build_farms_map(farms, height=500):
 
         zoom = max(3, min(17, int(math.log2(360 / max(max_span, 0.0001)))))
 
-        fig = go.Figure(go.Scattermap(
+        fig.add_trace(go.Scattermap(
             lat=lats,
             lon=lngs,
             mode='markers',

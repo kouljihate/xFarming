@@ -1,5 +1,11 @@
 # SmartFarmerFlow - Release Notes
 
+## [0.9.15] - 2026-09-06
+
+### Added
+- Automated version bump for commit
+
+
 ## [0.9.14] - 2026-09-06
 
 ### Added
