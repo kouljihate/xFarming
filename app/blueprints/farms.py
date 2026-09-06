@@ -49,11 +49,14 @@ def api_calculate():
         centroid = calculate_centroid(coords)
         if isinstance(centroid, dict) and centroid.get('error'):
             return jsonify({'error': centroid['error']}), 400
+        import json
+        geojson = json.dumps({'type': 'Polygon', 'coordinates': [coords]})
         return jsonify({
             'area_ha': round(metrics.get('area_ha', 0), 4),
             'perimeter_m': round(metrics.get('perimeter_m', 0), 2),
             'center_lat': centroid.get('latitude'),
             'center_lon': centroid.get('longitude'),
+            'geojson': geojson,
         })
     except Exception as e:
         return jsonify({'error': str(e)}), 500
@@ -180,6 +183,17 @@ def add():
                 boundary = json.loads(boundary_str)
             except Exception:
                 pass
+
+        if not boundary.get('coordinates'):
+            coords_str = request.form.get('coordinates', '').strip()
+            if coords_str:
+                try:
+                    from app.utils.calculation import parse_simple_coordinates
+                    coords = parse_simple_coordinates(coords_str)
+                    if coords and len(coords) >= 3:
+                        boundary = {'type': 'Polygon', 'coordinates': [coords]}
+                except Exception:
+                    pass
 
         farm_data = FarmModel(
             farm_name=farm_name,
@@ -313,6 +327,17 @@ def edit(farm_id):
                         boundary = json.loads(boundary_str)
                     except Exception:
                         pass
+
+                if not boundary.get('coordinates'):
+                    coords_str = request.form.get('coordinates', '').strip()
+                    if coords_str:
+                        try:
+                            from app.utils.calculation import parse_simple_coordinates
+                            coords = parse_simple_coordinates(coords_str)
+                            if coords and len(coords) >= 3:
+                                boundary = {'type': 'Polygon', 'coordinates': [coords]}
+                        except Exception:
+                            pass
 
                 farm_data = FarmModel(
                     farm_id=farm.get('farm_id', ''),

@@ -145,6 +145,8 @@
                                                 readonly>
                                         </div>
                                     </div>
+                                    <input type="hidden" name="boundary" id="farmBoundary"
+                                        value="{{ form_data.get('boundary', '') if form_data is defined else '' }}">
 
                                 </div>
                             </div>
@@ -432,6 +434,9 @@ function calculateCoords() {
             document.getElementById('farmPerimeter').value = data.perimeter_m;
             document.getElementById('farmCenterLat').value = data.center_lat;
             document.getElementById('farmCenterLon').value = data.center_lon;
+            if (data.geojson) {
+                document.getElementById('farmBoundary').value = data.geojson;
+            }
             statusEl.textContent = 'Area: ' + data.area_ha + ' ha | Perimeter: ' + data.perimeter_m + ' m';
             statusEl.className = 'form-text text-success';
         })
