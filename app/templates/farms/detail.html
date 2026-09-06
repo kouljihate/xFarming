@@ -148,13 +148,7 @@
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
-                    <div class="mb-3">
-                        <label class="form-label">Land</label>
-                        <select class="form-select rounded-pill" name="land_id" required>
-                            <option value="{{ land._id }}">{{ land.name }}</option>
-                        </select>
-                        <input type="hidden" name="farm_id" value="{{ farm._id }}">
-                    </div>
+                    <input type="hidden" name="farm_id" value="{{ farm._id }}">
                     <div class="row">
                         <div class="col-md-6 mb-3">
                             <label class="form-label">Name</label>
