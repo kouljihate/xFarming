@@ -438,6 +438,37 @@ def delete(land_id):
 
 @log_func_call
 @admin_required
+@lands_bp.route('/<land_id>/delete_zone/<sector_id>/<zone_id>', methods=['POST'])
+def delete_zone(land_id, sector_id, zone_id):
+    try:
+        log_message('info', f"[LAND] Delete Zone request - Land: {land_id}, Sector: {sector_id}, Zone: {zone_id}")
+        db = get_db()
+        if isinstance(db, dict) and db.get('error'):
+            flash(f'Database error: {db["message"]}', 'danger')
+            return redirect(url_for('lands.index'))
+        land = db.lands.find_one({'_id': ObjectId(land_id)})
+        if not land:
+            flash('Land not found', 'danger')
+            return redirect(url_for('lands.index'))
+        result = db.lands.update_one(
+            {'_id': ObjectId(land_id), 'farms.sectors._id': sector_id},
+            {'$pull': {'farms.$[].sectors.$[s].zones': {'_id': zone_id}}},
+            array_filters=[{'s._id': sector_id}]
+        )
+        if result.modified_count > 0:
+            flash('Zone deleted successfully!', 'success')
+        else:
+            flash('Zone not found', 'danger')
+        return redirect(url_for('zones.index'))
+    except Exception as e:
+        err = _error_info(e)
+        log_message('error', f"lands.delete_zone() line {err['line']}: {err['message']}\n{err['trace']}")
+        flash(f'Error deleting zone: {err["message"]}', 'danger')
+        return redirect(url_for('zones.index'))
+
+
+@log_func_call
+@admin_required
 @lands_bp.route('/<land_id>/upload_photo', methods=['POST'])
 def upload_photo(land_id):
     try:

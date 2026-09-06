@@ -39,32 +39,58 @@
                                 </div>
                                 <div class="card-body">
                                     <div class="row">
-                                        <div class="col-md-3 mb-3">
-                                            <label class="form-label">Land</label>
-                                            <select class="form-select rounded-pill" name="land_id" id="farmLandSelect" required>
-                                                {% for land in lands %}
-                                                <option value="{{ land._id }}" {% if
-                                                    form_data.get('land_id')==land._id %}selected{% endif %}>{{
-                                                    land.name }}</option>
-                                                {% endfor %}
-                                            </select>
-                                        </div>
-                                        <div class="col-md-3 mb-3">
+                                        <div class="col-md-4 mb-3">
                                             <label class="form-label">Farm ID</label>
                                             <input type="text" class="form-control rounded-pill" name="farm_id"
-                                                value="{{ form_data.get('farm_id', 1) }}">
+                                                value="{{ form_data.get('farm_id', '') if form_data is defined else '' }}">
                                         </div>
 
-                                        <div class="col-md-6 mb-3">
+                                        <div class="col-md-8 mb-3">
                                             <label class="form-label">Farm Name</label>
                                             <input type="text" class="form-control rounded-pill" name="farm_name"
-                                                value="{{ form_data.get('farm_name', '') }}" required>
+                                                value="{{ form_data.get('farm_name', '') if form_data is defined else '' }}" required>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-6 mb-3">
+                                            <label class="form-label">Address / Street</label>
+                                            <input type="text" class="form-control rounded-pill" name="street"
+                                                value="{{ form_data.get('street', '') if form_data is defined else '' }}">
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <label class="form-label">City</label>
+                                            <input type="text" class="form-control rounded-pill" name="city"
+                                                value="{{ form_data.get('city', '') if form_data is defined else '' }}">
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-4 mb-3">
+                                            <label class="form-label">Latitude</label>
+                                            <input type="number" step="any" class="form-control rounded-pill" name="latitude"
+                                                id="addFarmLatitude"
+                                                value="{{ form_data.get('latitude', '') if form_data is defined else '' }}"
+                                                oninput="fetchAltitude()">
+                                        </div>
+                                        <div class="col-md-4 mb-3">
+                                            <label class="form-label">Longitude</label>
+                                            <input type="number" step="any" class="form-control rounded-pill" name="longitude"
+                                                id="addFarmLongitude"
+                                                value="{{ form_data.get('longitude', '') if form_data is defined else '' }}"
+                                                oninput="fetchAltitude()">
+                                        </div>
+                                        <div class="col-md-4 mb-3">
+                                            <label class="form-label">Altitude (m) <small class="text-muted">auto</small></label>
+                                            <input type="number" step="any" class="form-control rounded-pill" name="altitude"
+                                                id="addFarmAltitude"
+                                                value="{{ form_data.get('altitude', 0) if form_data is defined else 0 }}"
+                                                readonly disabled>
+                                            <div id="addFarmAltitudeStatus" class="form-text"></div>
                                         </div>
                                     </div>
                                     <div class="mb-3">
                                         <label class="form-label">Description</label>
                                         <textarea class="form-control rounded" name="description"
-                                            rows="2">{{ form_data.get('description', '') }}</textarea>
+                                            rows="2">{{ form_data.get('description', '') if form_data is defined else '' }}</textarea>
                                     </div>
                                 </div>
                             </div>
@@ -78,48 +104,45 @@
                                         <label class="form-label">Coordinates</label>
                                         <div class="input-group">
                                             <input type="text" class="form-control rounded" name="coordinates"
-                                                id="farmCoordinates" placeholder="[(x1, y1), (x2, y2), (x3, y3), ...]"
-                                                value="{{ calc_coords if calc_coords else form_data.get('coordinates', '') }}">
-                                            <button type="submit" name="action" value="calculate"
+                                                id="farmCoordinates" placeholder="[(lat1, lon1), (lat2, lon2), ...]"
+                                                value="{{ calc_coords if calc_coords else form_data.get('coordinates', '') if form_data is defined else '' }}">
+                                            <button type="button" onclick="calculateCoords()"
                                                 class="btn btn-primary rounded-pill" title="Calculate">
                                                 <i class="bi-arrow-repeat"></i>
                                             </button>
                                         </div>
-                                        <small class="text-muted">Enter as [(x, y), (x, y), ...] and click
+                                        <small class="text-muted">Enter as [(lat, lon), (lat, lon), ...] and click
                                             Calculate</small>
+                                        <div id="calcStatus" class="form-text"></div>
                                     </div>
                                     <div class="row">
                                         <div class="col-md-3 mb-3">
                                             <label class="form-label">Area (Hectares)</label>
                                             <input type="number" class="form-control rounded-pill" name="area"
-                                                value="{{ calc_area if calc_area is defined else form_data.get('area', 0) }}"
+                                                id="farmArea"
+                                                value="{{ calc_area if calc_area is defined else form_data.get('area', 0) if form_data is defined else 0 }}"
                                                 readonly>
                                         </div>
                                         <div class="col-md-3 mb-3">
                                             <label class="form-label">Perimeter (Meters)</label>
                                             <input type="number" class="form-control rounded-pill" name="perimeter"
-                                                value="{{ calc_perimeter if calc_perimeter is defined else form_data.get('perimeter', 0) }}"
+                                                id="farmPerimeter"
+                                                value="{{ calc_perimeter if calc_perimeter is defined else form_data.get('perimeter', 0) if form_data is defined else 0 }}"
                                                 readonly>
                                         </div>
                                         <div class="col-md-2 mb-3">
                                             <label class="form-label">Latitude</label>
                                             <input type="number" step="0.01" class="form-control rounded-pill"
-                                                name="center_lat"
-                                                value="{{ calc_center_lat if calc_center_lat is defined else form_data.get('center_lat', 0) }}"
+                                                name="center_lat" id="farmCenterLat"
+                                                value="{{ calc_center_lat if calc_center_lat is defined else form_data.get('center_lat', 0) if form_data is defined else 0 }}"
                                                 readonly>
                                         </div>
                                         <div class="col-md-3 mb-3">
                                             <label class="form-label">Longitude</label>
                                             <input type="number" step="0.01" class="form-control rounded-pill"
-                                                name="center_lon"
-                                                value="{{ calc_center_lon if calc_center_lon is defined else form_data.get('center_lon', 0) }}"
+                                                name="center_lon" id="farmCenterLon"
+                                                value="{{ calc_center_lon if calc_center_lon is defined else form_data.get('center_lon', 0) if form_data is defined else 0 }}"
                                                 readonly>
-                                        </div>
-                                        <div class="col-md-1 mb-3">
-                                            <button type="submit" name="action" value="map"
-                                                class="btn btn-primary rounded-pill" title="Show on Map">
-                                                <i class="bi-map"></i>
-                                            </button>
                                         </div>
                                     </div>
 
@@ -350,3 +373,71 @@
         </div>
     </div>
 </div>
+
+<script>
+let altitudeTimer = null;
+function fetchAltitude() {
+    clearTimeout(altitudeTimer);
+    altitudeTimer = setTimeout(function() {
+        var lat = document.getElementById('addFarmLatitude').value;
+        var lon = document.getElementById('addFarmLongitude').value;
+        var statusEl = document.getElementById('addFarmAltitudeStatus');
+        var altInput = document.getElementById('addFarmAltitude');
+        if (!lat || !lon || lat === '0' || lon === '0') {
+            statusEl.textContent = '';
+            return;
+        }
+        statusEl.textContent = 'Fetching altitude...';
+        statusEl.className = 'form-text text-info';
+        fetch('/farms/api/altitude?lat=' + encodeURIComponent(lat) + '&lon=' + encodeURIComponent(lon))
+            .then(function(r) { return r.json(); })
+            .then(function(data) {
+                if (data.altitude !== undefined) {
+                    altInput.value = data.altitude;
+                    statusEl.textContent = 'Elevation: ' + data.altitude + ' m';
+                    statusEl.className = 'form-text text-success';
+                } else {
+                    altInput.value = '';
+                    statusEl.textContent = data.error || 'Altitude unavailable';
+                    statusEl.className = 'form-text text-warning';
+                }
+            })
+            .catch(function() {
+                altInput.value = '';
+                statusEl.textContent = 'Failed to fetch altitude';
+                statusEl.className = 'form-text text-danger';
+            });
+    }, 500);
+}
+
+function calculateCoords() {
+    var coordsStr = document.getElementById('farmCoordinates').value.trim();
+    var statusEl = document.getElementById('calcStatus');
+    if (!coordsStr) {
+        statusEl.textContent = 'Please enter coordinates first';
+        statusEl.className = 'form-text text-warning';
+        return;
+    }
+    statusEl.textContent = 'Calculating...';
+    statusEl.className = 'form-text text-info';
+    fetch('/farms/api/calculate?coords=' + encodeURIComponent(coordsStr))
+        .then(function(r) { return r.json(); })
+        .then(function(data) {
+            if (data.error) {
+                statusEl.textContent = data.error;
+                statusEl.className = 'form-text text-danger';
+                return;
+            }
+            document.getElementById('farmArea').value = data.area_ha;
+            document.getElementById('farmPerimeter').value = data.perimeter_m;
+            document.getElementById('farmCenterLat').value = data.center_lat;
+            document.getElementById('farmCenterLon').value = data.center_lon;
+            statusEl.textContent = 'Area: ' + data.area_ha + ' ha | Perimeter: ' + data.perimeter_m + ' m';
+            statusEl.className = 'form-text text-success';
+        })
+        .catch(function() {
+            statusEl.textContent = 'Failed to calculate';
+            statusEl.className = 'form-text text-danger';
+        });
+}
+</script>

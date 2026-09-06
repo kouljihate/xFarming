@@ -1,9 +1,7 @@
 <div class="modal fade" id="addZoneModal" tabindex="-1">
     <div class="modal-dialog modal-xl">
         <div class="modal-content">
-            <p>{{ url_for('zones.add') }}</p>
             <form method="POST" action="{{ url_for('zones.add') }}">
-                <input type="hidden" name="land_id" id="addZoneLandId">
                 <input type="hidden" name="sector_id" id="addZoneSectorId">
                 <div class="modal-header bg-success text-white">
                     <h5 class="modal-title"><i class="bi-plus-circle me-2"></i>{{ t('add', session.get('lang', 'en')) }}
@@ -11,6 +9,19 @@
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">Sector</label>
+                        <select class="form-select rounded-pill" id="addZoneSectorSelect"
+                            onchange="document.getElementById('addZoneSectorId').value=this.value;"
+                            required>
+                            <option value="">-- Select Sector --</option>
+                            {% for sector in sectors %}
+                            <option value="{{ sector._id }}">
+                                {{ sector.farm.farm_name }} &gt; {{ sector.name }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
                     <div class="row">
                         <div class="col-md-6 mb-3">
                             <label class="form-label">Zone ID</label>

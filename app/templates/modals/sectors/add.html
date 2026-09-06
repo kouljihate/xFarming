@@ -10,30 +10,27 @@
                 <div class="modal-body">
                     <div class="row">
                         <div class="col-md-6 mb-3">
-                            <label class="form-label"><i class="bi-geo-alt me-1"></i>Land</label>
-                            <select class="form-select rounded-pill" name="land_id" id="addSectorLand" required onchange="updateFarmSelect()">
-                                {% for land in lands %}
-                                <option value="{{ land._id }}">{{ land.name }}</option>
+                            <label class="form-label"><i class="bi-building me-1"></i>Farm</label>
+                            <select class="form-select rounded-pill" name="farm_id" required>
+                                {% for farm in farms %}
+                                <option value="{{ farm._id }}">{{ farm.farm_name }}</option>
                                 {% endfor %}
                             </select>
                         </div>
-                        <div class="col-md-6 mb-3">
-                            <label class="form-label"><i class="bi-building me-1"></i>Farm</label>
-                            <select class="form-select rounded-pill" name="farm_id" id="addSectorFarm" required>
-                                <option value="">-- Select Farm --</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="row">
-
                         <div class="col-md-6 mb-3">
                             <label class="form-label">Sector Number</label>
                             <input type="number" class="form-control rounded-pill" name="sector_number" value="1"
                                 min="1">
                         </div>
+                    </div>
+                    <div class="row">
                         <div class="col-md-6 mb-3">
                             <label class="form-label">Sector Name</label>
                             <input type="text" class="form-control rounded-pill" name="name" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Description</label>
+                            <textarea class="form-control rounded-pill" name="description" rows="2"></textarea>
                         </div>
                     </div>
                     <div class="mb-3">
@@ -88,20 +85,3 @@
         </div>
     </div>
 </div>
-
-<script>
-var landsFarms = {{ lands_farms_json|safe }};
-function updateFarmSelect() {
-    var landId = document.getElementById('addSectorLand').value;
-    var farmSelect = document.getElementById('addSectorFarm');
-    farmSelect.innerHTML = '<option value="">-- Select Farm --</option>';
-    if (landsFarms[landId]) {
-        landsFarms[landId].forEach(function(farm) {
-            var opt = document.createElement('option');
-            opt.value = farm._id;
-            opt.text = farm.farm_name;
-            farmSelect.appendChild(opt);
-        });
-    }
-}
-</script>

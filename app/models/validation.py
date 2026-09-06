@@ -111,49 +111,17 @@ class SectorModel(BaseModel):
     zones: List[ZoneModel] = Field(default_factory=list)
     _id: Optional[str] = None
 
-class LandModel(BaseModel):
-    land_id: str = Field(default='', min_length=0, max_length=50)
-    name: str = Field(..., min_length=1, max_length=100)
-    location: Optional[dict] = Field(default_factory=lambda: {
-        'address': {'street': '', 'city': '', 'state': '', 'postal_code': '', 'country': ''},
-        'city': '',
-        'center_coordinate': {'latitude': 0.0, 'longitude': 0.0},
-        'altitude': {'minimum': 0.0, 'maximum': 0.0},
-    })
-    metadata: Optional[dict] = Field(default_factory=lambda: {
-        'established_date': '', 'last_updated': '', 'status': 'active', 'notes': '', 'version': 1
-    })
-    farms: List[FarmModel] = Field(default_factory=list)
-    created_at: Optional[datetime] = datetime.now()
-    last_updated_at: Optional[datetime] = None
-    _id: Optional[str] = None
-    
-    @validator('name')
-    def name_must_not_be_empty(cls, v):
-        if not v.strip():
-            raise ValueError('Land name cannot be empty')
-        return v.strip()
-    
-    class Config:
-        str_strip_whitespace = True
-    
-    @staticmethod
-    def check_duplicate(db, name, exclude_id=None):
-        query = {'name': name}
-        if exclude_id:
-            query['_id'] = {'$ne': ObjectId(exclude_id)}
-        if db.lands.find_one(query):
-            raise ValueError(f"Land with name '{name}' already exists")
-
-class ActivityModel(BaseModel):
-    type: str = Field(..., pattern='^(irrigating|fertilizing|harvesting|planting|pruning)$')
-    notes: Optional[str] = None
-    date: Optional[datetime] = None
-
 class FarmModel(BaseModel):
-    farm_id: int = Field(default=1)
+    farm_id: str = Field(default='', min_length=0, max_length=50)
     farm_name: str = Field(..., min_length=1, max_length=100)
     description: Optional[str] = None
+    address: Optional[dict] = Field(default_factory=lambda: {
+        'street': '', 'city': '', 'state': '', 'postal_code': '', 'country': ''
+    })
+    center_coordinate: Optional[dict] = Field(default_factory=lambda: {
+        'latitude': 0.0, 'longitude': 0.0
+    })
+    altitude: Optional[float] = 0.0
     location: Optional[dict] = Field(default_factory=lambda: {
         'area': {'value': 0, 'unit': 'ha'},
         'soil_type': '', 'topography': '', 'climate_zone': ''
@@ -168,14 +136,41 @@ class FarmModel(BaseModel):
     })
     photos: Optional[List[dict]] = Field(default_factory=list)
     metadata: Optional[dict] = Field(default_factory=lambda: {
-        'created_date': '', 'last_updated': '', 'status': 'active', 'notes': '', 'version': 1
+        'established_date': '', 'last_updated': '', 'status': 'active',
+        'notes': '', 'version': 1
     })
     statistics: Optional[dict] = Field(default_factory=lambda: {
         'total_sectors': 0, 'total_zones': 0, 'total_rows': 0, 'total_trees': 0, 'cultivated_area': 0
     })
-    sectors: List['SectorModel'] = Field(default_factory=list)
+    sectors: List[SectorModel] = Field(default_factory=list)
+    created_at: Optional[datetime] = datetime.now()
+    last_updated_at: Optional[datetime] = None
     _id: Optional[str] = None
 
+    @validator('farm_name')
+    def name_must_not_be_empty(cls, v):
+        if not v.strip():
+            raise ValueError('Farm name cannot be empty')
+        return v.strip()
+
+    class Config:
+        str_strip_whitespace = True
+
+    @staticmethod
+    def check_duplicate(db, name, exclude_id=None):
+        query = {'farm_name': name}
+        if exclude_id:
+            try:
+                query['_id'] = {'$ne': ObjectId(exclude_id)}
+            except Exception:
+                query['_id'] = {'$ne': exclude_id}
+        if db.farms.find_one(query):
+            raise ValueError(f"Farm with name '{name}' already exists")
+
+class ActivityModel(BaseModel):
+    type: str = Field(..., pattern='^(irrigating|fertilizing|harvesting|planting|pruning)$')
+    notes: Optional[str] = None
+    date: Optional[datetime] = None
 
 class VisitModel(BaseModel):
     visit_id: str = Field(default='')

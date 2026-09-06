@@ -3,23 +3,17 @@
 {% block title %}{{ t('sectors', session.get('lang', 'en')) }} - SmartFarmerFlow{% endblock %}
 
 {% block content %}
-<a href="{{ url_for('lands.index') }}" class="btn rounded-pill btn-secondary mb-3">{{ t('back', session.get('lang',
+<a href="{{ url_for('farms.index') }}" class="btn rounded-pill btn-secondary mb-3">{{ t('back', session.get('lang',
     'en')) }}</a>
 <h2>{{ t('sectors', session.get('lang', 'en')) }}</h2>
 
-{% set has_farms = lands|selectattr('farms')|list|length > 0 or lands|selectattr('sectors')|list|length > 0 %}
-{% if session.get('role') == 'admin' and has_farms %}
+{% if session.get('role') == 'admin' and farms|length > 0 %}
 <button type="button" class="btn rounded-pill btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#addSectorModal">
     <i class="bi-plus-circle"></i> {{ t('add', session.get('lang', 'en')) }} {{ t('sector', session.get('lang', 'en'))
     }}
 </button>
-<button type="button" class="btn rounded-pill btn-outline-primary mb-3 ms-2" data-bs-toggle="modal"
-    data-bs-target="#bulkAddSectorModal">
-    <i class="bi-stack"></i> {{ t('bulk_add', session.get('lang', 'en')) }} {{ t('sectors', session.get('lang', 'en'))
-    }}
-</button>
 {% elif session.get('role') == 'admin' %}
-<div class="alert alert-warning mb-3"><i class="bi-exclamation-triangle me-2"></i>Please add a Farm or Land first before adding Sectors.</div>
+<div class="alert alert-warning mb-3"><i class="bi-exclamation-triangle me-2"></i>Please add a Farm first before adding Sectors.</div>
 {% endif %}
 
 <form method="GET" class="mb-3">
@@ -34,26 +28,13 @@
     </div>
 </form>
 
-{% if map_html %}
-<div class="card mb-4">
-    <div class="card-header">
-        <h5 class="mb-0"><i class="bi-map me-2"></i>Map of ALL Lands</h5>
-    </div>
-    <div class="card-body p-2">
-        <div style="height: 400px; width: 100%;">
-            {{ map_html | safe }}
-        </div>
-    </div>
-</div>
-{% endif %}
-
 {% if sectors %}
 <div class="table-responsive">
     <table class="table table-striped">
         <thead>
             <tr>
                 <th><i class="bi-grid-fill me-1"></i> Name</th>
-                <th><i class="bi-geo-alt-fill me-1"></i> Land</th>
+                <th><i class="bi-building me-1"></i> Farm</th>
                 <th><i class="bi-map-fill me-1"></i> Zones</th>
                 <th><i class="bi-gear me-1"></i> Actions</th>
             </tr>
@@ -62,7 +43,7 @@
             {% for sector in sectors %}
             <tr>
                 <td>{{ sector.name }}</td>
-                <td>{{ sector.land.name if sector.land else '' }}</td>
+                <td>{{ sector.farm.farm_name if sector.farm else '' }}</td>
                 <td>{{ sector.zone_count }}</td>
                 <td>
                     <a href="{{ url_for('sectors.detail', sector_id=sector._id) }}"
@@ -76,16 +57,11 @@
                         data-bs-target="#deleteSectorModal{{ sector._id }}" title="Delete Sector {{sector._id}}">
                         <i class="bi-trash"></i>
                     </button>
-                    <button type="button" class="btn rounded-pill btn-sm btn-success" title="Add New Zone"
-                        onclick="document.getElementById('addZoneLandId').value='{{ sector.land._id }}'; document.getElementById('addZoneSectorId').value='{{ sector._id }}'; new bootstrap.Modal(document.getElementById('addZoneModal')).show();">
-                        <i class="bi-plus-circle"></i>
-                    </button>
                     {% endif %}
                 </td>
             </tr>
             {% include "modals/sectors/edit.html" %}
             {% include "modals/sectors/delete.html" %}
-            {% include "modals/zones/add.html" %}
 
             {% endfor %}
         </tbody>
@@ -94,7 +70,6 @@
 {% else %}
 <div class="text-center py-5">
     <h1 class="display-1 text-muted">No Sector Found</h1>
-    <!-- <p class="lead text-muted">No sectors found</p> -->
     {% if session.get('role') == 'admin' %}
     <button type="button" class="btn rounded-pill btn-primary mt-3" data-bs-toggle="modal"
         data-bs-target="#addSectorModal">
@@ -105,51 +80,6 @@
 {% endif %}
 
 {% if session.get('role') == 'admin' %}
-<!-- Bulk Add Sector Modal -->
-<div class="modal fade" id="bulkAddSectorModal" tabindex="-1">
-    <div class="modal-dialog modal-md">
-        <div class="modal-content border-success">
-            <form method="POST" action="{{ url_for('sectors.bulk_add') }}">
-                <div class="modal-header bg-success text-white">
-                    <h5 class="modal-title"><i class="bi-stack me-2"></i>Bulk Add Sectors</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                    <div class="mb-3">
-                        <label class="form-label">Land</label>
-                        <select class="form-select rounded-pill" name="land_id" required>
-                            {% for land in lands %}
-                            <option value="{{ land._id }}">{{ land.name }}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-4 mb-3">
-                            <label class="form-label">Prefix</label>
-                            <input type="text" class="form-control rounded-pill" name="prefix" value="Sector" required>
-                        </div>
-                        <div class="col-md-4 mb-3">
-                            <label class="form-label">Start From</label>
-                            <input type="number" class="form-control rounded-pill" name="start_from" value="1" min="1"
-                                required>
-                        </div>
-                        <div class="col-md-4 mb-3">
-                            <label class="form-label">End At</label>
-                            <input type="number" class="form-control rounded-pill" name="end_at" value="5" min="1"
-                                required>
-                        </div>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn rounded-pill btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="submit" class="btn rounded-pill btn-primary">Add Sectors</button>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
-
-
 {% include "modals/sectors/add.html" %}
 
 {% endif %}

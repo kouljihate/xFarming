@@ -3,23 +3,13 @@
 {% block title %}{{ t('farms', session.get('lang', 'en')) }} - SmartFarmerFlow{% endblock %}
 
 {% block content %}
-<a href="{{ url_for('lands.index') }}" class="btn rounded-pill btn-secondary mb-3">{{ t('back', session.get('lang',
-    'en')) }}</a>
 <h2>{{ t('farms', session.get('lang', 'en')) }}</h2>
 
-{% if session.get('role') == 'admin' and lands|length > 0 %}
+{% if session.get('role') == 'admin' %}
 <button type="button" class="btn rounded-pill btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#addFarmModal">
     <i class="bi-plus-circle"></i> {{ t('add', session.get('lang', 'en')) }} {{ t('farm', session.get('lang', 'en'))
     }}
 </button>
-<button type="button" class="btn rounded-pill btn-outline-primary mb-3 ms-2" data-bs-toggle="modal"
-    data-bs-target="#bulkAddFarmModal">
-    <i class="bi-stack"></i> {{ t('bulk_add', session.get('lang', 'en')) }} {{ t('farms', session.get('lang', 'en'))
-    }}
-</button>
-{% elif session.get('role') == 'admin' and lands|length == 0 %}
-<div class="alert alert-warning mb-3"><i class="bi-exclamation-triangle me-2"></i>Please add a Land first before adding
-    Farms.</div>
 {% endif %}
 
 <form method="GET" class="mb-3">
@@ -40,9 +30,12 @@
         <thead>
             <tr>
                 <th><i class="bi-building me-1"></i> Name</th>
-                <th><i class="bi-geo-alt-fill me-1"></i> Land</th>
+                <th><i class="bi-geo-alt-fill me-1"></i> Location</th>
                 <th><i class="bi-arrows-angle-expand me-1"></i> Area</th>
                 <th><i class="bi-grid-fill me-1"></i> Sectors</th>
+                <th><i class="bi-map me-1"></i> Zones</th>
+                <th><i class="bi-layout-three-columns me-1"></i> Rows</th>
+                <th><i class="bi-tree me-1"></i> Trees</th>
                 <th><i class="bi-gear me-1"></i> Actions</th>
             </tr>
         </thead>
@@ -50,9 +43,12 @@
             {% for farm in farms %}
             <tr>
                 <td>{{ farm.farm_name }}</td>
-                <td>{{ farm.land.name if farm.land else '' }}</td>
+                <td>{{ farm.address.city if farm.address else '' }}</td>
                 <td>{{ farm.location.area.value if farm.location and farm.location.area else '' }} {{ farm.location.area.unit if farm.location and farm.location.area else '' }}</td>
                 <td>{{ farm.sector_count }}</td>
+                <td>{{ farm.zone_count }}</td>
+                <td>{{ farm.row_count }}</td>
+                <td>{{ farm.tree_count }}</td>
                 <td>
                     <a href="{{ url_for('farms.detail', farm_id=farm._id) }} " title="View Farm - {{farm.farm_name}} "
                         class="btn rounded-pill btn-sm btn-primary"><i class="bi-eye"></i></a>
@@ -65,20 +61,20 @@
                         data-bs-target="#deleteFarmModal{{ farm._id }}" title="Delete Farm - {{farm.farm_name}}">
                         <i class="bi-trash"></i>
                     </button>
-                    <button type="button" class="btn rounded-pill btn-sm btn-info"
-                        onclick="document.getElementById('addFarmLandId').value='{{ farm._id }}'; new bootstrap.Modal(document.getElementById('addFarmModal')).show();">
-                        <i class="bi-plus-circle"></i>
-                    </button>
                     {% endif %}
                 </td>
             </tr>
-            {% include "modals/farms/edit.html" %}
-            {% include "modals/farms/delete.html" %}
-
             {% endfor %}
         </tbody>
     </table>
 </div>
+
+{% if session.get('role') == 'admin' %}
+{% for farm in farms %}
+{% include "modals/farms/edit.html" %}
+{% include "modals/farms/delete.html" %}
+{% endfor %}
+{% endif %}
 {% else %}
 <div class="text-center py-5">
     <h1 class="display-1 text-muted">No Farm Found</h1>
@@ -91,51 +87,22 @@
 </div>
 {% endif %}
 
-{% if session.get('role') == 'admin' %}
-<!-- Bulk Add Farm Modal -->
-<div class="modal fade" id="bulkAddFarmModal" tabindex="-1">
-    <div class="modal-dialog modal-md">
-        <div class="modal-content border-success">
-            <form method="POST" action="{{ url_for('farms.bulk_add') }}">
-                <div class="modal-header bg-success text-white">
-                    <h5 class="modal-title"><i class="bi-stack me-2"></i>Bulk Add Farms</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                    <div class="mb-3">
-                        <label class="form-label">Land</label>
-                        <select class="form-select rounded-pill" name="land_id" required>
-                            {% for land in lands %}
-                            <option value="{{ land._id }}">{{ land.name }}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-4 mb-3">
-                            <label class="form-label">Prefix</label>
-                            <input type="text" class="form-control rounded-pill" name="prefix" value="Farm" required>
-                        </div>
-                        <div class="col-md-4 mb-3">
-                            <label class="form-label">Start From</label>
-                            <input type="number" class="form-control rounded-pill" name="start_from" value="1" min="1"
-                                required>
-                        </div>
-                        <div class="col-md-4 mb-3">
-                            <label class="form-label">End At</label>
-                            <input type="number" class="form-control rounded-pill" name="end_at" value="5" min="1"
-                                required>
-                        </div>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn rounded-pill btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="submit" class="btn rounded-pill btn-primary">Add Farms</button>
-                </div>
-            </form>
+{% if map_html %}
+<div class="row mb-4">
+    <div class="card">
+        <div class="card-header">
+            <h5 class="mb-0">Map of ALL Farms</h5>
+        </div>
+        <div class="card-body">
+            <div style="height: 400px; width: 100%;">
+                {{ map_html | safe }}
+            </div>
         </div>
     </div>
 </div>
+{% endif %}
 
+{% if session.get('role') == 'admin' %}
 {% include "modals/farms/add.html" %}
 
 {% endif %}

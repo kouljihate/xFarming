@@ -15,21 +15,28 @@
                         <label for="type" class="form-label">Activity Type</label>
                         <select class="form-select rounded-pill" id="type" name="type" required>
                             <option value="">Select type...</option>
-                            <option value="land_created">Land Created</option>
-                            <option value="land_updated">Land Updated</option>
-                            <option value="sector_created">Sector Created</option>
-                            <option value="zone_created">Zone Created</option>
-                            <option value="row_created">Row Created</option>
-                            <option value="tree_created">Tree Created</option>
-                            <option value="other">Other</option>
+                            {% for at in activity_types %}
+                            <option value="{{ at[0] }}"{% if at[0] == request.args.get('type', '') %} selected{% endif %}>{{ at[1] }}</option>
+                            {% endfor %}
                         </select>
                     </div>
                     <div class="mb-3">
                         <label for="notes" class="form-label">Notes</label>
                         <textarea class="form-control rounded-pill" id="notes" name="notes" rows="3" placeholder="Enter activity notes..."></textarea>
                     </div>
+                    <div class="mb-3">
+                        <label for="date" class="form-label">Date</label>
+                        <input type="date" class="form-control rounded-pill" id="date" name="date" value="{{ request.args.get('date', '') }}" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="status" class="form-label">Status</label>
+                        <select class="form-select rounded-pill" id="status" name="status">
+                            <option value="completed">Completed</option>
+                            <option value="pending">Pending</option>
+                        </select>
+                    </div>
                     <div class="d-grid gap-2">
-                        <button type="submit" class="btn rounded-pill btn-primary">Add Activity</button>
+                        <button type="submit" class="btn rounded-pill btn-success">Create Activity</button>
                         <a href="{{ url_for('activities.index') }}" class="btn rounded-pill btn-outline-secondary">Cancel</a>
                     </div>
                 </form>

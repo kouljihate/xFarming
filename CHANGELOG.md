@@ -1,6 +1,18 @@
 # SmartFarmerFlow - Version History
 
-## [0.9.3] - 2026-05-19
+## [1.0.1] - 2026-09-06
+
+### Fixed
+- **Farm delete operation**: Resolved critical bug where farms with string `_id` in MongoDB could not be deleted due to ObjectId query mismatch
+- **Universal document lookup**: Added `find_doc()` helper in `database.py` that handles both ObjectId and string `_id` formats
+- **All blueprints updated**: farms, sectors, zones, rows, trees, visits blueprints now use `find_doc()` for consistent MongoDB queries
+- **FarmModel.check_duplicate()**: Updated to handle both ObjectId and string exclude_id formats
+- **Delete endpoint logging**: Added detailed logging for farm deletion attempts with success/failure feedback
+
+### Changed
+- Version bumped to 1.0.1
+
+## [1.0.0] - 2026-05-19
 
 ### Added
 - Version number display at bottom of sidebar
@@ -8,6 +20,7 @@
 - Improved logging infrastructure with log rotation
 - Additional data validation checks in utility scripts
 - Enhanced farm and land management capabilities
+- Comprehensive test suite for farms, lands, sectors, zones
 
 ### Changed
 - Updated version references throughout the codebase
@@ -25,12 +38,6 @@
 - Fixed coordinate calculation edge cases
 - Resolved logging file handle issues
 
-## [0.9.2] - 2026-05-13
-
-### Added
-- Automated version bump for commit
-
-
 ## [0.9.1] - 2026-05-13
 
 ### Added
@@ -43,7 +50,6 @@
 - **Google Maps URL** generation from centroid coordinates, linked in farm detail
 - **LOG_MODE env var**: console-only (`--debug-console`), file-only (`--debug-file`), or combined logging
 - **Farm translations**: keys for `farms`, `total_farms`, `add_farm`, `farm`, `view` in English, Arabic, and French
-- **Icecream debugging**: `ic` import in `run.py` for easier debugging
 
 ### Changed
 - **Lands blueprint refactored**: removed legacy sector management from lands; simplified LandModel location structure with `center_coordinate` and `altitude` fields
@@ -59,24 +65,6 @@
 - **Error handlers**: Added 500 and generic Exception handlers in `app/__init__.py` with proper logging
 - **Form values**: Preserved during calculation errors in Farm Add modal
 - **Removed debug prints**: Cleaned up legacy debug `print()` statements
-
-## [0.8.1] - 2026-05-09
-
-### Added
-- Automated version bump for commit
-
-
-## [0.7.81] - 2026-05-09
-
-### Added
-- Automated version bump for commit
-
-
-## [0.7.80] - 2026-05-09
-
-### Added
-- Automated version bump for commit
-
 
 ## [0.8.0] - 2026-05-09
 
@@ -95,392 +83,30 @@
 ### Fixed
 - Registered missing farms_bp and visits_bp blueprints in app/__init__.py
 
-
-## [0.7.79] - 2026-05-08
-
-### Added
-- Automated version bump for commit
-
-
-## [0.7.78] - 2026-05-08
-
-### Added
-- Automated version bump for commit
-
-
-## [0.7.77] - 2026-05-08
-
-### Fixed
-- Fixed Add Land modal freeze issue when clicking Calculate button
-- Simplified calculation.py to remove external dependencies (pyproj/shapely)
-- Fixed route to use `request.form.get('calculate')` directly
-- Updated template button to use `name="calculate" value="1"`
-
-
-## [0.7.76] - 2026-05-08
-
-### Added
-- Added coordinate calculation utility for Area/Perimeter
-
-### Changed
-- Updated parse_simple_coordinates() to support negative and decimal coordinates
-
-
-## [0.7.75] - 2026-05-08
-
-### Added
-- New calculation utility module (app/utils/calculation.py) for polygon area and perimeter calculations
-- Added coordinate parsing to support format: [(x, y), (x, y), ...] with negative and decimal numbers
-- Calculate button in Add Land modal (Address & Location tab) to compute Area and Perimeter from coordinates
-- Calculate button in Add Sector modal with same functionality
-
-### Changed
-- Updated parse_simple_coordinates() to support negative and decimal coordinates
-- Auto-open modal after calculation using CSS classes instead of JavaScript
-
-### Fixed
-- Fixed pyautogui import error in lands.py
-
-
-## [0.7.74] - 2026-05-07
-
-### Added
-- Automated version bump for commit
-
-
-## [0.7.73] - 2026-05-07
-
-### Added
-- Automated version bump for commit
-
-
-## [0.7.71] - 2026-05-07
-
-### Added
-- Automated version bump for commit
-
-
-## [0.7.69] - 2026-05-07
-
-### Added
-- Automated version bump for commit
-
-
-## [0.7.68] - 2026-05-07
-
-### Added
-- Automated version bump for commit
-
-
-## [0.7.66] - 2026-05-07
-
-### Added
-- Automated version bump for commit
-
-
-## [0.7.64] - 2026-05-07
-
-### Added
-- Automated version bump for commit
-
-
-## [0.7.62] - 2026-05-07
-
-### Added
-- Automated version bump for commit
-
-
-## [0.7.60] - 2026-05-07
-
-### Added
-- Automated version bump for commit
-
-
-## [0.7.58] - 2026-05-07
-
-### Added
-- Automated version bump for commit
-
-
-## [0.7.56] - 2026-05-06
-
-### Added
-- Automated version bump for commit
-
-
-## [0.7.54] - 2026-05-06
-
-### Added
-- Automated version bump for commit
-
-
-## [0.7.52] - 2026-05-06
-
-### Added
-- Automated version bump for commit
-
-
-## [0.7.50] - 2026-05-06
-
-### Added
-- Automated version bump for commit
-
-
-## [0.7.48] - 2026-05-06
-
-### Added
-- Automated version bump for commit
-
-
-## [0.7.46] - 2026-05-06
-
-### Added
-- Automated version bump for commit
-
-
-## [0.7.45] - 2026-05-06
-
-### Added
-- Automated version bump for commit
-
-
-## [0.7.43] - 2026-05-06
-
-### Added
-- Automated version bump for commit
-
-
-## [0.7.41] - 2026-05-06
-
-### Added
-- Automated version bump for commit
-
-
-## [0.7.39] - 2026-05-06
-
-### Added
-- Automated version bump for commit
-
-
-## [0.7.37] - 2026-05-06
-
-### Added
-- Automated version bump for commit
-
-
-## [0.7.35] - 2026-05-06
-
-### Added
-- Automated version bump for commit
-
-
-## [0.7.33] - 2026-05-06
-
-### Added
-- Automated version bump for commit
-
-
-## [0.7.31] - 2026-05-06
-
-### Added
-- Automated version bump for commit
-
-
-## [0.7.29] - 2026-05-06
-
-### Added
-- Automated version bump for commit
-
-
-## [0.7.27] - 2026-05-05
-
-### Added
-- Automated version bump for commit
-
-
-## [0.7.26] - 2026-05-05
-
-### Added
-- Automated version bump for commit
-
-
-## [0.7.25] - 2026-05-05
-
-### Added
-- Automated version bump for commit
-
-
-## [0.7.24] - 2026-05-05
-
-### Added
-- Automated version bump for commit
-
-
-## [0.7.23] - 2026-05-05
-
-### Added
-- Automated version bump for commit
-
-
-## [0.7.22] - 2026-05-05
-
-### Added
-- Automated version bump for commit
-
-
-## [0.7.21] - 2026-05-05
-
-### Added
-- Automated version bump for commit
-
-
-## [0.7.20] - 2026-05-05
-
-### Added
-- Automated version bump for commit
-
-
-## [0.7.19] - 2026-05-05
-
-### Added
-- Automated version bump for commit
-
-
-## [0.7.18] - 2026-05-05
-
-### Added
-- Automated version bump for commit
-
-
-## [0.7.17] - 2026-05-05
-
-### Added
-- Automated version bump for commit
-
-
-## [0.7.16] - 2026-05-05
-
-### Added
-- Automated version bump for commit
-
-
-## [0.7.15] - 2026-05-05
-
-### Added
-- Automated version bump for commit
-
-
-## [0.7.14] - 2026-05-05
-
-### Added
-- Automated version bump for commit
-
-
-## [0.7.13] - 2026-05-05
-
-### Added
-- Automated version bump for commit
-
-
-## [0.7.12] - 2026-05-05
-
-### Added
-- Automated version bump for commit
-
-
-## [0.7.11] - 2026-05-05
-
-### Added
-- Automated version bump for commit
-
-
-## [0.7.10] - 2026-05-05
-
-### Added
-- Automated version bump for commit
-
-
-## [0.7.9] - 2026-05-05
-
-### Added
-- Automated version bump for commit
-
-
-## [0.7.8] - 2026-05-05
-
-### Added
-- Automated version bump for commit
-
-
-## [0.7.7] - 2026-05-05
-
-### Added
-- Automated version bump for commit
-
-
-## [0.7.6] - 2026-05-05
-
-### Added
-- Automated version bump for commit
-
-
-## [0.7.5] - 2026-05-05
-
-### Added
-- Automated version bump for commit
-
-
-## [0.7.4] - 2026-05-05
-
-### Added
-- Automated version bump for commit
-
-
-## [0.7.2] - 2026-05-04
-
-### Added
-- Automated version bump for commit
-
-
-## [0.7.1] - 2026-05-04
-
-### Added
-- Automated version bump for commit
-
-
 ## [0.7.0] - 2026-05-04
 
 ### Added
 - Owner Information group in Add/Edit Land Basic Info tab
 - Party ID field for owner identification
 - Grouped owner fields (Party ID, Name, Email, Phone) in UI
-
-### Changed
-- Backend now uses form-submitted Party ID instead of hardcoded value
-- Updated Add/Edit Land modals to align with LandModel owner structure
-
-### Fixed
-- Addressed template syntax and routing issues
-
-## [0.6.0] - 2026-05-04
-
-### Added
 - Bootstrap Tabs in Add Land modal (Basic Info, Address & Location, Legal Documents, Photos)
 - Photos tab with multiple file upload support
 - Backend photo upload handling (saved to static/uploads/lands/)
-- Photo descriptions linked to each uploaded image
 - Light/Dark theme toggle buttons in sidebar (btn-group)
 - ZERO state pages for all modules (Lands, Sectors, Zones, Rows, Trees)
 - Language buttons organized in btn-group structure
 - Inline form replaced with modal for Add Land
 
 ### Changed
+- Backend now uses form-submitted Party ID instead of hardcoded value
+- Updated Add/Edit Land modals to align with LandModel owner structure
 - Updated Land layout to match exact JSON structure (postal_code, delivered, legal.types array)
 - Login page styled with Bootstrap theme and custom.css
 - Language switcher uses btn-outline-light with active state
 - Sidebar footer reorganized with grouped buttons
 
 ### Fixed
+- Addressed template syntax and routing issues
 - Template syntax error (duplicate if blocks)
 - Removed duplicate Add Land form
 - Proper tab navigation with Bootstrap 5 structure

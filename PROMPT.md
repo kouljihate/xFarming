@@ -4,12 +4,12 @@
 
 **SmartFarmerFlow** is a Flask-based agricultural land management web application with MongoDB. It manages hierarchical farm data: Lands → Farms → Sectors → Zones → Rows → Trees.
 
-- **Version**: 0.9.3
 - **Framework**: Flask with Blueprint modular architecture
 - **Database**: MongoDB (pymongo)
 - **Validation**: Pydantic v2
 - **Templates**: Jinja2 with Bootstrap 5 (Bootswatch themes)
 - **Languages**: English, Arabic (RTL), French
+- **Foontname**: English, French Comfortaa and Arabic (RTL) Reem Kufi Fun
 - **No JavaScript**: All visualizations generated server-side (Plotly, Folium)
 
 ---
@@ -48,6 +48,9 @@ SFarming/
 └── init_data.py            # Database initialization
 ```
 
+### DB Name
+- Database name = Smart_Farming
+
 ### Data Storage Pattern
 
 All hierarchy data stored as **nested arrays within lands collection**:
@@ -62,36 +65,143 @@ All hierarchy data stored as **nested arrays within lands collection**:
 
 lands collection document:
 {
-  _id: ObjectId,
-  name: "Land Name",
-  location: { coordinates: { latitude, longitude }, ... },
-  farms: [
+  "_id": {
+    "$oid": "6a1d39685774eef0fa4607dc"
+  },
+  "land_id": "L01",
+  "name": "Azguar",
+  "location": {
+    "address": {
+      "street": "",
+      "city": ""
+    },
+    "center_coordinate": {
+      "latitude": 33.61794,
+      "longitude": -4.72763
+    },
+    "altitude": 1500
+  },
+  "metadata": {
+    "established_date": "2017-01-01",
+    "notes": "",
+  },
+  "farms": [
     {
-      _id: "farm_id",
-      name: "Farm 1",
-      sectors: [
-        {
-          _id: "sector_id",
-          name: "Sector 1",
-          zones: [
-            {
-              _id: "zone_id",
-              name: "Zone A",
-              rows: [
-                {
-                  _id: "row_id",
-                  name: "Row 1",
-                  trees: [
-                    { _id: "tree_id", name: "Tree 1", visits: [...], ... }
-                  ]
-                }
-              ]
-            }
-          ]
+      "farm_id": 1,
+      "farm_name": "Farm 387614 E",
+      "description": "Created by Playwright test",
+      "location": {
+        "area": {
+          "value": 0,
+          "unit": "ha"
+        },
+        "soil_type": "loam",
+        "topography": "",
+        "climate_zone": ""
+      },
+      "boundary": [
+		{"x": 1234, "y": 5678},
+		{"x": 1234, "y": 5678},
+		{"x": 1234, "y": 5678},
+		{"x": 1234, "y": 5678}
+	  ],
+      "irrigation_system": {
+        "type": [],
+        "source": [],
+        "capacity_lph": 0,
+        "notes": ""
+      },
+      "legal": {
+        "registration_number": "",
+        "lease_status": "owned",
+        "documents": ""
+      },
+      "photos": null,
+      "statistics": {
+        "total_sectors": 0,
+        "total_zones": 0,
+        "total_rows": 0,
+        "total_trees": 0,
+        "cultivated_area": 0
+      },
+      "sectors": [
+		{
+          "sector_id": 1,
+          "sector_number": 1,
+          "name": "Test Sector 355558 E",
+          "description": "",
+          
+          "boundary": {
+            "type": "Polygon",
+            "coordinates": []
+          },
+          "metadata": {
+            "status": "active",
+            "notes": "Created by test 355558"
+          },
+          "statistics": {
+            "total_zones": 0,
+            "total_rows": 0,
+            "total_trees": 0
+          },
+          "zones": [
+		   {
+			"zone_id": 1,
+			"zone_number": 1
+			"name": "",
+			"description": ""
+			"location": {
+				"area": 1,
+				"row_spacing": "",
+				"tree_spacing": "",
+				"orientation" : ""
+			},
+			"boundary": [],
+			"soil_characteristics": [],
+			"statistics": {
+				"total_rows": 1,
+				"total_trees": 1,
+				"active_trees": 1,
+				"dead_trees": 0,
+			}
+			"metadata": dict (created_date, last_updated, status, notes, zone_manager)
+			"rows": [
+				"row_number": int (default=1)
+				"description": Optional[str]
+				"position": dict (start_coordinates, end_coordinates, length, orientation)
+				"tree_count": dict (total_positions, active_trees, empty_positions, dead_trees, replacement_needed)
+				"trees": List[
+					"tree_id": str (e.g., "T001")
+					"position_in_row": int
+					"tree_number": int
+					"qr_code": Optional[str]
+					"rfid_tag": Optional[str]
+					"basic_info": dict (species, common_name, scientific_name, variety, rootstock, clone_id, source, source_certified, planting_date, planted_by, age_years, expected_lifespan_years, generation)
+					"location_precise": dict (latitude, longitude, altitude_meters, accuracy_cm, slope_percentage, aspect, distances)
+					"visits": List[
+						"visit_id": int
+						"visit_date": str
+						"visit_type": str (default="inspection")
+						"inspector": required[str]
+						"status": str (default="pending")
+						"findings": dict (health_status, pests, diseases, notes)
+						"actions_taken": List[dict]
+						"next_visit": Optional[str]
+						"metadata": dict (created_date, last_updated, version)
+					]
+					"historical_production": List[dict]
+					"irrigation_record": List[dict] 
+					"photos": List[dict]
+					"notes": List[dict]
+					"metadata": dict (created_date, last_updated, status, notes, version, data_quality_score, sync_status, backup_location)
+				]
+			]
+		  ],
+          "_id": "6a1d45fe6a3001279309c43b",
         }
-      ]
+	  ],
+      "_id": "6a1d461c6a3001279309c443"
     }
-  ]
 }
 ```
 
@@ -104,7 +214,7 @@ lands collection document:
 #### `create_app()` in `app/__init__.py`
 - Flask application factory
 - Initializes Bootstrap, logging, translations
-- Registers all blueprints (auth, dashboard, lands, activities, users, sectors, zones, rows, trees)
+- Registers all blueprints (auth, dashboard, lands, activities, users, sectors, zones, rows, trees, visits)
 - Sets up Jinja globals: `t` (translation function), `app_version`
 
 #### `Config` class in `app/config.py`
@@ -115,6 +225,12 @@ lands collection document:
 #### `get_db()` in `app/database.py`
 - Returns MongoDB database instance
 - Uses `current_app.config['MONGO_URI']`
+
+#### `find_doc(collection, doc_id)` in `app/database.py`
+- Universal document lookup that handles both ObjectId and string `_id` formats
+- First attempts `ObjectId(doc_id)`, then falls back to string `_id` match
+- Usage: `farm = find_doc(db.lands, farm_id)` → returns land document or None
+- **IMPORTANT**: All blueprints must use this for MongoDB queries due to mixed ID types
 
 #### `init_db()` in `app/database.py`
 - Creates 'users' collection with default admin user (admin/admin123)
@@ -128,39 +244,34 @@ lands collection document:
 #### `TreeModel(BaseModel)`
 - `tree_id`: str (e.g., "T001")
 - `position_in_row`: int
-- `tree_number`: str
+- `tree_number`: int
 - `qr_code`: Optional[str]
 - `rfid_tag`: Optional[str]
 - `basic_info`: dict (species, common_name, scientific_name, variety, rootstock, clone_id, source, source_certified, planting_date, planted_by, age_years, expected_lifespan_years, generation)
 - `location_precise`: dict (latitude, longitude, altitude_meters, accuracy_cm, slope_percentage, aspect, distances)
 - `visits`: List[dict]
 - `historical_production`: List[dict]
-- `irigation_record`: List[dict] (note: typo "irigation")
+- `irrigation_record`: List[dict] 
 - `photos`: List[dict]
 - `notes`: List[dict]
 - `metadata`: dict (created_date, last_updated, status, notes, version, data_quality_score, sync_status, backup_location)
 
 #### `RowModel(BaseModel)`
 - `row_number`: int (default=1)
-- `name`: str (default="Row")
 - `description`: Optional[str]
 - `position`: dict (start_coordinates, end_coordinates, length, orientation)
 - `tree_count`: dict (total_positions, active_trees, empty_positions, dead_trees, replacement_needed)
-- `maintenance`: dict (last_pruned, last_fertilized, last_irrigated, next_maintenance, maintenance_notes)
-- `metadata`: dict (created_date, last_updated, status, notes)
 - `trees`: List[TreeModel]
 
 #### `ZoneModel(BaseModel)`
-- `zone_id`: str
-- `zone_number`: str
+- `zone_id`: int
+- `zone_number`: int
 - `name`: str (required, 1-100 chars)
 - `description`: Optional[str]
 - `location`: dict (area, row_spacing, tree_spacing, orientation)
 - `boundary`: dict (type: "Polygon", coordinates)
-- `crop_info`: dict (current_crop, variety, planting_date, rootstock, pollinators)
 - `soil_characteristics`: dict (type, ph, organic_matter, drainage)
 - `statistics`: dict (total_rows, total_trees, trees_per_acre, active_trees, dead_trees, replacement_rate)
-- `maintenance`: dict
 - `metadata`: dict (created_date, last_updated, status, notes, zone_manager)
 - `rows`: List[RowModel]
 
@@ -193,9 +304,12 @@ lands collection document:
 - `location`: dict (area, soil_type, topography, climate_zone)
 - `boundary`: dict (type: "Polygon", coordinates)
 - `irrigation_system`: dict (type, source, capacity_lph, notes)
+- `legal`: dict (registration_number, lease_status, documents)
+- `photos`: Optional[str] (uploaded filename)
 - `metadata`: dict (created_date, last_updated, status, notes, version)
 - `statistics`: dict (total_sectors, total_zones, total_rows, total_trees, cultivated_area)
 - `sectors`: List[SectorModel]
+- `_id`: Optional[str] — **NOTE**: MongoDB may store as string or ObjectId; always use `find_doc()` for queries
 
 #### `VisitModel(BaseModel)`
 - `visit_id`: str
@@ -343,6 +457,13 @@ lands collection document:
 
 ## Key Patterns
 
+
+### Use try...except
+- Every where
+- Starting from main entry script
+- on every Fucntion/Method 
+- if error happens on any function should return the error description/line number to the called script/function 
+
 ### Authentication/Authorization
 - Session-based auth with `user_id`, `username`, `role`
 - Admin-only: lands.add, sectors.add, zones.add, rows.add, trees.add (POST methods)
@@ -354,6 +475,7 @@ lands collection document:
 - Validate with `model.model_validate(form_data)` or direct instantiation
 
 ### MongoDB Operations
+- **Use `find_doc(collection, doc_id)`** for all lookups — handles both ObjectId and string _id
 - `ObjectId()` for generating new IDs (stored as strings)
 - `db.lands.update_one({'_id': ObjectId(id)}, {'$set': {...}})`
 - `$push` for adding to arrays
@@ -361,14 +483,14 @@ lands collection document:
 
 ### Template Patterns
 - Extend `base.html`
-- Bootstrap 5 with Bootswatch theme (minty/darkly)
-- Modal forms for Add/Edit
+- Bootstrap 5 with Bootswatch theme (load ALL themes locally inside css/themes/)
+- Modal forms for Add/Edit/Delete in ALL modules
 - Sidebar navigation with breadcrumbs
 - Translations via `{{ t('key') }}`
 
 ### Role-based Access
 - `admin`: Full access (CRUD on all entities)
-- `worker`: Can add/view lands, sectors, upload photos
+- `worker`: Can add/view lands, sectors, upload photos, Add trees, activities 
 - `guest`, `customer`: View-only (authenticated)
 
 
@@ -386,22 +508,10 @@ lands collection document:
 3. **Use Pydantic** for all validation
 4. **Nested storage**: All hierarchy in lands collection
 5. **Server-side charts**: Use Plotly generated HTML
-6. **Server-side maps**: Use python-plotly Maps generated HTML
+6. **Server-side maps**: Use python-plotly Maps (satellite view)
 
 ---
 
-## Common Field Mappings
-
-| Entity | Display Field | ID Field | Status Field |
-|--------|---------------|----------|--------------|
-| Tree | `basic_info.variety` | `tree_id` | `metadata.status` |
-| Tree | `name`    | `tree_id` | - |
-| Row | `name`    | `row_id` | `metadata.status` |
-| Zone | `name`    | `zone_id` | `metadata.status` |
-| Sector | `name`    | `sector_id` | `metadata.status` |
-| Farm | `name`    | `farm_id` | `metadata.status` |
-| Land | `name`    | `land_id` | `metadata.status` |
----
 
 ## Example Request Flow
 

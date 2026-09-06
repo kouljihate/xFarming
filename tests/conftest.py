@@ -2,6 +2,7 @@ import sys
 import os
 import threading
 import time
+import traceback
 import pytest
 from playwright.sync_api import sync_playwright
 
@@ -86,4 +87,9 @@ def log(request):
 @pytest.hookimpl(tryfirst=True, hookwrapper=True)
 def pytest_runtest_makereport(item, call):
     outcome = yield
-    setattr(item, f"rep_{call.when}", outcome.get_result())
+    report = outcome.get_result()
+    setattr(item, f"rep_{call.when}", report)
+    if call.when == 'call' and report.failed:
+        log_fixture = item.funcargs.get('log')
+        if log_fixture:
+            log_fixture.error(f"Test failed: {report.longreprtext}", exc_info=sys.exc_info())

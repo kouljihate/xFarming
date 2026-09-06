@@ -5,6 +5,25 @@
 {% block content %}
 <h2>{{ t('activities', session.get('lang', 'en')) }}</h2>
 
+<div class="row mb-3">
+    <div class="col-md-4">
+        <div class="input-group">
+            <select class="form-select rounded-pill" id="typeFilter" onchange="window.location.href='?type=' + this.value">
+                <option value="">All Types</option>
+                {% for at in activity_types %}
+                <option value="{{ at[0] }}"{% if at[0] == activity_type_filter %} selected{% endif %}>{{ at[1] }}</option>
+                {% endfor %}
+            </select>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <input type="date" class="form-control rounded-pill" id="dateFilter" placeholder="Filter by date">
+    </div>
+    <div class="col-md-4 text-end">
+        <button class="btn btn-primary rounded-pill" onclick="window.location.href='/'">Reset Filters</button>
+    </div>
+</div>
+
 {% if activities %}
 <table class="table table-striped">
     <thead>
@@ -12,14 +31,23 @@
             <th>Date</th>
             <th>Type</th>
             <th>Notes</th>
+            <th>Status</th>
         </tr>
     </thead>
     <tbody>
         {% for activity in activities %}
         <tr>
-            <td>{{ activity.date }}</td>
+            <td>{{ activity.date.strftime('%Y-%m-%d') if activity.date else '' }}</td>
             <td>{{ t(activity.type, session.get('lang', 'en')) }}</td>
             <td>{{ activity.notes or '' }}</td>
+            <td>
+    {% if activity.status == 'completed' %}
+        <span class="badge bg-success">Completed</span>
+    {% else %}
+        <span class="badge bg-warning">Pending</span>
+    {% endif %}
+    {{ activity.status }}
+</td>
         </tr>
         {% endfor %}
     </tbody>
@@ -29,7 +57,7 @@
     <ul class="pagination">
         {% if page > 1 %}
         <li class="page-item">
-            <a class="page-link" href="{{ url_for('activities.index', page=page-1) }}">{{ t('previous', session.get('lang', 'en')) }}</a>
+            <a class="page-link" href="{{ url_for('activities.index', page=page-1, type=activity_type_filter) }}">{{ t('previous', session.get('lang', 'en')) }}</a>
         </li>
         {% endif %}
         <li class="page-item disabled">
@@ -37,7 +65,7 @@
         </li>
         {% if page < pages %}
         <li class="page-item">
-            <a class="page-link" href="{{ url_for('activities.index', page=page+1) }}">{{ t('next', session.get('lang', 'en')) }}</a>
+            <a class="page-link" href="{{ url_for('activities.index', page=page+1, type=activity_type_filter) }}">{{ t('next', session.get('lang', 'en')) }}</a>
         </li>
         {% endif %}
     </ul>
@@ -45,6 +73,20 @@
 {% else %}
 <p>{{ t('no_activities', session.get('lang', 'en')) }}</p>
 {% endif %}
+
+<script>
+// Date filter functionality
+const dateFilter = document.getElementById('dateFilter');
+if (dateFilter) {
+    dateFilter.addEventListener('change', function() {
+        const typeVal = document.getElementById('typeFilter').value;
+        const url = new URLSearchParams();
+        if (typeVal) url.append('type', typeVal);
+        if (this.value) url.append('date', this.value);
+        window.location.href = '?' + url.toString();
+    });
+}
+</script>
 {% endblock %}
 
 

@@ -17,7 +17,7 @@ def get_altitude_meters(lat: float, lon: float) -> float | None:
     results = data.get("results", [])
     if not results:
         return None
-    return results[0].get("elevation")  # meters
+    return results[0].get("elevation")
 
 
 def _error_info(e):
@@ -31,20 +31,20 @@ def _error_info(e):
     }
 
 
-def build_lands_map(lands, height=500):
+def build_farms_map(farms, height=500):
     try:
         lats = []
         lngs = []
         texts = []
         custom_data = []
 
-        for land in lands:
-            location = land.get('location', {})
-            coordinates = (location.get('center_coordinate')
-                           or location.get('coordinates')
-                           or {})
-            lat = coordinates.get('latitude')
-            lng = coordinates.get('longitude')
+        for farm in farms:
+            coords = farm.get('center_coordinate', {})
+            if not coords:
+                location = farm.get('location', {})
+                coords = location.get('center_coordinate') or location.get('coordinates') or {}
+            lat = coords.get('latitude')
+            lng = coords.get('longitude')
 
             if lat is None or lng is None:
                 continue
@@ -55,10 +55,9 @@ def build_lands_map(lands, height=500):
                     continue
                 lats.append(lat_f)
                 lngs.append(lng_f)
-                texts.append(land.get('name', 'Unknown'))
+                texts.append(farm.get('farm_name', farm.get('name', 'Unknown')))
 
-                sector_count = len(land.get('sectors', []))
-
+                sector_count = len(farm.get('sectors', []))
                 custom_data.append(sector_count)
             except (ValueError, TypeError):
                 continue
@@ -104,49 +103,105 @@ def build_lands_map(lands, height=500):
         return None
 
 
-def build_land_detail_map(land, height=400):
+def build_farm_edit_map(farm, height=400):
     try:
-        location = land.get('location', {})
-        coordinates = (location.get('center_coordinate')
-                       or location.get('coordinates')
-                       or {})
-        lat = coordinates.get('latitude')
-        lng = coordinates.get('longitude')
+        import json
 
-        if lat is None or lng is None:
-            return None
-        try:
-            lat_f = float(lat)
-            lng_f = float(lng)
-            if not (-90 <= lat_f <= 90) or not (-180 <= lng_f <= 180):
-                return None
-        except (ValueError, TypeError):
-            return None
+        coords = farm.get('center_coordinate', {})
+        if not coords:
+            location = farm.get('location', {})
+            coords = location.get('center_coordinate') or location.get('coordinates') or {}
+        lat = coords.get('latitude')
+        lng = coords.get('longitude')
 
-        fig = go.Figure(go.Scattermap(
-            lat=[lat_f],
-            lon=[lng_f],
-            mode='markers',
-            marker=go.scattermap.Marker(
-                size=14,
-                color='red'
-            ),
-            text=[land.get('name', 'Unknown')],
-            hovertemplate='<b>%{text}</b><br><extra></extra>'
-        ))
+        boundary = farm.get('boundary') or {}
+        if isinstance(boundary, str):
+            try:
+                boundary = json.loads(boundary)
+            except Exception:
+                boundary = {}
 
-        fig.update_layout(
-            map=dict(
-                style='satellite-streets',
-                center=dict(lat=lat_f, lon=lng_f),
-                zoom=15
-            ),
-            margin=dict(t=10, l=10, r=10, b=10),
-            height=height
-        )
+        boundary_coords = boundary.get('coordinates', []) if isinstance(boundary, dict) else []
 
-        return pyo.plot(fig, output_type='div', include_plotlyjs='cdn')
-    except Exception as e:
+        location = farm.get('location') or {}
+        area_dict = location.get('area') or {}
+        area = area_dict.get('value', 0) if isinstance(area_dict, dict) else 0
+        area_unit = area_dict.get('unit', 'ha') if isinstance(area_dict, dict) else 'ha'
+        soil_type = location.get('soil_type', '')
+        topography = location.get('topography', '')
+        climate_zone = location.get('climate_zone', '')
+        farm_name = farm.get('farm_name', farm.get('name', 'Farm'))
+
+        fig = go.Figure()
+
+        has_boundary = False
+        boundary_lats = []
+        boundary_lngs = []
+
+        if boundary_coords and len(boundary_coords) > 0:
+            ring = boundary_coords[0]
+            if len(ring) >= 3:
+                boundary_lngs = [p[0] for p in ring]
+                boundary_lats = [p[1] for p in ring]
+                has_boundary = True
+
+        center_lat = lat
+        center_lng = lng
+
+        if has_boundary:
+            if center_lat is None:
+                center_lat = (min(boundary_lats) + max(boundary_lats)) / 2
+            if center_lng is None:
+                center_lng = (min(boundary_lngs) + max(boundary_lngs)) / 2
+
+        if has_boundary and center_lat is not None:
+            fig.add_trace(go.Scattermap(
+                lat=boundary_lats,
+                lon=boundary_lngs,
+                mode='lines',
+                fill='toself',
+                fillcolor='rgba(46, 180, 100, 0.15)',
+                line=dict(width=2, color='#2eb464'),
+                name='Boundary',
+                hoverinfo='none'
+            ))
+
+        if center_lat is not None and center_lng is not None:
+            info_text = (
+                f"<b>{farm_name}</b><br>"
+                f"Area: {area} {area_unit}<br>"
+                f"Soil: {soil_type if soil_type else 'N/A'}<br>"
+                f"Topography: {topography if topography else 'N/A'}<br>"
+                f"Climate: {climate_zone if climate_zone else 'N/A'}"
+            )
+            fig.add_trace(go.Scattermap(
+                lat=[center_lat],
+                lon=[center_lng],
+                mode='markers',
+                marker=go.scattermap.Marker(
+                    size=12,
+                    color='#2eb464' if has_boundary else 'red'
+                ),
+                text=[info_text],
+                hoverinfo='text',
+                name='Farm'
+            ))
+
+        if center_lat is not None:
+            fig.update_layout(
+                map=dict(
+                    style='satellite-streets',
+                    center=dict(lat=center_lat, lon=center_lng),
+                    zoom=15
+                ),
+                margin=dict(t=10, l=10, r=10, b=10),
+                height=height,
+                showlegend=False
+            )
+            return pyo.plot(fig, output_type='div', include_plotlyjs='cdn')
+
+        return None
+    except Exception:
         return None
 
 
@@ -165,8 +220,8 @@ def decimal_to_dms(value: float, is_lat: bool = True) -> str:
 
     return f"{degrees}° {minutes}' {seconds:.2f}\" {direction}"
 
+
 def latlon_to_dms_and_address(lat: float, lon: float) -> dict:
-    # WGS84 is the default coordinate reference used by GPS lat/lon
     lat_dms = decimal_to_dms(lat, is_lat=True)
     lon_dms = decimal_to_dms(lon, is_lat=False)
 

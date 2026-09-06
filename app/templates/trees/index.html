@@ -3,29 +3,11 @@
 {% block title %}{{ t('trees', session.get('lang', 'en')) }} - SmartFarmerFlow{% endblock %}
 
 {% block content %}
-<a href="{{ url_for('lands.index') }}" class="btn rounded-pill btn-secondary mb-3">{{ t('back', session.get('lang', 'en')) }}</a>
+<a href="{{ url_for('farms.index') }}" class="btn rounded-pill btn-secondary mb-3">{{ t('back', session.get('lang',
+    'en')) }}</a>
 <h2>{{ t('trees', session.get('lang', 'en')) }}</h2>
 
-{% set has_rows = false %}
-{% for land in lands %}
-    {% if land.farms %}
-        {% for farm in land.farms %}
-            {% if farm.sectors %}
-                {% for sector in farm.sectors %}
-                    {% if sector.zones %}
-                        {% for zone in sector.zones %}
-                            {% if zone.rows %}
-                                {% set has_rows = true %}
-                            {% endif %}
-                        {% endfor %}
-                    {% endif %}
-                {% endfor %}
-            {% endif %}
-        {% endfor %}
-    {% endif %}
-{% endfor %}
-
-{% if session.get('role') == 'admin' and has_rows %}
+{% if session.get('role') == 'admin' and rows|length > 0 %}
 <button type="button" class="btn rounded-pill btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#addTreeModal">
     <i class="bi-plus-circle"></i> {{ t('add', session.get('lang', 'en')) }} {{ t('trees', session.get('lang', 'en')) }}
 </button>
@@ -61,10 +43,10 @@
             {% for tree in trees %}
             <tr>
                 <td><i class="bi-tree-fill"></i> {{ tree.name }}</td>
-                <td>{{ tree.crop_variety or '-' }}</td>
+                <td>{{ tree.basic_info.variety if tree.basic_info else (tree.crop_variety or '-') }}</td>
                 <td><span
-                        class="badge bg-{{ 'success' if tree.health_status == 'good' else 'warning' if tree.health_status == 'fair' else 'danger' }}">{{
-                        tree.health_status or 'good' }}</span></td>
+                        class="badge bg-{{ 'success' if (tree.metadata.status if tree.metadata else 'healthy') == 'healthy' else 'warning' if (tree.metadata.status if tree.metadata else 'healthy') == 'fair' else 'danger' }}">{{
+                        tree.metadata.status if tree.metadata else 'healthy' }}</span></td>
                 <td>{{ tree.row.name if tree.row else '' }}</td>
                 <td>{{ tree.row.zone.name if tree.row and tree.row.zone else '' }}</td>
                 <td>{{ tree.row.zone.sector.name if tree.row and tree.row.zone and tree.row.zone.sector else '' }}</td>
@@ -90,7 +72,6 @@
 {% else %}
 <div class="text-center py-5">
     <h1 class="display-1 text-muted">No Tree Found</h1>
-    <!-- <p class="lead text-muted">No trees found</p> -->
     {% if session.get('role') == 'admin' %}
     <button type="button" class="btn rounded-pill btn-primary mt-3" data-bs-toggle="modal" data-bs-target="#addTreeModal">
         <i class="bi-plus-circle"></i> Plant Your First Tree
@@ -102,39 +83,6 @@
 {% if session.get('role') == 'admin' %}
 {% include "modals/trees/add.html" %}
 
-<!-- Bulk Add Trees Modal -->
-<div class="modal fade" id="bulkAddTreeModal" tabindex="-1">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <form method="POST" action="{{ url_for('trees.bulk_add') }}">
-                <div class="modal-header bg-{{ session.get('theme', 'minty') }} text-white">
-                    <h5 class="modal-title">Bulk Add Trees</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                    <div class="mb-3">
-                        <label class="form-label">Row</label>
-                        <select class="form-select rounded-pill" name="row_id" required>
-                            {% for row in rows %}
-                            <option value="{{ row._id }}">{{ row.name }} ({{ row.zone.name if row.zone else 'Unknown'
-                                }})</option>
-                            {% endfor %}
-                        </select>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Number of Trees</label>
-                        <input type="number" class="form-control rounded-pill" name="count" value="10" min="1" max="100">
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn rounded-pill btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="submit" class="btn rounded-pill btn-primary">Add Trees</button>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
-
 {% for tree in trees %}
     {% include "modals/trees/edit.html" %}
     {% include "modals/trees/delete.html" %}
@@ -142,6 +90,3 @@
 {% endif %}
 
 {% endblock %}
-
-
-

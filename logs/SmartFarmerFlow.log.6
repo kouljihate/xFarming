@@ -1,0 +1,62 @@
+2026-05-16 15:30:12,824 INFO: SmartFarmerFlow startup - Log mode: file [in D:\Projects\opencode\SFarming\app\utils\logging.py:207]
+2026-05-16 15:30:14,377 INFO: SmartFarmerFlow startup - Log mode: file [in D:\Projects\opencode\SFarming\app\utils\logging.py:207]
+2026-05-16 15:30:23,875 INFO: [FARM] Index page - User: admin [in D:\Projects\opencode\SFarming\app\utils\logging.py:114]
+2026-05-16 15:30:34,572 INFO: [FARM] Add Farm Form Data: calculate 
+ {'land_id': '69ff630975575dc3ec422ff9', 'farm_id': '1', 'farm_name': 'Azguar', 'description': '', 'coordinates': '[         (33.6169635, -4.725138),         (33.6173925, -4.725439),         (33.6178525, -4.725691),         (33.6183265, -4.726007),         (33.6196615, -4.727064),         (33.6182725, -4.729709),         (33.6168565, -4.72862),         (33.6167895, -4.726831),         (33.6167966, -4.7263297),         (33.6168542, -4.7259845),         (33.6169635, -4.725138),     ]', 'action': 'calculate', 'area': '0', 'perimeter': '0', 'center_lat': '0', 'center_lon': '0', 'irrigation_type': '', 'irrigation_source': '', 'irrigation_capacity': '0', 'status': 'active', 'irrigation_notes': '', 'registration_number': '', 'legal_docs': '', 'lease_status': 'owned', 'lease_expiry': '', 'photo_description': '', 'notes': ''} [in D:\Projects\opencode\SFarming\app\utils\logging.py:114]
+2026-05-16 15:30:34,604 INFO: [FARM] Calculate [in D:\Projects\opencode\SFarming\app\utils\logging.py:114]
+2026-05-16 15:31:17,907 INFO: [FARM] Add Farm Form Data: save 
+ {'land_id': '69ff630975575dc3ec422ff9', 'farm_id': '1', 'farm_name': 'Azguar', 'description': '1st Farm - 8Ha', 'coordinates': '[[33.6169635, -4.725138], [33.6173925, -4.725439], [33.6178525, -4.725691], [33.6183265, -4.726007], [33.6196615, -4.727064], [33.6182725, -4.729709], [33.6168565, -4.72862], [33.6167895, -4.726831], [33.6167966, -4.7263297], [33.6168542, -4.7259845], [33.6169635, -4.725138]]', 'area': '8.036637', 'perimeter': '1150.5131', 'center_lat': '33.6179535', 'center_lon': '-4.727434', 'soil_type': 'silt', 'topography': 'mountainous', 'climate_zone': 'Mountain-Atlas', 'irrigation_type': 'drip', 'irrigation_source': 'well', 'irrigation_capacity': '25', 'status': 'active', 'irrigation_notes': '', 'registration_number': '', 'legal_docs': '', 'lease_status': 'owned', 'lease_expiry': '', 'photo_description': '', 'notes': '', 'action': 'save'} [in D:\Projects\opencode\SFarming\app\utils\logging.py:114]
+2026-05-16 15:36:35,212 INFO: SmartFarmerFlow startup - Log mode: file [in D:\Projects\opencode\SFarming\app\utils\logging.py:207]
+2026-05-16 15:36:37,993 INFO: SmartFarmerFlow startup - Log mode: file [in D:\Projects\opencode\SFarming\app\utils\logging.py:207]
+2026-05-16 15:37:29,820 INFO: SmartFarmerFlow startup - Log mode: file [in D:\Projects\opencode\SFarming\app\utils\logging.py:207]
+2026-05-16 15:37:50,178 INFO: SmartFarmerFlow startup - Log mode: file [in D:\Projects\opencode\SFarming\app\utils\logging.py:207]
+2026-05-16 15:38:34,854 INFO: SmartFarmerFlow startup - Log mode: file [in D:\Projects\opencode\SFarming\app\utils\logging.py:207]
+2026-05-16 15:40:11,072 INFO: SmartFarmerFlow startup - Log mode: file [in D:\Projects\opencode\SFarming\app\utils\logging.py:207]
+2026-05-16 15:40:12,425 INFO: SmartFarmerFlow startup - Log mode: file [in D:\Projects\opencode\SFarming\app\utils\logging.py:207]
+2026-05-16 15:40:49,594 INFO: [FARM] Index page - User: admin [in D:\Projects\opencode\SFarming\app\utils\logging.py:114]
+2026-05-16 15:41:12,603 INFO: [FARM] Calculate [in D:\Projects\opencode\SFarming\app\utils\logging.py:114]
+2026-05-16 15:41:12,605 ERROR: Unhandled Exception: object of type 'NoneType' has no len() [in D:\Projects\opencode\SFarming\app\__init__.py:36]
+Traceback (most recent call last):
+  File "D:\Projects\xFarming\venv\Lib\site-packages\flask\app.py", line 917, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "D:\Projects\xFarming\venv\Lib\site-packages\flask\app.py", line 902, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "D:\Projects\opencode\SFarming\app\blueprints\farms.py", line 88, in add
+    result_polygon = calculate_polygon_metrics(coords)
+  File "D:\Projects\opencode\SFarming\app\utils\calculation.py", line 187, in calculate_polygon_metrics
+    if len(coords) < 3:
+       ~~~^^^^^^^^
+TypeError: object of type 'NoneType' has no len()
+2026-05-16 15:45:29,594 INFO: SmartFarmerFlow startup - Log mode: file [in D:\Projects\opencode\SFarming\app\utils\logging.py:207]
+2026-05-16 15:45:39,761 INFO: [FARM] Index page - User: admin [in D:\Projects\opencode\SFarming\app\utils\logging.py:114]
+2026-05-16 15:45:50,884 INFO: [FARM] Calculate [in D:\Projects\opencode\SFarming\app\utils\logging.py:114]
+2026-05-16 15:47:27,559 INFO: [FARM] Add Farm Form Data: save 
+ {'land_id': '69ff630975575dc3ec422ff9', 'farm_id': '1', 'farm_name': 'Azguar', 'description': '1st Farm - 8Ha', 'coordinates': '[[33.6169635, -4.725138], [33.6173925, -4.725439], [33.6178525, -4.725691], [33.6183265, -4.726007], [33.6196615, -4.727064], [33.6182725, -4.729709], [33.6168565, -4.72862], [33.6167895, -4.726831], [33.6167966, -4.7263297], [33.6168542, -4.7259845], [33.6169635, -4.725138]]', 'area': '8.036637', 'perimeter': '1150.5131', 'center_lat': '33.6179535', 'center_lon': '-4.727434', 'soil_type': 'silt', 'topography': 'mountainous', 'climate_zone': 'Mountain-Atlas', 'irrigation_type': 'drip', 'irrigation_source': 'well', 'irrigation_capacity': '25', 'status': 'active', 'irrigation_notes': '', 'registration_number': '', 'legal_docs': '', 'lease_status': 'owned', 'lease_expiry': '', 'photo_description': '', 'notes': '', 'action': 'save'} [in D:\Projects\opencode\SFarming\app\utils\logging.py:114]
+2026-05-16 15:47:27,597 ERROR: [farms.py:add():239] [FARM] Add Farm failed - User: admin - Error: cannot access local variable 'farm_data' where it is not associated with a value [in D:\Projects\opencode\SFarming\app\utils\logging.py:110]
+2026-05-16 15:47:27,657 INFO: [FARM] Index page - User: admin [in D:\Projects\opencode\SFarming\app\utils\logging.py:114]
+2026-05-16 15:48:12,102 INFO: SmartFarmerFlow startup - Log mode: file [in D:\Projects\opencode\SFarming\app\utils\logging.py:207]
+2026-05-16 15:48:15,072 INFO: SmartFarmerFlow startup - Log mode: file [in D:\Projects\opencode\SFarming\app\utils\logging.py:207]
+2026-05-16 15:48:28,561 INFO: SmartFarmerFlow startup - Log mode: file [in D:\Projects\opencode\SFarming\app\utils\logging.py:207]
+2026-05-16 15:48:46,969 INFO: SmartFarmerFlow startup - Log mode: file [in D:\Projects\opencode\SFarming\app\utils\logging.py:207]
+2026-05-16 15:48:48,482 INFO: SmartFarmerFlow startup - Log mode: file [in D:\Projects\opencode\SFarming\app\utils\logging.py:207]
+2026-05-16 15:49:02,058 INFO: [FARM] Index page - User: admin [in D:\Projects\opencode\SFarming\app\utils\logging.py:114]
+2026-05-16 15:49:10,421 INFO: [FARM] Calculate [in D:\Projects\opencode\SFarming\app\utils\logging.py:114]
+2026-05-16 15:49:14,591 INFO: [FARM] Add Farm Form Data: save 
+ {'land_id': '69ff630975575dc3ec422ff9', 'farm_id': '1', 'farm_name': 'Azguar', 'description': '', 'coordinates': '[[33.6169635, -4.725138], [33.6173925, -4.725439], [33.6178525, -4.725691], [33.6183265, -4.726007], [33.6196615, -4.727064], [33.6182725, -4.729709], [33.6168565, -4.72862], [33.6167895, -4.726831], [33.6167966, -4.7263297], [33.6168542, -4.7259845], [33.6169635, -4.725138]]', 'area': '8.036637', 'perimeter': '1150.5131', 'center_lat': '33.6179535', 'center_lon': '-4.727434', 'irrigation_type': '', 'irrigation_source': '', 'irrigation_capacity': '0', 'status': 'active', 'irrigation_notes': '', 'registration_number': '', 'legal_docs': '', 'lease_status': 'owned', 'lease_expiry': '', 'photo_description': '', 'notes': '', 'action': 'save'} [in D:\Projects\opencode\SFarming\app\utils\logging.py:114]
+2026-05-16 15:49:14,638 INFO: [FARM] Added farm: Azguar [in D:\Projects\opencode\SFarming\app\utils\logging.py:114]
+2026-05-16 15:49:14,667 INFO: [FARM] Index page - User: admin [in D:\Projects\opencode\SFarming\app\utils\logging.py:114]
+2026-05-16 15:49:22,094 INFO: [FARM] Index page - User: admin [in D:\Projects\opencode\SFarming\app\utils\logging.py:114]
+2026-05-16 15:54:47,930 INFO: SmartFarmerFlow startup - Log mode: file [in D:\Projects\opencode\SFarming\app\utils\logging.py:207]
+2026-05-16 15:55:11,983 INFO: SmartFarmerFlow startup - Log mode: file [in D:\Projects\opencode\SFarming\app\utils\logging.py:207]
+2026-05-16 15:55:28,678 INFO: SmartFarmerFlow startup - Log mode: file [in D:\Projects\opencode\SFarming\app\utils\logging.py:207]
+2026-05-16 15:55:43,879 INFO: SmartFarmerFlow startup - Log mode: file [in D:\Projects\opencode\SFarming\app\utils\logging.py:207]
+2026-05-16 16:00:17,002 INFO: SmartFarmerFlow startup - Log mode: file [in D:\Projects\opencode\SFarming\app\utils\logging.py:247]
+2026-05-16 16:00:29,683 INFO: SmartFarmerFlow startup - Log mode: file [in D:\Projects\opencode\SFarming\app\utils\logging.py:247]
+2026-05-16 16:00:48,660 INFO: SmartFarmerFlow startup - Log mode: file [in D:\Projects\opencode\SFarming\app\utils\logging.py:247]
+2026-05-16 16:01:01,873 INFO: SmartFarmerFlow startup - Log mode: file [in D:\Projects\opencode\SFarming\app\utils\logging.py:247]
+2026-05-16 16:01:30,491 INFO: SmartFarmerFlow startup - Log mode: file [in D:\Projects\opencode\SFarming\app\utils\logging.py:247]
+2026-05-16 16:01:40,384 INFO: SmartFarmerFlow startup - Log mode: file [in D:\Projects\opencode\SFarming\app\utils\logging.py:247]
+2026-05-16 16:01:50,932 INFO: SmartFarmerFlow startup - Log mode: file [in D:\Projects\opencode\SFarming\app\utils\logging.py:247]
+2026-05-16 16:02:02,847 INFO: SmartFarmerFlow startup - Log mode: file [in D:\Projects\opencode\SFarming\app\utils\logging.py:247]
+2026-05-16 16:02:51,389 INFO: SmartFarmerFlow startup - Log mode: file [in D:\Projects\opencode\SFarming\app\utils\logging.py:247]

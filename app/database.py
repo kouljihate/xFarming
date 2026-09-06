@@ -1,6 +1,7 @@
 import sys
 import traceback
 from pymongo import MongoClient
+from bson import ObjectId
 from flask import current_app
 
 
@@ -21,6 +22,16 @@ def get_db():
         return client.get_database()
     except Exception as e:
         return _error_info(e)
+
+
+def find_doc(collection, doc_id):
+    try:
+        doc = collection.find_one({'_id': ObjectId(doc_id)})
+        if doc:
+            return doc
+    except Exception:
+        pass
+    return collection.find_one({'_id': doc_id})
 
 
 def init_db():

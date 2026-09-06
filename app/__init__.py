@@ -1,13 +1,13 @@
 import sys
 import traceback
-from flask import Flask, render_template, redirect, url_for, request
+from flask import Flask, render_template, redirect, url_for, request, send_from_directory, make_response
 from flask_bootstrap import Bootstrap
 from dotenv import load_dotenv
 from app.config import Config
 from app.translations import t as t_func
 from app.utils.logger import setup_logging, before_request_logger, after_request_logger, log_exception
 
-__version__ = '0.9.13'
+__version__ = '0.9.14'
 
 bootstrap = Bootstrap()
 
@@ -39,6 +39,12 @@ def create_app():
             app.before_request(before_request_logger)
             app.after_request(after_request_logger)
         
+        @app.route('/static/css/custom.css')
+        def custom_css():
+            response = make_response(send_from_directory(app.static_folder, 'css/custom.css'))
+            response.headers['Cache-Control'] = 'public, max-age=31536000, immutable'
+            return response
+
         @app.errorhandler(404)
         @log_exception
         def not_found_error(error):
@@ -85,7 +91,6 @@ def create_app():
         
         from app.blueprints.auth import auth_bp
         from app.blueprints.dashboard import dashboard_bp
-        from app.blueprints.lands import lands_bp
         from app.blueprints.farms import farms_bp
         from app.blueprints.activities import activities_bp
         from app.blueprints.users import users_bp
@@ -97,7 +102,6 @@ def create_app():
         
         app.register_blueprint(auth_bp)
         app.register_blueprint(dashboard_bp)
-        app.register_blueprint(lands_bp)
         app.register_blueprint(farms_bp)
         app.register_blueprint(activities_bp)
         app.register_blueprint(users_bp)
